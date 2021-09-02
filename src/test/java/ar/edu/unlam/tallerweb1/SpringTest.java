@@ -25,9 +25,9 @@ public abstract class SpringTest {
     }
 
     @Test
-    void testFailAPropisto() {
+    void testAhoraDaTodoOk() {
         boolean estoEsFalso = false;
 
-        assert estoEsFalso;
+        assert !estoEsFalso;
     }
 }
