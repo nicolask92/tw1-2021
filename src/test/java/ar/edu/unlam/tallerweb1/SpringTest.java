@@ -2,6 +2,7 @@ package ar.edu.unlam.tallerweb1;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -23,4 +24,10 @@ public abstract class SpringTest {
         return this.sessionFactory.getCurrentSession();
     }
 
+    @Test
+    void testFailAPropisto() {
+        boolean estoEsFalso = false;
+
+        assert estoEsFalso;
+    }
 }
