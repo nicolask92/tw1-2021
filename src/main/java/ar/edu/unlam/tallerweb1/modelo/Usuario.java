@@ -1,5 +1,7 @@
 package ar.edu.unlam.tallerweb1.modelo;
 
+import com.sun.istack.NotNull;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,7 +23,22 @@ public class Usuario {
 	private String password;
 	private String rol;
 	private Boolean activo = false;
-	
+
+	@NotNull
+	String nombre;
+
+	@NotNull
+	String apellido;
+
+	public Usuario(String nombre, String apellido, String email) {
+		this.email = email;
+		this.nombre = nombre;
+		this.apellido = apellido;
+	}
+
+	public Usuario() {
+	}
+
 	public Long getId() {
 		return id;
 	}
