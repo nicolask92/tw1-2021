@@ -1,4 +1,4 @@
-<jsp:include page="../partial/header.jsp"></jsp:include>
+<jsp:include page="/partial/header.jsp"></jsp:include>
 <body id="page-top">
 
     <!-- Page Wrapper -->
