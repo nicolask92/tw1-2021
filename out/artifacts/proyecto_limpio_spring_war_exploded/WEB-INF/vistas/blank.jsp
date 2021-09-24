@@ -23,4 +23,4 @@
                 </div>
                 <!-- /.container-fluid -->
 
-<jsp:include page="partial/footer.jsp"></jsp:include>
+<jsp:include page="/partial/footer.jsp"></jsp:include>
