@@ -5,7 +5,7 @@
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-4 text-gray-800">LA No se actualiza si no borra la carpeta out</h1>
+                    <h1 class="h3 mb-4 text-gray-800">PAGINA DEFAULT</h1>
 
                     <div id='calendar'></div>
                 </div>
