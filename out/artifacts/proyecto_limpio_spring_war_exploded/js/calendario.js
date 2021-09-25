@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', function() {
         selectable: true,
         selectMirror: true,
         dayMaxEvents: true, // allow "more" link when too many events
-        plugins: [ 'dayGrid' ],
         locale: 'es',
         events: [
             {
