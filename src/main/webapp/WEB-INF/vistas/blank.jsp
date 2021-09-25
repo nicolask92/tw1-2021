@@ -7,9 +7,10 @@
                     <!-- Page Heading -->
                     <h1 class="h3 mb-4 text-gray-800">PAGINA DEFAULT</h1>
 
+                    <div id='calendar'></div>
 
                 </div>
-                <div id='calendar'></div>
+
                 <!-- /.container-fluid -->
 
 <jsp:include page="/partial/footer.jsp"></jsp:include>
