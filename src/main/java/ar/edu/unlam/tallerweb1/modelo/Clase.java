@@ -1,8 +1,10 @@
 package ar.edu.unlam.tallerweb1.modelo;
 
+import ar.edu.unlam.tallerweb1.common.Frecuencia;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.List;
 
 enum Modalidad {
@@ -28,12 +30,15 @@ public class Clase {
     @Transient
     Actividad actividad;
 
-    @NotNull
+    @Column(nullable = false)
     Modalidad modalidad;
 
     Integer cupoMaximo = 20;
 
-    public Clase(Periodo periodo, Actividad actividad, Modalidad modalidad) {
+    public Clase(LocalDate dia, Actividad actividad, Modalidad modalidad) {
+        if (actividad.frecuencia == Frecuencia.CON_INICIO_Y_FIN) {
+            if (dia.isBefore(actividad.))
+        }
         this.periodo = periodo;
         this.actividad = actividad;
         this.modalidad = modalidad;

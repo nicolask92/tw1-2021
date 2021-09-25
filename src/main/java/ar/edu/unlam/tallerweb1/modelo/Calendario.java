@@ -3,22 +3,6 @@ package ar.edu.unlam.tallerweb1.modelo;
 import javax.persistence.*;
 import java.util.List;
 
-// TODO ver que hacemos con esto, estaba en el diagrama, pero no me cierra como implementarlo
-enum Mes {
-    ENERO,
-    FEBRERO,
-    MARZO,
-    ABRIL,
-    MAYO,
-    JUNIO,
-    JULIO,
-    AGOSTO,
-    SEPTIEMBRE,
-    OCTUBRE,
-    NOVIEMBRE,
-    DICIEMBRE
-}
-
 @Entity
 public class Calendario {
     @Id
