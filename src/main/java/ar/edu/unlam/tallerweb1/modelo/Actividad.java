@@ -53,6 +53,78 @@ public class Actividad {
     public Actividad() {
     }
 
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public Calendario getCalendario() {
+        return calendario;
+    }
+
+    public void setCalendario(Calendario calendario) {
+        this.calendario = calendario;
+    }
+
+    public Tipo getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(Tipo tipo) {
+        this.tipo = tipo;
+    }
+
+    public Float getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(Float precio) {
+        this.precio = precio;
+    }
+
+    public List<DiaYHorario> getDiaYHorario() {
+        return diaYHorario;
+    }
+
+    public void setDiaYHorario(List<DiaYHorario> diaYHorario) {
+        this.diaYHorario = diaYHorario;
+    }
+
+    public List<Clase> getClases() {
+        return clases;
+    }
+
+    public void setClases(List<Clase> clases) {
+        this.clases = clases;
+    }
+
+    public Frecuencia getFrecuencia() {
+        return frecuencia;
+    }
+
+    public void setFrecuencia(Frecuencia frecuencia) {
+        this.frecuencia = frecuencia;
+    }
+
+    public Periodo getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(Periodo periodo) {
+        this.periodo = periodo;
+    }
+
+    public Horario getHorario() {
+        return horario;
+    }
+
+    public void setHorario(Horario horario) {
+        this.horario = horario;
+    }
+
     public Long getId() {
         return id;
     }
