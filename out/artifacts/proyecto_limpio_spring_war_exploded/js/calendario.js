@@ -12,6 +12,10 @@ document.addEventListener('DOMContentLoaded', function() {
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
         },
+        slotMinTime: '08:00:00',
+        slotMaxTime:'21:00:00',
+        slotDuration: '01:00:00',
+        expandRows: true,
         navLinks: true, // can click day/week names to navigate views
         editable: true,
         selectable: true,
