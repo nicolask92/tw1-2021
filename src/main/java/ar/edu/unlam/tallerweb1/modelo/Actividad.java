@@ -1,35 +1,10 @@
 package ar.edu.unlam.tallerweb1.modelo;
 
-import com.sun.istack.NotNull;
+import ar.edu.unlam.tallerweb1.common.Frecuencia;
+import ar.edu.unlam.tallerweb1.common.Tipo;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.util.List;
-
-enum Tipo {
-    CROSSFIT,
-    NATACION,
-    FUNCIONAL,
-    BOXEO,
-    RUNNING,
-    MUSCULACION
-}
-
-enum Dia {
-    LUNES,
-    MARTES,
-    MIERCOLES,
-    JUEVES,
-    VIERNES,
-    SABADO,
-    DOMINGO
-}
-
-enum Frecuencia {
-    REPETITIVA,
-    TEMPORADA,
-    CON_INICIO_Y_FIN
-}
 
 @Entity
 public class Actividad {
@@ -37,37 +12,42 @@ public class Actividad {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @NotNull
     String descripcion;
 
     @OneToOne
     Calendario calendario;
 
-    @NotNull
     Tipo tipo;
 
-    @NotNull
     Float precio;
 
     @Transient
-    List<Dia> diasConActividad;
+    List<DiaYHorario> diaYHorario;
 
-    @NotNull
-    @OneToOne
-    Clase clase;
+    @OneToMany
+    List<Clase> clases;
 
+    @Transient
     Frecuencia frecuencia;
 
     @Transient
-    Periodo horario;
+    Periodo periodo;
 
-    public Actividad(String descripcion, Tipo tipo, Float precio, Clase clase, Frecuencia frecuencia, Periodo horario) {
+    @Transient
+    Horario horario;
+
+    public Actividad(String descripcion, Tipo tipo, Float precio, Frecuencia frecuencia, Periodo horario) {
         this.descripcion = descripcion;
         this.tipo = tipo;
         this.precio = precio;
-        this.clase = clase;
-        this.frecuencia = frecuencia;
-        this.horario = horario;
+        this.frecuencia = Frecuencia.CON_INICIO_Y_FIN;
+    }
+
+    public Actividad(String descripcion, Tipo tipo, Float precio) {
+        this.descripcion = descripcion;
+        this.tipo = tipo;
+        this.precio = precio;
+        this.frecuencia = Frecuencia.REPETITIVA;
     }
 
     public Actividad() {
