@@ -37,7 +37,7 @@ public class Clase {
 
     public Clase(LocalDate dia, Actividad actividad, Modalidad modalidad) {
         if (actividad.frecuencia == Frecuencia.CON_INICIO_Y_FIN) {
-        //    if (dia.isAfter(actividad.))
+            if (dia.isBefore(actividad.))
         }
         this.periodo = periodo;
         this.actividad = actividad;
