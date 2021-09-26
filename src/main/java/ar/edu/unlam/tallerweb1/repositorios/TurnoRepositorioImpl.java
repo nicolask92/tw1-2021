@@ -2,7 +2,10 @@ package ar.edu.unlam.tallerweb1.repositorios;
 
 import ar.edu.unlam.tallerweb1.modelo.Clase;
 import ar.edu.unlam.tallerweb1.modelo.Turno;
+import ar.edu.unlam.tallerweb1.modelo.Usuario;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +19,14 @@ public class TurnoRepositorioImpl implements TurnoRepositorio {
     @Autowired
     public TurnoRepositorioImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
+    }
+
+    @Override
+    public List<Turno> getTurnosPorId(Usuario user) {
+        final Session session = sessionFactory.getCurrentSession();
+        return session.createCriteria(Turno.class)
+                .add(Restrictions.eq("usuario", user))
+                .list();
     }
 
     @Override

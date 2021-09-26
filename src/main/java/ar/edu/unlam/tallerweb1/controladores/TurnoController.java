@@ -2,6 +2,7 @@ package ar.edu.unlam.tallerweb1.controladores;
 
 import ar.edu.unlam.tallerweb1.common.Mes;
 import ar.edu.unlam.tallerweb1.modelo.Clase;
+import ar.edu.unlam.tallerweb1.modelo.Turno;
 import ar.edu.unlam.tallerweb1.servicios.ClaseService;
 import ar.edu.unlam.tallerweb1.servicios.TurnoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,12 @@ public class TurnoController {
         ModelMap model = new ModelMap();
         model.put("clase", clase);
         return new ModelAndView("clase", model);
+    }
+    @RequestMapping("/mostrar-turno/{id}")
+    public ModelAndView mostrarTurnoPorId(@PathVariable("id") Long id){
+        List<Turno> turnos = turnoService.getTurnosPorId(id);
+        ModelMap model = new ModelMap();
+        return new ModelAndView("Turnos", model);
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/reservar-Turno/{idClase}")

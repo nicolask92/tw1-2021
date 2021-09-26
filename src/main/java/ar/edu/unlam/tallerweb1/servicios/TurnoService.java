@@ -10,4 +10,6 @@ public interface TurnoService {
     List<Turno> getTurnosDeEsteMes();
 
     void guardarTurno(Long id);
+
+    List<Turno> getTurnosPorId(Long id);
 }
