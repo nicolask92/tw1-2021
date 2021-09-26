@@ -24,10 +24,10 @@ public class ClaseRepositorioImpl implements ClaseRepositorio {
         final Session session = sessionFactory.getCurrentSession();
 
         if (mes.isPresent()) {
-            return (List<Clase>) session.createCriteria(Clase.class)
-                    .add(equals());
+            return null;//(List<Clase>) session.createCriteria(Clase.class)
+                    //.add(equals());
         } else {
-            return (List<Clase>) session.createCriteria(Clase.class);
+            return null; // (List<Clase>) session.createCriteria(Clase.class);
         }
     }
 }

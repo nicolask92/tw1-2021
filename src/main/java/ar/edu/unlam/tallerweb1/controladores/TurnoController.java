@@ -33,4 +33,17 @@ public class TurnoController {
 
         return new ModelAndView("turnos", model);
     }
+
+    @RequestMapping("/mostrar-clase/{id}")
+    public ModelAndView mostrarClase(@PathVariable("id") Long id){
+        Clase clase = claseService.buscarClasePorId(id);
+        ModelMap model = new ModelMap();
+        model.put("clase", clase);
+        return new ModelAndView("clase", model);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, path = "/reservar-Turno/{id}")
+    public ModelAndView reservarTurno(@PathVariable("id") Integer id){
+        return new ModelAndView("redirect:turnos");
+    }
 }
