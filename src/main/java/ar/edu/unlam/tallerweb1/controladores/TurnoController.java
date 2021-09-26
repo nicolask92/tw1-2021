@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,7 +53,8 @@ public class TurnoController {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/reservar-Turno/{idClase}")
-    public ModelAndView reservarTurno(@PathVariable("idClase") Long id){
+    public ModelAndView reservarTurno(@PathVariable("idClase") Long id, HttpSession sesion){
+        int idUsuario = (int)sesion.getAttribute("usarioId");
         turnoService.guardarTurno(id);
         return new ModelAndView("clases-para-turnos");
     }

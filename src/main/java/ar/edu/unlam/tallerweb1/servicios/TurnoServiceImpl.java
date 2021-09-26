@@ -9,6 +9,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 @Service
 public class TurnoServiceImpl implements TurnoService {
@@ -27,6 +28,7 @@ public class TurnoServiceImpl implements TurnoService {
     @Override
     public void guardarTurno(Long id) {
         Clase clase = claseRepositorio.getById(id);
+        Cliente cliente = ;
         turnoRepositorio.guardarTurno(clase, cliente);
     }
 
