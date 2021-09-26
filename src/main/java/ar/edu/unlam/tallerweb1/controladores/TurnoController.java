@@ -13,14 +13,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Optional;
 
 @Controller
 public class TurnoController {
 
-    ClaseService claseService;
-    TurnoService turnoService;
+    private ClaseService claseService;
+    private TurnoService turnoService;
+
     @Autowired
     TurnoController(ClaseService claseService, TurnoService turnoService) {
         this.claseService = claseService;
@@ -28,11 +30,13 @@ public class TurnoController {
     }
 
     @RequestMapping({"/mostrar-clases/{mes}", "/mostrar-clases"})
-    public ModelAndView mostrarClasesParaSacarTurnos(@PathVariable Optional<Mes> mes) {
+    public ModelAndView mostrarClasesParaSacarTurnos(@PathVariable Optional<Mes> mes, HttpSession session) {
 
+        int idUsuario = (int) session.getAttribute("usuarioId");
         List<Clase> clases = claseService.getClases(mes);
 
         ModelMap model = new ModelMap();
+        model.put("usuariId", idUsuario);
 
         return new ModelAndView("clases-para-turnos", model);
     }

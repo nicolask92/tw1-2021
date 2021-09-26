@@ -19,7 +19,7 @@ public class TurnoControllerTest {
 
     ClaseService claseService = mock(ClaseService.class);
     TurnoService turnoService = mock(TurnoService.class);
-    TurnoController turnoController = new TurnoController(claseService, turnoService );
+    TurnoController turnoController = new TurnoController(claseService, turnoService);
 
     @Test
     public void testQueSePuedaReservarTurno() throws Exception {

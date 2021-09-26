@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 @Controller
 public class ControladorLogin {
@@ -29,7 +30,8 @@ public class ControladorLogin {
 
 	// Este metodo escucha la URL localhost:8080/NOMBRE_APP/login si la misma es invocada por metodo http GET
 	@RequestMapping("/login")
-	public ModelAndView irALogin() {
+	public ModelAndView irALogin(HttpSession session) {
+		session.setAttribute("usuarioId", 1);
 
 		ModelMap modelo = new ModelMap();
 		// Se agrega al modelo un objeto con key 'datosLogin' para que el mismo sea asociado
