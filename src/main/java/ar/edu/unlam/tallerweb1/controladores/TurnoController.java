@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import ar.edu.unlam.tallerweb1.modelo.Turno;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,30 +21,32 @@ public class TurnoController {
     ClaseService claseService;
     TurnoService turnoService;
     @Autowired
-    TurnoController(ClaseService claseService,TurnoService turnoService ) {
+    TurnoController(ClaseService claseService, TurnoService turnoService) {
         this.claseService = claseService;
         this.turnoService = turnoService;
-
     }
 
-
-
     @RequestMapping({"/mostrar-clases/{mes}", "/mostrar-clases"})
-    public ModelAndView mostrarClases(@PathVariable Optional<Mes> mes) {
+    public ModelAndView mostrarClasesParaSacarTurnos(@PathVariable Optional<Mes> mes) {
 
         List<Clase> clases = claseService.getClases(mes);
 
         ModelMap model = new ModelMap();
 
-        return new ModelAndView("Clases", model);
+        return new ModelAndView("clases-para-turnos", model);
     }
-    @RequestMapping({"/mostrar-turnos/{id}"})
-    public ModelAndView mostrarTurnosPorUsuario(@PathVariable Long id) {
 
-        List<Turno> turnos = turnoService.getTurnosPorId(id);
-
+    @RequestMapping("/mostrar-clase/{id}")
+    public ModelAndView mostrarClase(@PathVariable("id") Long id){
+        Clase clase = claseService.buscarClasePorId(id);
         ModelMap model = new ModelMap();
+        model.put("clase", clase);
+        return new ModelAndView("clase", model);
+    }
 
-        return new ModelAndView("ClasesPorUsuario", model);
+    @RequestMapping(method = RequestMethod.POST, path = "/reservar-Turno/{idClase}")
+    public ModelAndView reservarTurno(@PathVariable("idClase") Long id){
+        turnoService.guardarTurno(id);
+        return new ModelAndView("clases-para-turnos");
     }
 }
