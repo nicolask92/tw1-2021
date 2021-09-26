@@ -3,6 +3,7 @@ package ar.edu.unlam.tallerweb1.controladores;
 import ar.edu.unlam.tallerweb1.common.Mes;
 import ar.edu.unlam.tallerweb1.modelo.Clase;
 import ar.edu.unlam.tallerweb1.servicios.ClaseService;
+import ar.edu.unlam.tallerweb1.servicios.TurnoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -18,10 +19,11 @@ import java.util.Optional;
 public class TurnoController {
 
     ClaseService claseService;
-
+    TurnoService turnoService;
     @Autowired
-    TurnoController(ClaseService claseService) {
+    TurnoController(ClaseService claseService, TurnoService turnoService) {
         this.claseService = claseService;
+        this.turnoService = turnoService;
     }
 
     @RequestMapping({"/mostrar-turnos/{mes}", "/mostrar-turnos"})
@@ -42,8 +44,9 @@ public class TurnoController {
         return new ModelAndView("clase", model);
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/reservar-Turno/{id}")
-    public ModelAndView reservarTurno(@PathVariable("id") Integer id){
+    @RequestMapping(method = RequestMethod.POST, path = "/reservar-Turno/{idClase}")
+    public ModelAndView reservarTurno(@PathVariable("idClase") Long id){
+        turnoService.guardarTurno(id);
         return new ModelAndView("redirect:turnos");
     }
 }

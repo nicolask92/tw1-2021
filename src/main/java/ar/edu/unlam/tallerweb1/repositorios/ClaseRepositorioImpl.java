@@ -51,4 +51,12 @@ public class ClaseRepositorioImpl implements ClaseRepositorio {
 
         }
     }
+
+    @Override
+    public Clase getById(Long id) {
+        final Session session = sessionFactory.getCurrentSession();
+        return (Clase) session.createCriteria(Clase.class)
+                .add(Restrictions.eq("id",id))
+                .uniqueResult();
+    }
 }
