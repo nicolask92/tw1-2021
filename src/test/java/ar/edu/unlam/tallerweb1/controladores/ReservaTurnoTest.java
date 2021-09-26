@@ -4,36 +4,31 @@ import ar.edu.unlam.tallerweb1.common.Frecuencia;
 import ar.edu.unlam.tallerweb1.common.Modalidad;
 import ar.edu.unlam.tallerweb1.common.Tipo;
 import ar.edu.unlam.tallerweb1.modelo.*;
+
 import ar.edu.unlam.tallerweb1.servicios.ClaseService;
 import ar.edu.unlam.tallerweb1.servicios.TurnoService;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import static org.mockito.Mockito.mock;
 
-public class TurnoControllerTest {
+public class ReservaTurnoTest {
 
     ClaseService claseService = mock(ClaseService.class);
     TurnoService turnoService = mock(TurnoService.class);
-    TurnoController turnoController = new TurnoController(claseService, turnoService);
+    TurnoController turnoController = new TurnoController(claseService, turnoService );
 
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
-    }
 
     @Test
     public void testQueSePuedaReservarTurno() throws Exception {
-        Clase clase = givenQueLaClaseTengaLugar();
-        Cliente cliente = givenUnClienteActivo();
-        whenReservoTurno(clase);
+       Clase clase = givenQueLaClaseTengaLugar();
+       Cliente cliente = givenUnClienteActivo();
+       whenReservoTurno(clase);
 
     }
 
@@ -64,4 +59,6 @@ public class TurnoControllerTest {
         turnoController.reservarTurno(clase.getId());
 
     }
+
+
 }

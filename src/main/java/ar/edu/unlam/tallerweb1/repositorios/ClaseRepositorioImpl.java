@@ -29,6 +29,7 @@ public class ClaseRepositorioImpl implements ClaseRepositorio {
         final Session session = sessionFactory.getCurrentSession();
 
         if (mes.isPresent()) {
+
             int numeroDeMes = mes.get().ordinal();
             LocalDateTime primeroDiaDelMes = LocalDateTime.of(Year.now().getValue(), Month.of(numeroDeMes), 1, 0, 0, 0);
             Calendar cal = Calendar.getInstance();
@@ -47,6 +48,15 @@ public class ClaseRepositorioImpl implements ClaseRepositorio {
             return (List<Clase>) session.createCriteria(Clase.class)
                     .add(Restrictions.between("diaClase", primeroDiaDelMes, fechaCompletaUltimoDia))
                     .list();
+
         }
+    }
+
+    @Override
+    public Clase getById(Long id) {
+        final Session session = sessionFactory.getCurrentSession();
+        return (Clase) session.createCriteria(Clase.class)
+                .add(Restrictions.eq("id",id))
+                .uniqueResult();
     }
 }

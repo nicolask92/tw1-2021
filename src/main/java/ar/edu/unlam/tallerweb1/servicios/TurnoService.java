@@ -8,4 +8,6 @@ import java.util.List;
 @Service
 public interface TurnoService {
     List<Turno> getTurnosDeEsteMes();
+
+    void guardarTurno(Long id);
 }

@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface ClaseService {
     List<Clase> getClases(Optional<Mes> mes);
+
+    Clase buscarClasePorId(Long id);
 }

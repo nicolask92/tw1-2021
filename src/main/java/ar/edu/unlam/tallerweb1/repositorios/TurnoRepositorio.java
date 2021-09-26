@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface TurnoRepositorio {
     List<Clase> getTurnosDeEsteMes();
+    void guardarTurno(Long id);
 }
