@@ -9,7 +9,7 @@ import java.util.List;
 @Entity
 public class Actividad {
     @Id
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     String descripcion;
@@ -36,17 +36,20 @@ public class Actividad {
     @Transient
     Horario horario;
 
-    public Actividad(String descripcion, Tipo tipo, Float precio, Frecuencia frecuencia, Periodo horario) {
+    public Actividad(String descripcion, Tipo tipo, Float precio, Frecuencia frecuencia, Periodo periodo, Horario horario) {
         this.descripcion = descripcion;
         this.tipo = tipo;
         this.precio = precio;
         this.frecuencia = Frecuencia.CON_INICIO_Y_FIN;
+        this.periodo = periodo;
+        this.horario = horario;
     }
 
-    public Actividad(String descripcion, Tipo tipo, Float precio) {
+    public Actividad(String descripcion, Tipo tipo, Float precio, Horario horario) {
         this.descripcion = descripcion;
         this.tipo = tipo;
         this.precio = precio;
+        this.horario = horario;
         this.frecuencia = Frecuencia.REPETITIVA;
     }
 

@@ -12,5 +12,6 @@ public enum Mes {
     SEPTIEMBRE,
     OCTUBRE,
     NOVIEMBRE,
-    DICIEMBRE
+    DICIEMBRE;
+    public static final Mes[] values = values();
 }

@@ -4,13 +4,16 @@ import ar.edu.unlam.tallerweb1.common.Mes;
 import ar.edu.unlam.tallerweb1.modelo.Clase;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.time.*;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+@Repository("claseRepositorio")
 public class ClaseRepositorioImpl implements ClaseRepositorio {
 
     private final SessionFactory sessionFactory;
@@ -20,14 +23,30 @@ public class ClaseRepositorioImpl implements ClaseRepositorio {
         this.sessionFactory = sessionFactory;
     }
 
+    // TODO tengo que mejorar un poco el codigo aca, es un asco
     public List<Clase> getClases(Optional<Mes> mes) {
+
         final Session session = sessionFactory.getCurrentSession();
 
         if (mes.isPresent()) {
+            int numeroDeMes = mes.get().ordinal();
+            LocalDateTime primeroDiaDelMes = LocalDateTime.of(Year.now().getValue(), Month.of(numeroDeMes), 1, 0, 0, 0);
+            Calendar cal = Calendar.getInstance();
+            cal.set(Year.now().getValue(), Month.of(numeroDeMes).getValue(), 1);
+            int ultimoDiaDelMes = cal.getMaximum(Calendar.DAY_OF_MONTH);
+            LocalDateTime fechaCompletaUltimoDia = LocalDateTime.of(Year.now().getValue(), Month.of(numeroDeMes), ultimoDiaDelMes, 23, 59, 59);
             return (List<Clase>) session.createCriteria(Clase.class)
-                    .add(equals());
+                    .add(Restrictions.between("diaClase", primeroDiaDelMes, fechaCompletaUltimoDia))
+                    .list();
         } else {
-            return (List<Clase>) session.createCriteria(Clase.class);
+            Calendar cal = Calendar.getInstance();
+            int numeroDeMes = LocalDate.now().getMonth().getValue();
+            LocalDateTime primeroDiaDelMes = LocalDateTime.of(Year.now().getValue(), Month.of(numeroDeMes), 1, 0, 0, 0);
+            int ultimoDiaDelMes = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+            LocalDateTime fechaCompletaUltimoDia = LocalDateTime.of(Year.now().getValue(), Month.of(numeroDeMes), ultimoDiaDelMes, 23, 59, 59);
+            return (List<Clase>) session.createCriteria(Clase.class)
+                    .add(Restrictions.between("diaClase", primeroDiaDelMes, fechaCompletaUltimoDia))
+                    .list();
         }
     }
 }
