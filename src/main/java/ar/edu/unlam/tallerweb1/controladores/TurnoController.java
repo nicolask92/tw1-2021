@@ -26,14 +26,14 @@ public class TurnoController {
         this.turnoService = turnoService;
     }
 
-    @RequestMapping({"/mostrar-turnos/{mes}", "/mostrar-turnos"})
-    public ModelAndView mostrarTurnos(@PathVariable Optional<Mes> mes) {
+    @RequestMapping({"/mostrar-clases/{mes}", "/mostrar-clases"})
+    public ModelAndView mostrarClasesParaSacarTurnos(@PathVariable Optional<Mes> mes) {
 
         List<Clase> clases = claseService.getClases(mes);
 
         ModelMap model = new ModelMap();
 
-        return new ModelAndView("turnos", model);
+        return new ModelAndView("clases-para-turnos", model);
     }
 
     @RequestMapping("/mostrar-clase/{id}")
@@ -47,6 +47,6 @@ public class TurnoController {
     @RequestMapping(method = RequestMethod.POST, path = "/reservar-Turno/{idClase}")
     public ModelAndView reservarTurno(@PathVariable("idClase") Long id){
         turnoService.guardarTurno(id);
-        return new ModelAndView("redirect:turnos");
+        return new ModelAndView("clases-para-turnos");
     }
 }
