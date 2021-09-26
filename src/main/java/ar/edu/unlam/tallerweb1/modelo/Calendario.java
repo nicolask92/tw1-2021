@@ -6,7 +6,7 @@ import java.util.List;
 @Entity
 public class Calendario {
     @Id
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToMany
