@@ -1,6 +1,7 @@
 package ar.edu.unlam.tallerweb1.repositorios;
 
 import ar.edu.unlam.tallerweb1.modelo.Clase;
+import ar.edu.unlam.tallerweb1.modelo.Cliente;
 import ar.edu.unlam.tallerweb1.modelo.Turno;
 import ar.edu.unlam.tallerweb1.modelo.Usuario;
 import org.hibernate.Session;
@@ -9,6 +10,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -35,10 +37,9 @@ public class TurnoRepositorioImpl implements TurnoRepositorio {
     }
 
     @Override
-    public void guardarTurno(Long id) {
-
-        Turno turno = new Turno();
+    public void guardarTurno(Cliente cliente, Clase clase) {
+        Turno turno = new Turno( cliente,clase, LocalDate.now());
         sessionFactory.getCurrentSession().save(turno);
-
     }
+
 }

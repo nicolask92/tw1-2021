@@ -1,13 +1,14 @@
 package ar.edu.unlam.tallerweb1.servicios;
 
 import ar.edu.unlam.tallerweb1.modelo.Clase;
+import ar.edu.unlam.tallerweb1.modelo.Cliente;
 import ar.edu.unlam.tallerweb1.modelo.Turno;
 import ar.edu.unlam.tallerweb1.repositorios.ClaseRepositorio;
+import ar.edu.unlam.tallerweb1.repositorios.ClienteRepositorio;
 import ar.edu.unlam.tallerweb1.repositorios.TurnoRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Service
@@ -15,11 +16,13 @@ public class TurnoServiceImpl implements TurnoService {
 
     private TurnoRepositorio turnoRepositorio;
     private ClaseRepositorio claseRepositorio;
+    private ClienteRepositorio clienteRepositorio;
 
     @Autowired
-    public TurnoServiceImpl (TurnoRepositorio turnoRepositorio, ClaseRepositorio claseRepositorio){
+    public TurnoServiceImpl(TurnoRepositorio turnoRepositorio, ClaseRepositorio claseRepositorio, ClienteRepositorio clienteRepositorio){
         this.turnoRepositorio = turnoRepositorio;
         this.claseRepositorio = claseRepositorio;
+        this.clienteRepositorio = clienteRepositorio;
     }
 
     @Override
@@ -28,10 +31,10 @@ public class TurnoServiceImpl implements TurnoService {
     }
 
     @Override
-    public void guardarTurno(Long id) {
+    public void guardarTurno(Long id, Long idUsuario) {
         Clase clase = claseRepositorio.getById(id);
-        Cliente cliente = ;
-        turnoRepositorio.guardarTurno(clase, cliente);
+        Cliente cliente = clienteRepositorio.getById(idUsuario);
+        turnoRepositorio.guardarTurno(cliente, clase);
 
     }
 

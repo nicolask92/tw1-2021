@@ -57,8 +57,9 @@ public class TurnoController {
 
     @RequestMapping(method = RequestMethod.POST, path = "/reservar-Turno/{idClase}")
     public ModelAndView reservarTurno(@PathVariable("idClase") Long id, HttpSession sesion){
-        int idUsuario = (int)sesion.getAttribute("usarioId");
-        turnoService.guardarTurno(id);
+        Long idUsuario = (Long)sesion.getAttribute("usarioId");
+        turnoService.guardarTurno(id, idUsuario);
         return new ModelAndView("clases-para-turnos");
     }
+
 }

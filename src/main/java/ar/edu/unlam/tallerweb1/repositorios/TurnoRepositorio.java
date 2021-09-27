@@ -1,6 +1,7 @@
 package ar.edu.unlam.tallerweb1.repositorios;
 
 import ar.edu.unlam.tallerweb1.modelo.Clase;
+import ar.edu.unlam.tallerweb1.modelo.Cliente;
 import ar.edu.unlam.tallerweb1.modelo.Turno;
 import ar.edu.unlam.tallerweb1.modelo.Usuario;
 
@@ -10,5 +11,5 @@ public interface TurnoRepositorio {
     List<Turno> getTurnosPorId(Usuario user);
 
     List<Clase> getTurnosDeEsteMes();
-    void guardarTurno(Long id);
+    void guardarTurno(Cliente cliente, Clase clase);
 }

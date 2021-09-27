@@ -9,7 +9,7 @@ import java.util.List;
 public interface TurnoService {
     List<Turno> getTurnosDeEsteMes();
 
-    void guardarTurno(Long id);
+    void guardarTurno(Long id, Long idUsuario);
 
     List<Turno> getTurnosPorId(Long id);
 }
