@@ -53,6 +53,14 @@ public class Clase {
         return clientes;
     }
 
+    public LocalDateTime getDiaClase() {
+        return diaClase;
+    }
+
+    public void setDiaClase(LocalDateTime diaClase) {
+        this.diaClase = diaClase;
+    }
+
     public List<Cliente> getClientes() {
         return clientes;
     }
