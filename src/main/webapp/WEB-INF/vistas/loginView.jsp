@@ -4,9 +4,9 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Login</title>
     <link href="https://fonts.googleapis.com/css?family=Karla:400,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.materialdesignicons.com/4.8.95/css/materialdesignicons.min.css">
@@ -27,28 +27,27 @@
                             <div class="brand-wrapper center">
                                 <img src="img/logo-negro.png" alt="logo" class="">
                             </div>
-                            <p class="login-card-description">Iniciar sesión en su cuenta</p>
+                            <p class="login-card-description">Iniciar sesi&oacute;n en su cuenta</p>
                             <form:form action="validar-login" method="POST" modelAttribute="datosLogin">
 
                                 <%--Elementos de entrada de datos, el elemento path debe indicar en que atributo del objeto usuario se guardan los datos ingresados--%>
-                                <form:input path="email" id="email" type="email" class="form-control" />
-                                <form:input path="password" type="password" id="password" class="form-control"/>
+                                <form:input path="email" id="email" type="email" placeholder="email" class="form-control" />
+                                <form:input path="password" type="password" id="password" placeholder="***********" class="form-control"/>
 
-                                <button class="btn btn-lg btn-primary btn-block" Type="Submit"/>Login</button>
+                                <button class="btn btn-block login-btn mb-4" Type="Submit"/>Login</button>
                             </form:form>
-                            <a href="registrar-usuario"	>Registrarme</a>
                             <%--Bloque que es visible si el elemento error no esta vacio	--%>
                             <c:if test="${not empty error}">
                                 <h4><span>${error}</span></h4>
                                 <br>
                             </c:if>
                             ${msg}
-                        <a href="#!" class="forgot-password-link">¿Se te olvidó tu contraseña?</a>
-                        <p class="login-card-footer-text">¿No tienes una cuenta? <a href="/registro" class="text-reset">REGISTRARSE AQUÍ</a></p>
-                        <a href="/registro/codigo" class="text-reset">ACTIVA TU CUENTA AQUÍ</a>
+                        <a href="#!" class="forgot-password-link">¿Se te olvid&oacute; tu contrase&ntilde;a?</a>
+                        <p class="login-card-footer-text">¿No tienes una cuenta? <a href="ir-a-registrarme" class="text-reset">REGISTRARSE AQU&Iacute;</a></p>
+                        <a href="/registro/codigo" class="text-reset">ACTIVA TU CUENTA AQU&Iacute;</a>
                         <nav class="login-card-footer-nav">
                             <a href="#!">Condiciones de uso.</a>
-                            <a href="#!">Política de privacidad</a>
+                            <a href="#!">Pol&iacute;tica de privacidad</a>
                         </nav>
                     </div>
                 </div>
