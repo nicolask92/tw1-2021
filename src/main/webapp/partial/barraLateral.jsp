@@ -8,11 +8,12 @@
 
         <!-- Sidebar - Brand -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-           <img src="img/logo-blanco.png" class="img-fluid">
+           <img src="logo-blanco-chico.png" class="img-fluid mt-2  d-md-none d-lg-none d-sm-inline">
+            <div class="sidebar-brand-text mx-3"><img src="img/logo-blanco.png" class="img-fluid"></div>
         </a>
 
         <!-- Divider -->
-        <hr class="sidebar-divider my-0">
+        <hr class="sidebar-divider mt-2 mb-0">
 
         <!-- Nav Item - Dashboard -->
         <li class="nav-item">
