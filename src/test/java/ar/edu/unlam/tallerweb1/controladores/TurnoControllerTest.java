@@ -6,25 +6,34 @@ import ar.edu.unlam.tallerweb1.common.Tipo;
 import ar.edu.unlam.tallerweb1.modelo.*;
 import ar.edu.unlam.tallerweb1.servicios.ClaseService;
 import ar.edu.unlam.tallerweb1.servicios.TurnoService;
+import org.dom4j.rule.Mode;
+import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpSession;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
 
 public class TurnoControllerTest {
 
     ClaseService claseService = mock(ClaseService.class);
     TurnoService turnoService = mock(TurnoService.class);
     TurnoController turnoController = new TurnoController(claseService, turnoService);
+    HttpSession mockDeHttpSession = mock(HttpSession.class);
 
     @Test
     public void testQueSePuedaReservarTurno() throws Exception {
         Clase clase = givenQueLaClaseTengaLugar();
-        Cliente cliente = givenUnClienteActivo();
-        whenReservoTurno(clase);
-
+        ModelAndView mv = whenReservoTurno(clase.getId(), mockDeHttpSession);
+        thenReservoElTurno(mv);
     }
 
     private Cliente givenUnClienteActivo() {
@@ -50,8 +59,14 @@ public class TurnoControllerTest {
         return new Actividad("Actividad de alto impacto", Tipo.CROSSFIT, 4000f, Frecuencia.CON_INICIO_Y_FIN, periodo, horario);
     }
 
-    private void whenReservoTurno(Clase clase) {
-    //    turnoController.reservarTurno(clase.getId());
+    private ModelAndView whenReservoTurno(Long id, HttpSession session) {
 
+        return turnoController.reservarTurno(id, session);
+    }
+
+    private void thenReservoElTurno(ModelAndView mv) {
+        //doNothing().when(turnoService).guardarTurno(anyLong(), anyLong());
+        assertThat(mv.getViewName()).isEqualTo("clases-para-turnos");
+        //Assert.assertEquals(mv.getView(), "clases-para-turnos");
     }
 }

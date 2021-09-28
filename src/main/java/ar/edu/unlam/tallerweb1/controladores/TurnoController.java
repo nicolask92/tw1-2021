@@ -64,6 +64,7 @@ public class TurnoController {
     public ModelAndView reservarTurno(@PathVariable("idClase") Long id, HttpSession sesion){
         Long idUsuario = (Long)sesion.getAttribute("usarioId");
         turnoService.guardarTurno(id, idUsuario);
+
         return new ModelAndView("clases-para-turnos");
     }
 
