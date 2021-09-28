@@ -31,8 +31,8 @@ public class TurnoServiceImpl implements TurnoService {
     }
 
     @Override
-    public void guardarTurno(Long id, Long idUsuario) {
-        Clase clase = claseRepositorio.getById(id);
+    public void guardarTurno(Long idClase, Long idUsuario) {
+        Clase clase = claseRepositorio.getById(idClase);
         Cliente cliente = clienteRepositorio.getById(idUsuario);
         turnoRepositorio.guardarTurno(cliente, clase);
 

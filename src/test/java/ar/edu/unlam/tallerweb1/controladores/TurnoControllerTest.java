@@ -66,7 +66,7 @@ public class TurnoControllerTest {
 
     private void thenReservoElTurno(ModelAndView mv) {
         //doNothing().when(turnoService).guardarTurno(anyLong(), anyLong());
-        assertThat(mv.getViewName()).isEqualTo("clases-para-turnos");
         //Assert.assertEquals(mv.getView(), "clases-para-turnos");
+        assertThat(mv.getViewName()).isEqualTo("clases-para-turnos");
     }
 }
