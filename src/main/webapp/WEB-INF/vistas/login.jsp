@@ -1,42 +1,64 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
-<html>
-	<head>
-	<!-- Bootstrap core CSS -->
-	    <link href="css/bootstrap.min.css" rel="stylesheet" >
-	    <!-- Bootstrap theme -->
-	    <link href="css/bootstrap-theme.min.css" rel="stylesheet">
-	</head>
-	<body>
-		<div class = "container">
-			<div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
-				<%--Definicion de un form asociado a la accion /validar-login por POST. Se indica ademas que el model attribute se--%>
-				<%--debe referenciar con el nombre usuario, spring mapea los elementos de la vista con los atributos de dicho objeto--%>
-					<%--para eso debe coincidir el valor del elemento path de cada input con el nombre de un atributo del objeto --%>
-				<form:form action="validar-login" method="POST" modelAttribute="datosLogin">
-			    	<h3 class="form-signin-heading">Taller Web I</h3>
-					<hr class="colorgraph"><br>
+<html lang="es">
 
-					<%--Elementos de entrada de datos, el elemento path debe indicar en que atributo del objeto usuario se guardan los datos ingresados--%>
-					<form:input path="email" id="email" type="email" class="form-control" />
-					<form:input path="password" type="password" id="password" class="form-control"/>     		  
-					
-					<button class="btn btn-lg btn-primary btn-block" Type="Submit"/>Login</button>
-				</form:form>
-				<a href="registrar-usuario"	>Registrarme</a>
-				<%--Bloque que es visible si el elemento error no esta vacio	--%>
-				<c:if test="${not empty error}">
-			        <h4><span>${error}</span></h4>
-			        <br>
-		        </c:if>
-				${msg}
-			</div>
-		</div>
-		
-		<!-- Placed at the end of the document so the pages load faster -->
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" ></script>
-		<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
-		<script src="js/bootstrap.min.js" type="text/javascript"></script>
-	</body>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Login - The Sevens Fitness Club</title>
+    <link rel="icon" type="image/png" href="img/logo-7.png" />
+    <link href="https://fonts.googleapis.com/css?family=Karla:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/4.8.95/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+
+<body>
+    <main class="d-flex align-items-center min-vh-100 py-3 py-md-0">
+        <div class="container">
+            <div class="card login-card">
+                <div class="row no-gutters">
+                    <div class="col-md-5">
+                        <img src="img/login.jpg" alt="login" class="login-card-img">
+                    </div>
+                    <div class="col-md-7">
+                        <div class="card-body">
+                            <div class="brand-wrapper center">
+                                <img src="img/logo-negro.png" alt="logo" class="">
+                            </div>
+                            <p class="login-card-description">Iniciar sesi&oacute;n en su cuenta</p>
+                            <form:form action="validar-login" method="POST" modelAttribute="datosLogin">
+
+                                <%--Elementos de entrada de datos, el elemento path debe indicar en que atributo del objeto usuario se guardan los datos ingresados--%>
+                                <form:input path="email" id="email" type="email" placeholder="email" class="form-control" />
+                                <form:input path="password" type="password" id="password" placeholder="***********" class="form-control"/>
+
+                                <button class="btn btn-block login-btn mb-4" Type="Submit"/>Login</button>
+                            </form:form>
+                            <%--Bloque que es visible si el elemento error no esta vacio	--%>
+                            <c:if test="${not empty error}">
+                                <h4><span>${error}</span></h4>
+                                <br>
+                            </c:if>
+                            ${msg}
+                        <a href="#!" class="forgot-password-link">¿Se te olvid&oacute; tu contrase&ntilde;a?</a>
+                        <p class="login-card-footer-text">¿No tienes una cuenta? <a href="ir-a-registrarme" class="text-reset">REGISTRARSE AQU&Iacute;</a></p>
+                        <a href="/registro/codigo" class="text-reset">ACTIVA TU CUENTA AQU&Iacute;</a>
+                        <nav class="login-card-footer-nav">
+                            <a href="#!">Condiciones de uso.</a>
+                            <a href="#!">Pol&iacute;tica de privacidad</a>
+                        </nav>
+                    </div>
+                </div>
+            </div>  
+
+        </div>
+    </main>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+</body>
+
 </html>
