@@ -8,7 +8,7 @@
 
         <!-- Sidebar - Brand -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-           <img src="logo-blanco-chico.png" class="img-fluid mt-2  d-md-none d-lg-none d-sm-inline">
+           <img src="img/logo-blanco-chico.png" class="img-fluid mt-2  d-md-none d-lg-none d-sm-inline">
             <div class="sidebar-brand-text mx-3"><img src="img/logo-blanco.png" class="img-fluid"></div>
         </a>
 
