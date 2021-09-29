@@ -9,7 +9,7 @@ import java.util.List;
 public interface TurnoService {
     List<Turno> getTurnosDeEsteMes();
 
-    void guardarTurno(Long idClase, Long idUsuario);
+    void guardarTurno(Long idClase, Long idUsuario) throws Exception;
 
     List<Turno> getTurnosPorId(Long id);
 }

@@ -64,6 +64,14 @@ public class TurnoControllerTest {
         thenReservoElTurno(mv);
     }
 
+    @Test
+    public void testQueNoSePuedaReservarTurno() throws Exception {
+      Clase clase = givenQueLaClaseNoTengaLugar();
+      ModelAndView mv = whenReservoTurno(clase.getId(), mockDeHttpSession);
+      thenNoPuedoReservarTurno(mv);
+
+    }
+
     private Cliente givenUnClienteActivo() {
         return new Cliente("Arturo" + LocalDateTime.now(), "Frondizi", "arturitoElMasCapo@gmail.com");
     }
@@ -71,6 +79,17 @@ public class TurnoControllerTest {
     private Clase givenQueLaClaseTengaLugar() throws Exception {
         Actividad actividad = givenUnaActividadConPeriodoYHorarioValido();
         return new Clase(LocalDateTime.now(), actividad, Modalidad.PRESENCIAL);
+    }
+
+    private Clase givenQueLaClaseNoTengaLugar() throws Exception {
+        Actividad actividad = givenUnaActividadConPeriodoYHorarioValido();
+        Clase clase = new Clase(LocalDateTime.now(), actividad, Modalidad.PRESENCIAL);
+        clase.setCantidadMaxima(0);
+        Cliente cliente = givenUnClienteActivo();
+
+        doThrow(Exception.class).when(turnoService).guardarTurno(clase.getId(),cliente.getId());
+
+        return clase;
     }
 
     private Actividad givenUnaActividadConPeriodoYHorarioValido() throws Exception {
@@ -85,7 +104,7 @@ public class TurnoControllerTest {
         return new Actividad("Actividad de alto impacto", Tipo.CROSSFIT, 4000f, Frecuencia.CON_INICIO_Y_FIN, periodo, horario);
     }
 
-    private ModelAndView whenReservoTurno(Long id, HttpSession session) {
+    private ModelAndView whenReservoTurno(Long id, HttpSession session) throws Exception {
 
         return turnoController.reservarTurno(id, session);
     }
@@ -93,6 +112,12 @@ public class TurnoControllerTest {
     private void thenReservoElTurno(ModelAndView mv) {
         //doNothing().when(turnoService).guardarTurno(anyLong(), anyLong());
         //Assert.assertEquals(mv.getView(), "clases-para-turnos");
+        assertThat(mv.getModel().get("msg")).isEqualTo("Se guardo turno correctamente");
+        assertThat(mv.getViewName()).isEqualTo("redirect:/home");
+    }
+
+    private void thenNoPuedoReservarTurno(ModelAndView mv) {
+        assertThat(mv.getModel().get("msg")).isEqualTo("Cupo máximo alcanzado");
         assertThat(mv.getViewName()).isEqualTo("clases-para-turnos");
     }
 }
