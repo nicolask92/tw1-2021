@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +33,7 @@ public class ClasesViewModelBuilderTest {
     }
 
     private void thenElListadoDeClasesSeHaceCorrectamente(CalendarioDeActividades calendario) {
-        assertEquals(LocalDate.now().getDayOfMonth(), calendario.getClases().size());
+        assertEquals(Calendar.getInstance().getMaximum(Calendar.DAY_OF_MONTH), calendario.getClases().size());
     }
 
     private CalendarioDeActividades whenRenderizoElMes(List<Clase> clases) throws Exception {
