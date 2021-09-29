@@ -37,25 +37,25 @@ public class TurnoControllerTest {
     public void testQueSeMuestrenLosTurnosDeUnUsuarioEspecifico(){
      Turno turno = givenHayUnTurno();
      ModelAndView mv = whenConsultoElTurnoConUnUsuario(turno);
-     thenMuestroLosTurnosDelUsuario(mv);
+     thenMuestroLosTurnosDelUsuario(mv, turno);
     }
 
-    private void thenMuestroLosTurnosDelUsuario(ModelAndView mv) {
+    private void thenMuestroLosTurnosDelUsuario(ModelAndView mv, Turno turno) {
         assertThat(mv.getViewName()).isEqualTo("Turnos");
+        assertThat(mv.getModel().get("turnos")).isEqualTo(List.of(turno));
     }
 
     private ModelAndView whenConsultoElTurnoConUnUsuario(Turno turno) {
-        List<Turno> turnoCliente = Arrays.asList(turno);
+        List<Turno> turnoCliente = List.of(turno);
         Cliente cliente = mock(Cliente.class);
-        ModelAndView mv = turnoController.mostrarTurnoPorId(cliente.getId());
         when(turnoService.getTurnosPorId(cliente.getId())).thenReturn(turnoCliente);
+        ModelAndView mv = turnoController.mostrarTurnoPorId(cliente.getId());
         return mv;
     }
 
     private Turno givenHayUnTurno() {
-        return mock(Turno.class);
+        return new Turno();
     }
-
 
     @Test
     public void testQueSePuedaReservarTurno() throws Exception {
@@ -65,9 +65,7 @@ public class TurnoControllerTest {
     }
 
     private Cliente givenUnClienteActivo() {
-        return new Cliente("Arturo" + LocalDateTime.now(),
-                "Frondizi", "arturitoElMasCapo@gmail.com");
-
+        return new Cliente("Arturo" + LocalDateTime.now(), "Frondizi", "arturitoElMasCapo@gmail.com");
     }
 
     private Clase givenQueLaClaseTengaLugar() throws Exception {

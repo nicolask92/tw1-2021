@@ -54,10 +54,12 @@ public class TurnoController {
         model.put("clase", clase);
         return new ModelAndView("clase", model);
     }
+
     @RequestMapping("/mostrar-turno/{id}")
-    public ModelAndView mostrarTurnoPorId(@PathVariable("id") Long id){
+    public ModelAndView mostrarTurnoPorId(@PathVariable("id") Long id) {
         List<Turno> turnos = turnoService.getTurnosPorId(id);
         ModelMap model = new ModelMap();
+        model.put("turnos", turnos);
         return new ModelAndView("Turnos", model);
     }
 
