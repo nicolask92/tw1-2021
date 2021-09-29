@@ -9,17 +9,13 @@
     <!-- Page Heading -->
     <h1 class="h3 mb-4 text-gray-800">Calendario de turnos</h1>
 
-
     <table class="table">
         <thead>
             <tr>
-                <th scope="col">Lunes</th>
-                <th scope="col">Mares</th>
-                <th scope="col">Miercoles</th>
-                <th scope="col">Jueves</th>
-                <th scope="col">Viernes</th>
-                <th scope="col">Sabado</th>
-                <th scope="col">Domingo</th>
+                ${calendario.conjuntoDias.size()}
+                <c:forEach items="${calendario.conjuntoDias}" varStatus="loop" var="dia" begin="0" end="${calendario.conjuntoDias.size() - 1}">
+                    <th scope="col"><c:out value="${dia.toString()}"/></th>
+                </c:forEach>
             </tr>
         </thead>
         <tbody>

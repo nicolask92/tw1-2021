@@ -34,13 +34,14 @@ public class TurnoController {
     }
 
     @RequestMapping({"/mostrar-clases/{mes}", "/mostrar-clases"})
-    public ModelAndView mostrarClasesParaSacarTurnos(@PathVariable Optional<Mes> mes) {
+    public ModelAndView mostrarClasesParaSacarTurnos(@PathVariable Optional<Mes> mes) throws Exception {
 
         List<Clase> clases = claseService.getClases(mes);
 
         CalendarioDeActividades calendarioYActividades = clasesViewModelBuilder.getCalendarioCompleto(clases, mes);
 
         ModelMap model = new ModelMap();
+        model.put("mes", mes);
         model.put("calendario", calendarioYActividades);
 
         return new ModelAndView("clases-para-turnos", model);

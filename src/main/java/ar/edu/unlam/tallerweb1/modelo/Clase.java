@@ -61,6 +61,42 @@ public class Clase {
         this.diaClase = diaClase;
     }
 
+    public void setClientes(List<Cliente> clientes) {
+        this.clientes = clientes;
+    }
+
+    public List<Entrenador> getProfesores() {
+        return profesores;
+    }
+
+    public void setProfesores(List<Entrenador> profesores) {
+        this.profesores = profesores;
+    }
+
+    public Actividad getActividad() {
+        return actividad;
+    }
+
+    public void setActividad(Actividad actividad) {
+        this.actividad = actividad;
+    }
+
+    public Modalidad getModalidad() {
+        return modalidad;
+    }
+
+    public void setModalidad(Modalidad modalidad) {
+        this.modalidad = modalidad;
+    }
+
+    public Integer getCupoMaximo() {
+        return cupoMaximo;
+    }
+
+    public void setCupoMaximo(Integer cupoMaximo) {
+        this.cupoMaximo = cupoMaximo;
+    }
+
     public List<Cliente> getClientes() {
         return clientes;
     }
