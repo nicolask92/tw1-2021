@@ -18,6 +18,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -28,6 +31,31 @@ public class TurnoControllerTest {
     TurnoService turnoService = mock(TurnoService.class);
     TurnoController turnoController = new TurnoController(claseService, turnoService);
     HttpSession mockDeHttpSession = mock(HttpSession.class);
+
+
+    @Test
+    public void testQueSeMuestrenLosTurnosDeUnUsuarioEspecifico(){
+     Turno turno = givenHayUnTurno();
+     ModelAndView mv = whenConsultoElTurnoConUnUsuario(turno);
+     thenMuestroLosTurnosDelUsuario(mv);
+    }
+
+    private void thenMuestroLosTurnosDelUsuario(ModelAndView mv) {
+        assertThat(mv.getViewName()).isEqualTo("Turnos");
+    }
+
+    private ModelAndView whenConsultoElTurnoConUnUsuario(Turno turno) {
+        List<Turno> turnoCliente = Arrays.asList(turno);
+        Cliente cliente = mock(Cliente.class);
+        ModelAndView mv = turnoController.mostrarTurnoPorId(cliente.getId());
+        when(turnoService.getTurnosPorId(cliente.getId())).thenReturn(turnoCliente);
+        return mv;
+    }
+
+    private Turno givenHayUnTurno() {
+        return mock(Turno.class);
+    }
+
 
     @Test
     public void testQueSePuedaReservarTurno() throws Exception {
