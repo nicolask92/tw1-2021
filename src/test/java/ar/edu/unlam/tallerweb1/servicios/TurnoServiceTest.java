@@ -23,6 +23,7 @@ import static org.mockito.Mockito.never;
 public class TurnoServiceTest {
 
 
+    private static final Long IDCLASE = 20L ;
     TurnoRepositorio turnoRepositorio = mock(TurnoRepositorio.class);
     ClaseRepositorio claseRepositorio = mock(ClaseRepositorio.class);
     ClienteRepositorio clienteRepositorio = mock(ClienteRepositorio.class);
@@ -30,7 +31,7 @@ public class TurnoServiceTest {
 
 
     @Test
-    public void testQueSeGuardeTurnoSeAgregue1ClienteALaClase() throws Exception {
+    public void testQueSiGuardeTurnoSeAgregue1ClienteALaClase() throws Exception {
         Cliente cliente = givenUnClienteActivo();
         Clase clase = givenClaseConLugar();
         whenGuardoTurno(clase.getId(), cliente.getId(), cliente, clase);
@@ -38,17 +39,17 @@ public class TurnoServiceTest {
 
     }
 
-    @Test
+    @Test(expected = Exception.class)
     public void testQueLaClaseNoSeEncontro() throws Exception {
 
         Cliente cliente = givenUnClienteActivo();
-        Clase clase = givenLaClaseNoExiste();
-        whenGuardoTurnoIncorrectamente(clase.getId(), cliente.getId(), cliente, clase);
+        givenLaClaseNoExiste();
+        whenGuardoTurnoIncorrectamente(cliente);
         thenNoSeGuarda();
     }
 
-    private Clase givenLaClaseNoExiste() {
-        return mock(Clase.class);
+    private void givenLaClaseNoExiste() throws Exception {
+        when(claseRepositorio.getById(IDCLASE)).thenReturn(null);
     }
 
 
@@ -79,17 +80,15 @@ public class TurnoServiceTest {
         turnoService.guardarTurno(idClase, idUsuario);
 
     }
-    private void whenGuardoTurnoIncorrectamente(Long idClase, Long idUsuario, Cliente cliente, Clase clase) throws Exception {
-        when(clienteRepositorio.getById(idUsuario)).thenReturn(cliente);
-        doThrow(Exception.class).when(claseRepositorio).getById(idClase);
-        doThrow(Exception.class).when(clase).agregarCliente(cliente);
-        doNothing().when(turnoRepositorio).guardarTurno(cliente,clase);
-        turnoService.guardarTurno(idClase, idUsuario);
+    private void whenGuardoTurnoIncorrectamente(Cliente cliente) throws Exception {
+       when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
+       turnoService.guardarTurno(IDCLASE, cliente.getId());
     }
 
-    private void thenSeIncrementaEn1LaCantidadDeClientesEnLaClase(Clase clase) {
+    private void thenSeIncrementaEn1LaCantidadDeClientesEnLaClase(Clase clase) throws Exception {
         assertThat(clase.getClientes().size()).isEqualTo(1);
         verify(turnoRepositorio, times(1)).guardarTurno(any(),any());
+        verify(claseRepositorio,times(1)).getById(clase.getId());
     }
 
     private void thenNoSeGuarda() {
