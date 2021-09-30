@@ -39,7 +39,7 @@
                             </form:form>
                             <%--Bloque que es visible si el elemento error no esta vacio	--%>
                             <c:if test="${not empty error}">
-                                <h4><span>${error}</span></h4>
+                                <h4><span class="text-danger">${error}</span></h4>
                                 <br>
                             </c:if>
                             ${msg}

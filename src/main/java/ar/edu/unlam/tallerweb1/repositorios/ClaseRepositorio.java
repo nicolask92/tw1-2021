@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface ClaseRepositorio {
     List<Clase> getClases(Optional<Mes> mes);
 
-    Clase getById(Long id);
+    Clase getById(Long id) throws Exception;
 }

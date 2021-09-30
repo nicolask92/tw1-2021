@@ -51,7 +51,7 @@ public class TurnoControllerTest {
     @Test
     public void testQueNoSePuedaReservarTurno() throws Exception {
         Clase clase = givenQueLaClaseNoTengaLugar();
-        Cliente cliente = new Cliente();
+        Cliente cliente = givenUnClienteActivo();
         ModelAndView mv = whenReservoTurnoSinLugar(clase.getId(), mockDeHttpSession, cliente.getId());
         thenNoPuedoReservarTurno(mv);
 

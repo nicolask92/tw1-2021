@@ -53,10 +53,14 @@ public class ClaseRepositorioImpl implements ClaseRepositorio {
     }
 
     @Override
-    public Clase getById(Long id) {
+    public Clase getById(Long id) throws Exception {
         final Session session = sessionFactory.getCurrentSession();
-        return (Clase) session.createCriteria(Clase.class)
+        Clase clase = (Clase) session.createCriteria(Clase.class)
                 .add(Restrictions.eq("id",id))
                 .uniqueResult();
+
+        if (clase == null) throw new Exception();
+
+        return clase;
     }
 }
