@@ -8,6 +8,7 @@ import ar.edu.unlam.tallerweb1.repositorios.ClaseRepositorio;
 import ar.edu.unlam.tallerweb1.repositorios.ClienteRepositorio;
 import ar.edu.unlam.tallerweb1.repositorios.TurnoRepositorio;
 import org.junit.Test;
+import org.mockito.Mock;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -47,7 +48,7 @@ public class TurnoServiceTest {
     }
 
     private Clase givenLaClaseNoExiste() {
-        return new Clase();
+        return mock(Clase.class);
     }
 
 
@@ -74,12 +75,15 @@ public class TurnoServiceTest {
     private void whenGuardoTurno(Long idClase, Long idUsuario, Cliente cliente, Clase clase) throws Exception {
         when(claseRepositorio.getById(idClase)).thenReturn(clase);
         when(clienteRepositorio.getById(idUsuario)).thenReturn(cliente);
+        doNothing().when(turnoRepositorio).guardarTurno(cliente,clase);
         turnoService.guardarTurno(idClase, idUsuario);
 
     }
     private void whenGuardoTurnoIncorrectamente(Long idClase, Long idUsuario, Cliente cliente, Clase clase) throws Exception {
         when(clienteRepositorio.getById(idUsuario)).thenReturn(cliente);
-        doThrow(Exception.class).when(claseRepositorio).getById(clase.getId());
+        doThrow(Exception.class).when(claseRepositorio).getById(idClase);
+        doThrow(Exception.class).when(clase).agregarCliente(cliente);
+        doNothing().when(turnoRepositorio).guardarTurno(cliente,clase);
         turnoService.guardarTurno(idClase, idUsuario);
     }
 
@@ -88,7 +92,7 @@ public class TurnoServiceTest {
         verify(turnoRepositorio, times(1)).guardarTurno(any(),any());
     }
 
-    private void thenNoSeGuarda(){
+    private void thenNoSeGuarda() {
         //verify(clase ,never()).agregarCliente(cliente);
         verify(turnoRepositorio, never()).guardarTurno(any(), any());
     }

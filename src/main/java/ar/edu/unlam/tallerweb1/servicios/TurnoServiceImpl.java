@@ -34,7 +34,8 @@ public class TurnoServiceImpl implements TurnoService {
     public void guardarTurno(Long idClase, Long idUsuario) throws Exception {
         Clase clase = claseRepositorio.getById(idClase);
         Cliente cliente = clienteRepositorio.getById(idUsuario);
-
+        if (clase == null)
+            throw new Exception();
         clase.agregarCliente(cliente); //exepcion de si tiene cupo disponible
         turnoRepositorio.guardarTurno(cliente, clase);
 
