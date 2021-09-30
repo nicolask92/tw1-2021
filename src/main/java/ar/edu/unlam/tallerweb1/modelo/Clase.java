@@ -45,7 +45,7 @@ public class Clase {
     public Clase() {
     }
 
-    List<Cliente> agregarCliente(Cliente cliente) throws Exception {
+    public List<Cliente> agregarCliente(Cliente cliente) throws Exception {
         if (modalidad == Modalidad.PRESENCIAL && clientes.size() == cupoMaximo) {
             throw new Exception("Ya se excedio la cantidad maxima de personas que pueden asistir a este lugar");
         }

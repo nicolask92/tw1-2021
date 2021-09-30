@@ -34,10 +34,27 @@ public class TurnoControllerTest {
 
 
     @Test
-    public void testQueSeMuestrenLosTurnosDeUnUsuarioEspecifico(){
-     Turno turno = givenHayUnTurno();
-     ModelAndView mv = whenConsultoElTurnoConUnUsuario(turno);
-     thenMuestroLosTurnosDelUsuario(mv, turno);
+    public void testQueSeMuestrenLosTurnosDeUnUsuarioEspecifico() {
+        Turno turno = givenHayUnTurno();
+        ModelAndView mv = whenConsultoElTurnoConUnUsuario(turno);
+        thenMuestroLosTurnosDelUsuario(mv, turno);
+    }
+
+    @Test
+    public void testQueSePuedaReservarTurno() throws Exception {
+        Clase clase = givenQueLaClaseTengaLugar();
+        Cliente cliente = new Cliente();
+        ModelAndView mv = whenReservoTurno(clase.getId(), mockDeHttpSession, cliente.getId());
+        thenReservoElTurno(mv);
+    }
+
+    @Test
+    public void testQueNoSePuedaReservarTurno() throws Exception {
+        Clase clase = givenQueLaClaseNoTengaLugar();
+        Cliente cliente = new Cliente();
+        ModelAndView mv = whenReservoTurno(clase.getId(), mockDeHttpSession, cliente.getId());
+        thenNoPuedoReservarTurno(mv);
+
     }
 
     private void thenMuestroLosTurnosDelUsuario(ModelAndView mv, Turno turno) {
@@ -57,21 +74,6 @@ public class TurnoControllerTest {
         return new Turno();
     }
 
-    @Test
-    public void testQueSePuedaReservarTurno() throws Exception {
-        Clase clase = givenQueLaClaseTengaLugar();
-        ModelAndView mv = whenReservoTurno(clase.getId(), mockDeHttpSession);
-        thenReservoElTurno(mv);
-    }
-
-    @Test
-    public void testQueNoSePuedaReservarTurno() throws Exception {
-      Clase clase = givenQueLaClaseNoTengaLugar();
-      ModelAndView mv = whenReservoTurno(clase.getId(), mockDeHttpSession);
-      thenNoPuedoReservarTurno(mv);
-
-    }
-
     private Cliente givenUnClienteActivo() {
         return new Cliente("Arturo" + LocalDateTime.now(), "Frondizi", "arturitoElMasCapo@gmail.com");
     }
@@ -87,7 +89,7 @@ public class TurnoControllerTest {
         clase.setCantidadMaxima(0);
         Cliente cliente = givenUnClienteActivo();
 
-        doThrow(Exception.class).when(turnoService).guardarTurno(clase.getId(),cliente.getId());
+        doThrow(Exception.class).when(turnoService).guardarTurno(clase.getId(), cliente.getId());
 
         return clase;
     }
@@ -104,8 +106,9 @@ public class TurnoControllerTest {
         return new Actividad("Actividad de alto impacto", Tipo.CROSSFIT, 4000f, Frecuencia.CON_INICIO_Y_FIN, periodo, horario);
     }
 
-    private ModelAndView whenReservoTurno(Long id, HttpSession session) throws Exception {
-
+    private ModelAndView whenReservoTurno(Long id, HttpSession session, Long idUsuario) throws Exception {
+        when(session.getAttribute("usuarioId")).thenReturn(idUsuario);
+        doNothing().when(turnoService).guardarTurno(id, idUsuario);
         return turnoController.reservarTurno(id, session);
     }
 
