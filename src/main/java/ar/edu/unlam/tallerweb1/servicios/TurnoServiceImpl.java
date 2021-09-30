@@ -35,10 +35,7 @@ public class TurnoServiceImpl implements TurnoService {
         Clase clase = claseRepositorio.getById(idClase);
         Cliente cliente = clienteRepositorio.getById(idUsuario);
 
-        if(clase.getClientes().size() >= clase.getCupoMaximo())
-            throw new Exception();
-
-        clase.getClientes().add(cliente);
+        clase.agregarCliente(cliente);
         turnoRepositorio.guardarTurno(cliente, clase);
 
     }
