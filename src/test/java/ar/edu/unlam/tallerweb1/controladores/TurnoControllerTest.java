@@ -45,14 +45,14 @@ public class TurnoControllerTest {
         Clase clase = givenQueLaClaseTengaLugar();
         Cliente cliente = new Cliente();
         ModelAndView mv = whenReservoTurno(clase.getId(), mockDeHttpSession, cliente.getId());
-        thenReservoElTurno(mv);
+        thenReservoElTurnoCorrectamente(mv);
     }
 
     @Test
     public void testQueNoSePuedaReservarTurno() throws Exception {
         Clase clase = givenQueLaClaseNoTengaLugar();
         Cliente cliente = new Cliente();
-        ModelAndView mv = whenReservoTurno(clase.getId(), mockDeHttpSession, cliente.getId());
+        ModelAndView mv = whenReservoTurnoSinLugar(clase.getId(), mockDeHttpSession, cliente.getId());
         thenNoPuedoReservarTurno(mv);
 
     }
@@ -86,11 +86,7 @@ public class TurnoControllerTest {
     private Clase givenQueLaClaseNoTengaLugar() throws Exception {
         Actividad actividad = givenUnaActividadConPeriodoYHorarioValido();
         Clase clase = new Clase(LocalDateTime.now(), actividad, Modalidad.PRESENCIAL);
-        clase.setCantidadMaxima(0);
-        Cliente cliente = givenUnClienteActivo();
-
-        doThrow(Exception.class).when(turnoService).guardarTurno(clase.getId(), cliente.getId());
-
+        //clase.setCantidadMaxima(0);
         return clase;
     }
 
@@ -112,9 +108,13 @@ public class TurnoControllerTest {
         return turnoController.reservarTurno(id, session);
     }
 
-    private void thenReservoElTurno(ModelAndView mv) {
-        //doNothing().when(turnoService).guardarTurno(anyLong(), anyLong());
-        //Assert.assertEquals(mv.getView(), "clases-para-turnos");
+    private ModelAndView whenReservoTurnoSinLugar(Long id, HttpSession session, Long idUsuario) throws Exception {
+        when(session.getAttribute("usuarioId")).thenReturn(idUsuario);
+        doThrow(Exception.class).when(turnoService).guardarTurno(id, idUsuario);
+        return turnoController.reservarTurno(id, session);
+    }
+
+    private void thenReservoElTurnoCorrectamente(ModelAndView mv) {
         assertThat(mv.getModel().get("msg")).isEqualTo("Se guardo turno correctamente");
         assertThat(mv.getViewName()).isEqualTo("redirect:/home");
     }

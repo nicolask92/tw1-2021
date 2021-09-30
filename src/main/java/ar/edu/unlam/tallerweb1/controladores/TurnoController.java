@@ -70,13 +70,13 @@ public class TurnoController {
         ModelMap model = new ModelMap();
         try {
             turnoService.guardarTurno(idClase, idUsuario);
+            model.put("msg", "Se guardo turno correctamente");
+            return new ModelAndView("redirect:/home", model);
         } catch (Exception e) {
             model.put("msg", "Cupo máximo alcanzado");
             return new ModelAndView("clases-para-turnos", model);
         }
 
-        model.put("msg", "Se guardo turno correctamente");
-        return new ModelAndView("redirect:/home", model);
     }
 
 }
