@@ -20,7 +20,7 @@
         </thead>
         <tbody>
 
-        <c:forEach items="${calendario.clases}" varStatus="loop" var="dia" begin="0" end="${calendario.clases.size()}">
+        <c:forEach items="${calendario.fechasYSusClases}" varStatus="loop" var="dia" begin="0" end="${calendario.fechasYSusClases.size()}">
             <c:if test="${(loop.index % 7) == 0}">
                 <tr>
             </c:if>

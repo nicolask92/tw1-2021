@@ -18,6 +18,7 @@ public class ClasesViewModelBuilder {
 
     ClasesViewModelBuilder() {}
 
+    // TODO encapsular funcionamiento
     public CalendarioDeActividades getCalendarioCompleto(List<Clase> clases, Optional<Mes> mes) throws Exception {
         int numeroDeMes = mes.map(Enum::ordinal).orElseGet(() -> cal.get(Calendar.MONTH));
 

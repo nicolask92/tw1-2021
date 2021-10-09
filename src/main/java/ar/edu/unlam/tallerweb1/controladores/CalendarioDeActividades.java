@@ -7,15 +7,15 @@ import java.util.List;
 import java.util.Map;
 
 public class CalendarioDeActividades {
-    private Map<Integer, List<Clase>> clases = new HashMap<>();
+    private Map<Integer, List<Clase>> fechasYSusClases = new HashMap<>();
     private List<String> conjuntoDias;
 
-    public CalendarioDeActividades(Map<Integer, List<Clase>> clases) {
-        this.clases = clases;
+    public CalendarioDeActividades(Map<Integer, List<Clase>> fechasYSusClases) {
+        this.fechasYSusClases = fechasYSusClases;
     }
 
-    public Map<Integer, List<Clase>> getClases() {
-        return clases;
+    public Map<Integer, List<Clase>> getFechasYSusClases() {
+        return fechasYSusClases;
     }
 
     public void setConjuntoDias(List<String> conjuntoDias) {

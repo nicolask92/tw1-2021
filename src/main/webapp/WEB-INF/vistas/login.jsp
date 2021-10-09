@@ -35,7 +35,7 @@
                                 <form:input path="email" id="email" type="email" placeholder="email" class="form-control" />
                                 <form:input path="password" type="password" id="password" placeholder="***********" class="form-control"/>
 
-                                <button class="btn btn-block login-btn mb-4" Type="Submit"/>Login</button>
+                                <button class="btn btn-block login-btn mb-4" type="Submit" />Login</button>
                             </form:form>
                             <%--Bloque que es visible si el elemento error no esta vacio	--%>
                             <c:if test="${not empty error}">

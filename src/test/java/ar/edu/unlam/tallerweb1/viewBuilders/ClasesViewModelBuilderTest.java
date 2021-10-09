@@ -8,16 +8,12 @@ import ar.edu.unlam.tallerweb1.modelo.Actividad;
 import ar.edu.unlam.tallerweb1.modelo.Clase;
 import ar.edu.unlam.tallerweb1.modelo.Horario;
 import ar.edu.unlam.tallerweb1.modelo.Periodo;
-import org.junit.Assert;
 import org.junit.Test;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -32,8 +28,33 @@ public class ClasesViewModelBuilderTest {
         thenElListadoDeClasesSeHaceCorrectamente(calendario);
     }
 
+    @Test
+    public void siNoHayClasesElTotalDeClasesADevolverDentroDelBuilderEsCero() throws Exception {
+        givenCeroClasesEnElMes();
+        CalendarioDeActividades calendario = whenRenderizoElMes(Collections.emptyList());
+        thenLaCantidadDeClasesADevolverEsCero(calendario);
+    }
+
+    private void thenLaCantidadDeClasesADevolverEsCero(CalendarioDeActividades calendario) {
+        int tamanioDeClase = calcularClasesEnCalendario(calendario);
+        assertEquals(tamanioDeClase, 0);
+    }
+
+    private int calcularClasesEnCalendario(CalendarioDeActividades calendarioDeActividades) {
+        return (int) calendarioDeActividades.getFechasYSusClases()
+                .values()
+                .stream()
+                .mapToLong(List::size)
+                .sum();
+    }
+
+    private void givenCeroClasesEnElMes() {
+    }
+
     private void thenElListadoDeClasesSeHaceCorrectamente(CalendarioDeActividades calendario) {
-        assertEquals(Calendar.getInstance().getMaximum(Calendar.DAY_OF_MONTH), calendario.getClases().size());
+        int tamanioDeClase = calcularClasesEnCalendario(calendario);
+        assertEquals(tamanioDeClase, 2);
+        assertEquals(Calendar.getInstance().getMaximum(Calendar.DAY_OF_MONTH), calendario.getFechasYSusClases().size());
     }
 
     private CalendarioDeActividades whenRenderizoElMes(List<Clase> clases) throws Exception {

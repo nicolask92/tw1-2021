@@ -6,10 +6,7 @@ import ar.edu.unlam.tallerweb1.common.Tipo;
 import ar.edu.unlam.tallerweb1.modelo.*;
 import ar.edu.unlam.tallerweb1.servicios.ClaseService;
 import ar.edu.unlam.tallerweb1.servicios.TurnoService;
-import org.dom4j.rule.Mode;
-import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
@@ -18,11 +15,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 public class TurnoControllerTest {
