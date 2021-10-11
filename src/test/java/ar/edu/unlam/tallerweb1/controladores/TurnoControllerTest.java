@@ -28,12 +28,20 @@ public class TurnoControllerTest {
 
 
     @Test
-    public void testQueSeMuestrenLosTurnosDeUnUsuarioEspecifico() {
+    public void testQueSeMuestrenLosTurnosDeUnUsuarioEspecifico() throws Exception {
         Turno turno = givenHayUnTurno();
         Cliente cliente = new Cliente();
         ModelAndView mv = whenConsultoElTurnoConUnUsuario(turno, mockDeHttpSession, cliente.getId());
         thenMuestroLosTurnosDelUsuario(mv, turno);
     }
+
+    @Test
+    public void testUsuarioNoTieneTurnosParaConsultar() throws Exception {
+        Cliente cliente = givenUnUsuarioSinTurnos();
+        ModelAndView mv = whenConsultoUsuarioSinTurnos(cliente.getId(), mockDeHttpSession);
+        thenMuestroQueNoTieneTurnos(mv);
+    }
+
 
     @Test
     public void testQueSePuedaReservarTurno() throws Exception {
@@ -52,17 +60,8 @@ public class TurnoControllerTest {
 
     }
 
-    private void thenMuestroLosTurnosDelUsuario(ModelAndView mv, Turno turno) {
-        assertThat(mv.getViewName()).isEqualTo("Turnos");
-        assertThat(mv.getModel().get("turnos")).isEqualTo(List.of(turno));
-    }
-
-    private ModelAndView whenConsultoElTurnoConUnUsuario(Turno turno, HttpSession session,Long usuarioId) {
-        List<Turno> turnoCliente = List.of(turno);
-        //Cliente cliente = mock(Cliente.class);
-        when(session.getAttribute("usuarioId")).thenReturn(usuarioId);
-        when(turnoService.getTurnosPorId(usuarioId)).thenReturn(turnoCliente);
-        return turnoController.mostrarTurnoPorId(session);
+    private Cliente givenUnUsuarioSinTurnos() {
+        return new Cliente();
     }
 
     private Turno givenHayUnTurno() {
@@ -109,6 +108,21 @@ public class TurnoControllerTest {
         return turnoController.reservarTurno(id, session);
     }
 
+    private ModelAndView whenConsultoElTurnoConUnUsuario(Turno turno, HttpSession session,Long usuarioId) throws Exception {
+        List<Turno> turnoCliente = List.of(turno);
+        //Cliente cliente = mock(Cliente.class);
+        when(session.getAttribute("usuarioId")).thenReturn(usuarioId);
+        when(turnoService.getTurnosPorId(usuarioId)).thenReturn(turnoCliente);
+        return turnoController.mostrarTurnoPorId(session);
+    }
+
+    private ModelAndView whenConsultoUsuarioSinTurnos(Long usuarioId, HttpSession session) throws Exception {
+        when(session.getAttribute("usuarioId")).thenReturn(usuarioId);
+        when(turnoService.getTurnosPorId(usuarioId)).thenReturn(null);
+        doThrow(Exception.class).when(turnoService).getTurnosPorId(usuarioId);
+        return turnoController.mostrarTurnoPorId(session);
+    }
+
     private void thenReservoElTurnoCorrectamente(ModelAndView mv) {
         assertThat(mv.getModel().get("msg")).isEqualTo("Se guardo turno correctamente");
         assertThat(mv.getViewName()).isEqualTo("redirect:/home");
@@ -117,5 +131,15 @@ public class TurnoControllerTest {
     private void thenNoPuedoReservarTurno(ModelAndView mv) {
         assertThat(mv.getModel().get("msg")).isEqualTo("Cupo máximo alcanzado");
         assertThat(mv.getViewName()).isEqualTo("clases-para-turnos");
+    }
+
+    private void thenMuestroLosTurnosDelUsuario(ModelAndView mv, Turno turno) {
+        assertThat(mv.getViewName()).isEqualTo("Turnos");
+        assertThat(mv.getModel().get("turnos")).isEqualTo(List.of(turno));
+    }
+
+    private void thenMuestroQueNoTieneTurnos(ModelAndView mv) {
+        assertThat(mv.getModel().get("turnos")).isEqualTo(null);
+        assertThat(mv.getModel().get("msg")).isEqualTo("No hay turnos disponibles");
     }
 }
