@@ -43,6 +43,7 @@ public class TurnoServiceImpl implements TurnoService {
 
     @Override
     public List<Turno> getTurnosPorId(Long id) {
-        return null;
+        Cliente cliente = clienteRepositorio.getById(id);
+        return turnoRepositorio.getTurnosPorId(cliente);
     }
 }

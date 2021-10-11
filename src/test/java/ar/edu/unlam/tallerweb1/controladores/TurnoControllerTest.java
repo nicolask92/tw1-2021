@@ -30,7 +30,8 @@ public class TurnoControllerTest {
     @Test
     public void testQueSeMuestrenLosTurnosDeUnUsuarioEspecifico() {
         Turno turno = givenHayUnTurno();
-        ModelAndView mv = whenConsultoElTurnoConUnUsuario(turno);
+        Cliente cliente = new Cliente();
+        ModelAndView mv = whenConsultoElTurnoConUnUsuario(turno, mockDeHttpSession, cliente.getId());
         thenMuestroLosTurnosDelUsuario(mv, turno);
     }
 
@@ -56,12 +57,12 @@ public class TurnoControllerTest {
         assertThat(mv.getModel().get("turnos")).isEqualTo(List.of(turno));
     }
 
-    private ModelAndView whenConsultoElTurnoConUnUsuario(Turno turno) {
+    private ModelAndView whenConsultoElTurnoConUnUsuario(Turno turno, HttpSession session,Long usuarioId) {
         List<Turno> turnoCliente = List.of(turno);
-        Cliente cliente = mock(Cliente.class);
-        when(turnoService.getTurnosPorId(cliente.getId())).thenReturn(turnoCliente);
-        ModelAndView mv = turnoController.mostrarTurnoPorId(cliente.getId());
-        return mv;
+        //Cliente cliente = mock(Cliente.class);
+        when(session.getAttribute("usuarioId")).thenReturn(usuarioId);
+        when(turnoService.getTurnosPorId(usuarioId)).thenReturn(turnoCliente);
+        return turnoController.mostrarTurnoPorId(session);
     }
 
     private Turno givenHayUnTurno() {
