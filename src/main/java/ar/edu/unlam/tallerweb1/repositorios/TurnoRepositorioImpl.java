@@ -24,7 +24,7 @@ public class TurnoRepositorioImpl implements TurnoRepositorio {
     }
 
     @Override
-    public List<Turno> getTurnosPorId(Cliente cliente) {
+    public List<Turno> getTurnosByIdCliente(Cliente cliente) {
         final Session session = sessionFactory.getCurrentSession();
         return session.createCriteria(Turno.class)
                 .add(Restrictions.eq("cliente", cliente))

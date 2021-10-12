@@ -61,7 +61,7 @@ public class TurnoController {
         Long idUsuario = (Long)sesion.getAttribute("usarioId");
         ModelMap model = new ModelMap();
         try{
-            List<Turno> turnos = turnoService.getTurnosPorId(idUsuario);
+            List<Turno> turnos = turnoService.getTurnosByIdCliente(idUsuario);
             model.put("turnos", turnos);
             return new ModelAndView("Turnos", model);
         } catch (Exception e){

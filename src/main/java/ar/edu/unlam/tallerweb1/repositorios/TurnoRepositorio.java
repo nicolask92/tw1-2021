@@ -8,8 +8,9 @@ import ar.edu.unlam.tallerweb1.modelo.Usuario;
 import java.util.List;
 
 public interface TurnoRepositorio {
-    List<Turno> getTurnosPorId(Cliente cliente);
+    List<Turno> getTurnosByIdCliente(Cliente cliente);
 
     List<Clase> getTurnosDeEsteMes();
+
     void guardarTurno(Cliente cliente, Clase clase);
 }

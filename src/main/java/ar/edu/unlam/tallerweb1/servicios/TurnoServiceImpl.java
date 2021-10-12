@@ -42,9 +42,9 @@ public class TurnoServiceImpl implements TurnoService {
     }
 
     @Override
-    public List<Turno> getTurnosPorId(Long id) throws Exception {
+    public List<Turno> getTurnosByIdCliente(Long id) throws Exception {
         Cliente cliente = clienteRepositorio.getById(id);
-        List<Turno> turnos = turnoRepositorio.getTurnosPorId(cliente);
+        List<Turno> turnos = turnoRepositorio.getTurnosByIdCliente(cliente);
         if(turnos == null)
             throw new Exception();
         return turnos;

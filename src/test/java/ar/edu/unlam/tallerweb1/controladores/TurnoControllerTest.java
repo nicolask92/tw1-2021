@@ -112,14 +112,14 @@ public class TurnoControllerTest {
         List<Turno> turnoCliente = List.of(turno);
         //Cliente cliente = mock(Cliente.class);
         when(session.getAttribute("usuarioId")).thenReturn(usuarioId);
-        when(turnoService.getTurnosPorId(usuarioId)).thenReturn(turnoCliente);
+        when(turnoService.getTurnosByIdCliente(usuarioId)).thenReturn(turnoCliente);
         return turnoController.mostrarTurnoPorId(session);
     }
 
     private ModelAndView whenConsultoUsuarioSinTurnos(Long usuarioId, HttpSession session) throws Exception {
         when(session.getAttribute("usuarioId")).thenReturn(usuarioId);
-        when(turnoService.getTurnosPorId(usuarioId)).thenReturn(null);
-        doThrow(Exception.class).when(turnoService).getTurnosPorId(usuarioId);
+        when(turnoService.getTurnosByIdCliente(usuarioId)).thenReturn(null);
+        doThrow(Exception.class).when(turnoService).getTurnosByIdCliente(usuarioId);
         return turnoController.mostrarTurnoPorId(session);
     }
 

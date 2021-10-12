@@ -11,5 +11,5 @@ public interface TurnoService {
 
     void guardarTurno(Long idClase, Long idUsuario) throws Exception;
 
-    List<Turno> getTurnosPorId(Long id) throws Exception;
+    List<Turno> getTurnosByIdCliente(Long id) throws Exception;
 }
