@@ -56,13 +56,24 @@ public class TurnoController {
         return new ModelAndView("clase", model);
     }
 
-    @RequestMapping("/mostrar-turno/{id}")
-    public ModelAndView mostrarTurnoPorId(@PathVariable("id") Long id) {
-        List<Turno> turnos = turnoService.getTurnosPorId(id);
+    @RequestMapping("/mostrar-turno")
+    public ModelAndView mostrarTurnoPorId(HttpSession sesion) throws Exception {
+        Long idUsuario = (Long)sesion.getAttribute("usarioId");
         ModelMap model = new ModelMap();
-        model.put("turnos", turnos);
-        return new ModelAndView("Turnos", model);
+        try{
+            List<Turno> turnos = turnoService.getTurnosPorId(idUsuario);
+            model.put("turnos", turnos);
+            return new ModelAndView("Turnos", model);
+        } catch (Exception e){
+            model.put("msg", "No hay turnos disponibles");
+            return new ModelAndView("Turnos", model);
+        }
+
     }
+    /*@RequestMapping("/mostrar-turno")
+    public ModelAndView mostrarTurnos() {
+        return new ModelAndView("Turnos");
+    }*/
 
     @RequestMapping(method = RequestMethod.POST, path = "/reservar-Turno/{idClase}")
     public ModelAndView reservarTurno(@PathVariable("idClase") Long idClase, HttpSession sesion) throws Exception {
