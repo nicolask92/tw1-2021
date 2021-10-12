@@ -3,7 +3,6 @@ package ar.edu.unlam.tallerweb1.viewBuilders;
 import ar.edu.unlam.tallerweb1.common.Frecuencia;
 import ar.edu.unlam.tallerweb1.common.Modalidad;
 import ar.edu.unlam.tallerweb1.common.Tipo;
-import ar.edu.unlam.tallerweb1.controladores.CalendarioDeActividades;
 import ar.edu.unlam.tallerweb1.modelo.Actividad;
 import ar.edu.unlam.tallerweb1.modelo.Clase;
 import ar.edu.unlam.tallerweb1.modelo.Horario;
@@ -35,30 +34,20 @@ public class ClasesViewModelBuilderTest {
         thenLaCantidadDeClasesADevolverEsCero(calendario);
     }
 
-    private void thenLaCantidadDeClasesADevolverEsCero(CalendarioDeActividades calendario) {
-        int tamanioDeClase = calcularClasesEnCalendario(calendario);
-        assertEquals(tamanioDeClase, 0);
-    }
-
-    private int calcularClasesEnCalendario(CalendarioDeActividades calendarioDeActividades) {
-        return (int) calendarioDeActividades.getFechasYSusClases()
-                .values()
-                .stream()
-                .mapToLong(List::size)
-                .sum();
-    }
-
     private void givenCeroClasesEnElMes() {
     }
 
     private void thenElListadoDeClasesSeHaceCorrectamente(CalendarioDeActividades calendario) {
         int tamanioDeClase = calcularClasesEnCalendario(calendario);
-        assertEquals(tamanioDeClase, 2);
+        int hoy = LocalDateTime.now().getDayOfMonth();
+        assertEquals(2, tamanioDeClase);
         assertEquals(Calendar.getInstance().getMaximum(Calendar.DAY_OF_MONTH), calendario.getFechasYSusClases().size());
-    }
-
-    private CalendarioDeActividades whenRenderizoElMes(List<Clase> clases) throws Exception {
-        return clasesBuilder.getCalendarioCompleto(clases, Optional.empty());
+        FechaYClases fechaHoyYSusClases = calendario.getFechasYSusClases()
+                .stream()
+                .filter(fechaYClase -> fechaYClase.getDia() == hoy)
+                .findFirst()
+                .orElse(null);
+        assertEquals(fechaHoyYSusClases.getClases().size(), 2);
     }
 
     private List<Clase> givenClases(int i, boolean mesActual) throws Exception {
@@ -82,6 +71,16 @@ public class ClasesViewModelBuilderTest {
         return new Actividad(nombreActividad, Tipo.CROSSFIT, 4000f, Frecuencia.CON_INICIO_Y_FIN, periodo, horario);
     }
 
+
+    private CalendarioDeActividades whenRenderizoElMes(List<Clase> clases) throws Exception {
+        return clasesBuilder.getCalendarioCompleto(clases, Optional.empty());
+    }
+
+    private void thenLaCantidadDeClasesADevolverEsCero(CalendarioDeActividades calendario) {
+        int tamanioDeClase = calcularClasesEnCalendario(calendario);
+        assertEquals(tamanioDeClase, 0);
+    }
+
     private List<Clase> crearClasesPorCriterios(int cantitdadClases, boolean mesActual) throws Exception {
         List<Clase> clases = new ArrayList<>();
         for (int i = 0; i < cantitdadClases; i++) {
@@ -89,5 +88,15 @@ public class ClasesViewModelBuilderTest {
             clases.add(clase);
         }
         return clases;
+    }
+
+    private int calcularClasesEnCalendario(CalendarioDeActividades calendarioDeActividades) {
+        return (int) calendarioDeActividades.getFechasYSusClases()
+                .stream()
+                .map( FechaYClases::getClases )
+                .collect(Collectors.toList())
+                .stream().flatMap(Collection::stream)
+                .filter(Objects::nonNull)
+                .count();
     }
 }

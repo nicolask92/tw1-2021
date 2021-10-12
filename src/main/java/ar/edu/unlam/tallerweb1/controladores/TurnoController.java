@@ -5,6 +5,7 @@ import ar.edu.unlam.tallerweb1.modelo.Clase;
 import ar.edu.unlam.tallerweb1.modelo.Turno;
 import ar.edu.unlam.tallerweb1.servicios.ClaseService;
 import ar.edu.unlam.tallerweb1.servicios.TurnoService;
+import ar.edu.unlam.tallerweb1.viewBuilders.CalendarioDeActividades;
 import ar.edu.unlam.tallerweb1.viewBuilders.ClasesViewModelBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

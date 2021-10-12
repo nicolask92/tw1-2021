@@ -1,107 +1,123 @@
 package ar.edu.unlam.tallerweb1.viewBuilders;
 
 import ar.edu.unlam.tallerweb1.common.Mes;
-import ar.edu.unlam.tallerweb1.controladores.CalendarioDeActividades;
 import ar.edu.unlam.tallerweb1.modelo.Clase;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
-import java.time.Month;
-import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
 public class ClasesViewModelBuilder {
 
-    final static Calendar cal = Calendar.getInstance();
-
     ClasesViewModelBuilder() {}
 
-    // TODO encapsular funcionamiento
     public CalendarioDeActividades getCalendarioCompleto(List<Clase> clases, Optional<Mes> mes) throws Exception {
-        int numeroDeMes = mes.map(Enum::ordinal).orElseGet(() -> cal.get(Calendar.MONTH));
 
-        // arreglar el numero de mes, usar la constante de Calender.
-        int anio = cal.get(Calendar.YEAR);
-        cal.set(anio, numeroDeMes, 1);
+        Calendar calendario = setearCalendario(mes);
 
-        Map<Integer, List<Clase>> diaYClases = new HashMap<>();
+        return armarCalendario(calendario, clases);
+    }
 
-        for (int i = 0; i < cal.getMaximum(Calendar.DAY_OF_MONTH); i++) {
-            int finalI = i;
+    private CalendarioDeActividades armarCalendario(Calendar cal, List<Clase> clases) throws Exception {
+        List<FechaYClases> fechaYClases = new ArrayList<>();
+
+        for (int numeroDelDiaDelMes = 0; numeroDelDiaDelMes < cal.getMaximum(Calendar.DAY_OF_MONTH); numeroDelDiaDelMes++) {
+            int finalNumeroDelDiaDelMes = numeroDelDiaDelMes;
             List<Clase> clasesParaEsteDia = clases.stream()
-                    .filter(clase -> clase.getDiaClase().getDayOfMonth() == finalI )
+                    .filter(clase -> clase.getDiaClase().getDayOfMonth() == finalNumeroDelDiaDelMes )
                     .collect(Collectors.toList());
-            diaYClases.put(i, clasesParaEsteDia);
+            fechaYClases.add(new FechaYClases(numeroDelDiaDelMes, clasesParaEsteDia));
         }
-        CalendarioDeActividades calendarioYClases = new CalendarioDeActividades(diaYClases);
-        calendarioYClases.setConjuntoDias(this.generarListaDeDias());
+
+        CalendarioDeActividades calendarioYClases = new CalendarioDeActividades(fechaYClases);
+        calendarioYClases.setConjuntoDias(this.generarListaDeDias(cal));
         return calendarioYClases;
     }
 
-    private List<String> generarListaDeDias() throws Exception {
+    private Calendar setearCalendario(Optional<Mes> mes) {
+        Calendar calendario = Calendar.getInstance();
+        int numeroDeMes = getNumeroDeMes(mes, calendario);
+        int anioActual = calendario.get(Calendar.YEAR);
+        calendario.set(anioActual, numeroDeMes, 1);
+        return calendario;
+    }
+
+    private int getNumeroDeMes(Optional<Mes> mes, Calendar calendario) {
+        return mes.map(Enum::ordinal).orElseGet(() -> calendario.get(Calendar.MONTH));
+    }
+
+    private List<String> generarListaDeDias(Calendar calendario) throws Exception {
         List<String> dias = new ArrayList<>();
-        Date date = cal.getTime();
-        String diaEnString = new SimpleDateFormat("EEEE").format(date);
-        if (diaEnString.equals("lunes")) {
-            dias.add("Lunes");
-            dias.add("Martes");
-            dias.add("Miercoles");
-            dias.add("Jueves");
-            dias.add("Viernes");
-            dias.add("Sabado");
-            dias.add("Domingo");
-        } else if (diaEnString.equals("martes")) {
-            dias.add("Martes");
-            dias.add("Miercoles");
-            dias.add("Jueves");
-            dias.add("Viernes");
-            dias.add("Sabado");
-            dias.add("Domingo");
-            dias.add("Lunes");
-        } else if (diaEnString.equals("miércoles")) {
-            dias.add("Miercoles");
-            dias.add("Jueves");
-            dias.add("Viernes");
-            dias.add("Sabado");
-            dias.add("Domingo");
-            dias.add("Lunes");
-            dias.add("Martes");
-        } else if (diaEnString.equals("jueves")) {
-            dias.add("Jueves");
-            dias.add("Viernes");
-            dias.add("Sabado");
-            dias.add("Domingo");
-            dias.add("Lunes");
-            dias.add("Martes");
-            dias.add("Miercoles");
-        } else if (diaEnString.equals("viernes")) {
-            dias.add("Viernes");
-            dias.add("Sabado");
-            dias.add("Domingo");
-            dias.add("Lunes");
-            dias.add("Martes");
-            dias.add("Miercoles");
-            dias.add("Jueves");
-        } else if (diaEnString.equals("sabado")) {
-            dias.add("Sabado");
-            dias.add("Domingo");
-            dias.add("Lunes");
-            dias.add("Martes");
-            dias.add("Miercoles");
-            dias.add("Jueves");
-            dias.add("Viernes");
-        } else if (diaEnString.equals("domingo")) {
-            dias.add("Domingo");
-            dias.add("Lunes");
-            dias.add("Martes");
-            dias.add("Miercoles");
-            dias.add("Jueves");
-            dias.add("Viernes");
-            dias.add("Sabado");
-        } else {
-            throw new Exception("Sos un asco programando amigo, mira lo que hiciste ahi arriba, el dia es=" + diaEnString);
+        Date diaYFecha = calendario.getTime();
+        String diaEnString = new SimpleDateFormat("EEEE").format(diaYFecha);
+        switch (diaEnString) {
+            case "lunes":
+                dias.add("Lunes");
+                dias.add("Martes");
+                dias.add("Miercoles");
+                dias.add("Jueves");
+                dias.add("Viernes");
+                dias.add("Sabado");
+                dias.add("Domingo");
+                break;
+            case "martes":
+                dias.add("Martes");
+                dias.add("Miercoles");
+                dias.add("Jueves");
+                dias.add("Viernes");
+                dias.add("Sabado");
+                dias.add("Domingo");
+                dias.add("Lunes");
+                break;
+            case "miércoles":
+                dias.add("Miercoles");
+                dias.add("Jueves");
+                dias.add("Viernes");
+                dias.add("Sabado");
+                dias.add("Domingo");
+                dias.add("Lunes");
+                dias.add("Martes");
+                break;
+            case "jueves":
+                dias.add("Jueves");
+                dias.add("Viernes");
+                dias.add("Sabado");
+                dias.add("Domingo");
+                dias.add("Lunes");
+                dias.add("Martes");
+                dias.add("Miercoles");
+                break;
+            case "viernes":
+                dias.add("Viernes");
+                dias.add("Sabado");
+                dias.add("Domingo");
+                dias.add("Lunes");
+                dias.add("Martes");
+                dias.add("Miercoles");
+                dias.add("Jueves");
+                break;
+            case "sabado":
+                dias.add("Sabado");
+                dias.add("Domingo");
+                dias.add("Lunes");
+                dias.add("Martes");
+                dias.add("Miercoles");
+                dias.add("Jueves");
+                dias.add("Viernes");
+                break;
+            case "domingo":
+                dias.add("Domingo");
+                dias.add("Lunes");
+                dias.add("Martes");
+                dias.add("Miercoles");
+                dias.add("Jueves");
+                dias.add("Viernes");
+                dias.add("Sabado");
+                break;
+            default:
+                throw new Exception("No hay dia con ese nombre, dia=" + diaEnString);
         }
         return dias;
     }
