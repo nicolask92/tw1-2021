@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Optional;
@@ -58,11 +59,13 @@ public class TurnoController {
 
     @RequestMapping("/mostrar-turno")
     public ModelAndView mostrarTurnoPorId(HttpSession sesion) throws Exception {
+
         Long idUsuario = (Long)sesion.getAttribute("usarioId");
         ModelMap model = new ModelMap();
         try{
             List<Turno> turnos = turnoService.getTurnosByIdCliente(idUsuario);
             model.put("turnos", turnos);
+            model.put("usuarioId", idUsuario);
             return new ModelAndView("Turnos", model);
         } catch (Exception e){
             model.put("msg", "No hay turnos disponibles");
@@ -70,10 +73,6 @@ public class TurnoController {
         }
 
     }
-    /*@RequestMapping("/mostrar-turno")
-    public ModelAndView mostrarTurnos() {
-        return new ModelAndView("Turnos");
-    }*/
 
     @RequestMapping(method = RequestMethod.POST, path = "/reservar-Turno/{idClase}")
     public ModelAndView reservarTurno(@PathVariable("idClase") Long idClase, HttpSession sesion) throws Exception {
