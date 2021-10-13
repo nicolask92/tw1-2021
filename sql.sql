@@ -1,3 +1,4 @@
+
 insert into usuario (DTYPE, activo, apellido, email, nombre, password, rol, plan)
 values ("Cliente", true, "Cliente", "cliente@gmail.com", "Jorge", "cliente123", "Rol de cliente", "BASICO");
 
@@ -21,3 +22,14 @@ values(20        , "2021-10-10T10:15:30", "PRESENCIAL", 1);
 
 insert into clase (cupoMaximo, diaClase, modalidad, actividad_id)
 values(20        , "2021-10-20T10:15:30", "PRESENCIAL", 1);
+
+insert into horario (id, horaFin, horaInicio)
+values(1,  "10:15:30", "12:15:30");
+
+insert into diayhorario (id, dia, horario_id)
+values (1, "Lunes", 1);
+
+insert into actividad_diayhorario (Actividad_id, diaYHorario_id)
+values (1, 1);
+
+INSERT INTO turno(id, asisitio, fechaYHoraDeReserva, clase_id, cliente_id) VALUES (1, 'false', '2021-10-03 10:15:30.000000', 4, 1)
