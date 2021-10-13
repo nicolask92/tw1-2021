@@ -34,6 +34,18 @@ public class ClasesViewModelBuilderTest {
         thenLaCantidadDeClasesADevolverEsCero(calendario);
     }
 
+    @Test
+    public void siHayClasesParaElMesQueVieneNoSeMuestraNadaEnElMesActual() throws Exception {
+        List<Clase> clases = givenClases(2, false);
+        CalendarioDeActividades calendario = whenRenderizoElMes(clases);
+        
+    }
+
+    @Test
+    public void dosClasesEnDiferenteDiaSeRenderizaCorrectamente() {
+
+    }
+
     private void givenCeroClasesEnElMes() {
     }
 

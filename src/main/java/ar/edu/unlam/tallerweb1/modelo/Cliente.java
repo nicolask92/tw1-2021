@@ -1,7 +1,6 @@
 package ar.edu.unlam.tallerweb1.modelo;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,7 +11,10 @@ enum Plan {
 }
 
 @Entity
+@Table(name="usuario")
 public class Cliente extends Usuario{
+
+    @Enumerated(EnumType.STRING)
     Plan plan;
 
     @OneToMany
