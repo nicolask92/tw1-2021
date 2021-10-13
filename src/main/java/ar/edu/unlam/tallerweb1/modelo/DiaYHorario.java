@@ -14,6 +14,9 @@ public class DiaYHorario {
     @OneToOne
     private Horario horario;
 
+    @ManyToOne
+    Actividad actividad;
+
     @Enumerated(EnumType.STRING)
     private Dia dia;
 

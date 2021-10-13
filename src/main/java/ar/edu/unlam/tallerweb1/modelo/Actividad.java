@@ -4,6 +4,7 @@ import ar.edu.unlam.tallerweb1.common.Frecuencia;
 import ar.edu.unlam.tallerweb1.common.Tipo;
 
 import javax.persistence.*;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Entity
@@ -28,33 +29,37 @@ public class Actividad {
     @OneToMany
     List<Clase> clases;
 
+    // TODO cambiar a enumarated
     @Transient
     Frecuencia frecuencia;
 
+    // TODO cambiar a enumarated
     @Transient
     Periodo periodo;
 
-    @Transient
-    Horario horario;
-
-    public Actividad(String descripcion, Tipo tipo, Float precio, Frecuencia frecuencia, Periodo periodo, Horario horario) {
+    public Actividad(String descripcion, Tipo tipo, Float precio, Frecuencia frecuencia, Periodo periodo) {
         this.descripcion = descripcion;
         this.tipo = tipo;
         this.precio = precio;
         this.frecuencia = Frecuencia.CON_INICIO_Y_FIN;
         this.periodo = periodo;
-        this.horario = horario;
     }
 
-    public Actividad(String descripcion, Tipo tipo, Float precio, Horario horario) {
+    public Actividad(String descripcion, Tipo tipo, Float precio) {
         this.descripcion = descripcion;
         this.tipo = tipo;
         this.precio = precio;
-        this.horario = horario;
         this.frecuencia = Frecuencia.REPETITIVA;
     }
 
     public Actividad() {
+    }
+
+    public String getActividadHorarioString(int dia) {
+        String comienzo = this.actividad.getHorario().getHoraInicio().format(DateTimeFormatter.ISO_LOCAL_TIME);
+        String fin = this.actividad.getHorario().getHoraFin().format(DateTimeFormatter.ISO_LOCAL_TIME);
+
+        return "(" + comienzo + " - " + fin + ")";
     }
 
     public String getDescripcion() {
@@ -119,14 +124,6 @@ public class Actividad {
 
     public void setPeriodo(Periodo periodo) {
         this.periodo = periodo;
-    }
-
-    public Horario getHorario() {
-        return horario;
-    }
-
-    public void setHorario(Horario horario) {
-        this.horario = horario;
     }
 
     public Long getId() {

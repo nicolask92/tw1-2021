@@ -26,7 +26,7 @@
             <th scope="row">
                 <h6>Dia ${dia.dia + 1}</h6>
                 <c:forEach items="${dia.clases}" varStatus="loop" var="clase">
-                    <small>${clase.getActividadString()}</small>
+                <small>${clase.getActividadString()} - ${clase.getActividadHorarioString()}</small>
                 </c:forEach>
             </th>
 

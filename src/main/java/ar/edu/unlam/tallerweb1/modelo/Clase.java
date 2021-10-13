@@ -5,6 +5,7 @@ import ar.edu.unlam.tallerweb1.common.Modalidad;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
