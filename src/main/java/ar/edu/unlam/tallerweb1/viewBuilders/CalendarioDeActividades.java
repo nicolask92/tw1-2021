@@ -4,7 +4,6 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 
-
 public class CalendarioDeActividades {
     private List<FechaYClases> fechaYClases;
     private List<String> conjuntoDias;

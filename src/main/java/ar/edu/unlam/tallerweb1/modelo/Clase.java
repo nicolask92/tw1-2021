@@ -20,10 +20,10 @@ public class Clase {
     @OneToMany
     List<Entrenador> profesores;
 
-    @Transient
+    @OneToOne
     Actividad actividad;
 
-    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     Modalidad modalidad;
 
     LocalDateTime diaClase;
@@ -51,6 +51,10 @@ public class Clase {
         }
         this.clientes.add(cliente);
         return clientes;
+    }
+
+    public String getActividadString() {
+        return this.actividad.descripcion;
     }
 
     public LocalDateTime getDiaClase() {

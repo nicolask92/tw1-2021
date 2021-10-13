@@ -17,11 +17,12 @@ public class Actividad {
     @OneToOne
     Calendario calendario;
 
+    @Enumerated(EnumType.STRING)
     Tipo tipo;
 
     Float precio;
 
-    @Transient
+    @OneToMany
     List<DiaYHorario> diaYHorario;
 
     @OneToMany

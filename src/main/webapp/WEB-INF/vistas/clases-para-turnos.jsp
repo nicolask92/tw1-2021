@@ -12,7 +12,6 @@
     <table class="table">
         <thead>
             <tr>
-                ${calendario.conjuntoDias.size()}
                 <c:forEach items="${calendario.conjuntoDias}" varStatus="loop" var="dia" begin="0" end="${calendario.conjuntoDias.size() - 1}">
                     <th scope="col"><c:out value="${dia.toString()}"/></th>
                 </c:forEach>
@@ -24,7 +23,13 @@
             <c:if test="${(loop.index % 7) == 0}">
                 <tr>
             </c:if>
-                    <th scope="row"><c:out value="${dia.toString()}"/></th>
+            <th scope="row">
+                <h6>Dia ${dia.dia + 1}</h6>
+                <c:forEach items="${dia.clases}" varStatus="loop" var="clase">
+                    <small>${clase.getActividadString()}</small>
+                </c:forEach>
+            </th>
+
             <c:if test="${(loop.index) == 6 || loop.index == 13 || loop.index == 20 || loop.index == 27}">
                 </tr>
             </c:if>
