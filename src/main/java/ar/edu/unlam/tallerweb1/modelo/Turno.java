@@ -43,4 +43,12 @@ public class Turno {
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
     }
+
+    public Clase getClase() {
+        return clase;
+    }
+
+    public void setClase(Clase clase) {
+        this.clase = clase;
+    }
 }

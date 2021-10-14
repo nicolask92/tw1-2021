@@ -58,10 +58,11 @@ public class TurnoController {
     }
 
     @RequestMapping("/mostrar-turno")
-    public ModelAndView mostrarTurnoPorId(HttpSession sesion) throws Exception {
+    public ModelAndView mostrarTurnoPorId(HttpServletRequest sesion) throws Exception {
 
-        Long idUsuario = (Long)sesion.getAttribute("usarioId");
+        Long idUsuario = (Long)sesion.getSession().getAttribute("usuarioId");
         ModelMap model = new ModelMap();
+
         try{
             List<Turno> turnos = turnoService.getTurnosByIdCliente(idUsuario);
             model.put("turnos", turnos);
@@ -75,8 +76,8 @@ public class TurnoController {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/reservar-Turno/{idClase}")
-    public ModelAndView reservarTurno(@PathVariable("idClase") Long idClase, HttpSession sesion) throws Exception {
-        Long idUsuario = (Long)sesion.getAttribute("usarioId");
+    public ModelAndView reservarTurno(@PathVariable("idClase") Long idClase, HttpServletRequest sesion) throws Exception {
+        Long idUsuario = (Long)sesion.getSession().getAttribute("usuarioId");
 
         ModelMap model = new ModelMap();
         try {
