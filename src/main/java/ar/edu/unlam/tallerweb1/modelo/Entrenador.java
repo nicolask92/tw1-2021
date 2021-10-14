@@ -1,13 +1,14 @@
 package ar.edu.unlam.tallerweb1.modelo;
 
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import java.util.List;
 
 @Entity
 public class Entrenador extends Usuario {
 
-    @OneToMany
+    @ManyToMany(mappedBy = "profesores")
     List<Clase> dictadas;
 
     public Entrenador(String nombre, String apellido, String email, List<Clase> dictadas) {

@@ -11,7 +11,7 @@ public class Cliente extends Usuario{
     @Enumerated(EnumType.STRING)
     Plan plan;
 
-    @OneToMany
+    @ManyToMany(mappedBy = "clientes")
     List<Clase> clases;
 
     public Cliente(String nombre, String apellido, String email, Plan plan, List<Clase> clases) {

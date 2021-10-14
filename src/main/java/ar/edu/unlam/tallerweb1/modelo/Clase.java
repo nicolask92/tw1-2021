@@ -16,10 +16,20 @@ public class Clase {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany
+    @ManyToMany
+    @JoinTable(
+            name = "clientes_clases",
+            joinColumns = @JoinColumn(name = "clase_id"),
+            inverseJoinColumns = @JoinColumn(name = "cliente_id")
+    )
     List<Cliente> clientes;
 
-    @OneToMany
+    @ManyToMany
+    @JoinTable(
+            name = "clases_profesores",
+            joinColumns = @JoinColumn(name = "clase_id"),
+            inverseJoinColumns = @JoinColumn(name = "entrenador_id")
+    )
     List<Entrenador> profesores;
 
     @ManyToOne(cascade = CascadeType.ALL)
