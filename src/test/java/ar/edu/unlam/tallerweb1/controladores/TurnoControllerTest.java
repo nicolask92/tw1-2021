@@ -75,7 +75,7 @@ public class TurnoControllerTest {
     }
 
     private void thenBorroTurno(ModelAndView mv) {
-        assertThat(mv.getModel().get("msg")).isEqualTo("Se borro turno correctamente");
+        assertThat(mv.getModel().get("msgBorrado")).isEqualTo("Se borro turno correctamente");
         assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-turno");
     }
 
