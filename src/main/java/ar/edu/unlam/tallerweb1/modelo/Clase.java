@@ -20,7 +20,6 @@ public class Clase {
     List<Cliente> clientes;
 
     @OneToMany
-    @NotNull
     List<Entrenador> profesores;
 
     @ManyToOne
@@ -29,7 +28,7 @@ public class Clase {
     @Enumerated(EnumType.STRING)
     Modalidad modalidad;
 
-    @OneToOne(optional = false)
+    @OneToOne
     Horario horario;
 
     Integer cupoMaximo = 20;

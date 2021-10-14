@@ -29,12 +29,10 @@ public class Actividad {
     @OneToMany
     List<Clase> clases;
 
-    // TODO cambiar a enumarated
-    @Transient
+    @Enumerated(EnumType.STRING)
     Frecuencia frecuencia;
 
-    // TODO cambiar a enumarated
-    @Transient
+    @OneToOne
     Periodo periodo;
 
     public Actividad(String descripcion, Tipo tipo, Float precio, Frecuencia frecuencia, Periodo periodo) {

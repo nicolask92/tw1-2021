@@ -8,6 +8,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.text.DateFormatSymbols;
 import java.time.*;
 import java.util.Calendar;
 import java.util.List;
@@ -35,7 +36,7 @@ public class ClaseRepositorioImpl implements ClaseRepositorio {
             Calendar cal = Calendar.getInstance();
             cal.set(Year.now().getValue(), Month.of(numeroDeMes).getValue(), 1);
             int ultimoDiaDelMes = cal.getMaximum(Calendar.DAY_OF_MONTH);
-            LocalDateTime fechaCompletaUltimoDia = LocalDateTime.of(Year.now().getValue(), Month.of(numeroDeMes), ultimoDiaDelMes, 23, 59, 59);
+            LocalDateTime fechaCompletaUltimoDia = LocalDateTime.of(Year.now().getValue(), Month.of(numeroDeMes), ultimoDiaDelMes - 1, 23, 59, 59);
             return session.createCriteria(Clase.class)
                     .add(Restrictions.between("diaClase", primeroDiaDelMes, fechaCompletaUltimoDia))
                     .list();
