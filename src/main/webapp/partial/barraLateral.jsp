@@ -8,8 +8,8 @@
 
         <!-- Sidebar - Brand -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="mostrar-clases">
-           <img src="img/logo-blanco-chico.png" class="img-fluid mt-2  d-md-none d-lg-none d-sm-inline">
-            <div class="sidebar-brand-text mx-3"><img src="img/logo-blanco.png" class="img-fluid"></div>
+           <img src="/proyecto_limpio_spring_war_exploded/img/logo-blanco-chico.png" class="img-fluid mt-2  d-md-none d-lg-none d-sm-inline">
+            <div class="sidebar-brand-text mx-3"><img src="/proyecto_limpio_spring_war_exploded/img/logo-blanco.png" class="img-fluid"></div>
         </a>
 
         <!-- Divider -->
