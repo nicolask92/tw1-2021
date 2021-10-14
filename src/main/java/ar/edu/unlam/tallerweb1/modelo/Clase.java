@@ -22,7 +22,7 @@ public class Clase {
     @OneToMany
     List<Entrenador> profesores;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     Actividad actividad;
 
     @Enumerated(EnumType.STRING)

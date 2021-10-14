@@ -32,7 +32,7 @@ public class Actividad {
     @Enumerated(EnumType.STRING)
     Frecuencia frecuencia;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     Periodo periodo;
 
     public Actividad(String descripcion, Tipo tipo, Float precio, Frecuencia frecuencia, Periodo periodo) {

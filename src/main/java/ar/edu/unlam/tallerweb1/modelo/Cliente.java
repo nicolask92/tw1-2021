@@ -4,12 +4,6 @@ import javax.persistence.*;
 import java.util.Collections;
 import java.util.List;
 
-enum Plan {
-    PREMIUM,
-    BASICO,
-    NINGUNO
-}
-
 @Entity
 @Table(name="usuario")
 public class Cliente extends Usuario{
