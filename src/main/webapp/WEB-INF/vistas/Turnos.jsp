@@ -21,7 +21,7 @@
                         <div class="card-body">
                             <h5 class="card-title">Actividad ${t.clase.actividadString}</h5>
                             <p class="card-text"><span>Fecha ${t.clase.diaClase}</span> </p>
-                            <p class="card-text"><span>Hora${t.clase.actividad.horario}</span> </p>
+                            <p class="card-text"><span>Hora</span> </p>
                             <a href="#" class="btn btn-primary">Cancelar turno</a>
                         </div>
                     </div>
