@@ -75,7 +75,7 @@ public class TurnoController {
 
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/reservar-Turno/{idClase}")
+    @RequestMapping(method = RequestMethod.GET, path = "/reservar-Turno/{idClase}")
     public ModelAndView reservarTurno(@PathVariable("idClase") Long idClase, HttpServletRequest sesion) throws Exception {
         Long idUsuario = (Long)sesion.getSession().getAttribute("usuarioId");
 
@@ -83,7 +83,7 @@ public class TurnoController {
         try {
             turnoService.guardarTurno(idClase, idUsuario);
             model.put("msg", "Se guardo turno correctamente");
-            return new ModelAndView("redirect:/home", model);
+            return new ModelAndView("redirect:/mostrar-turno", model);
         } catch (Exception e) {
             model.put("msg", "Cupo máximo alcanzado");
             return new ModelAndView("clases-para-turnos", model);

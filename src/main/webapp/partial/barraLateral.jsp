@@ -26,7 +26,7 @@
 
         <!-- Nav Item - Tables -->
         <li class="nav-item">
-            <a class="nav-link" href="mostrar-clases">
+            <a class="nav-link" href="/proyecto_limpio_spring_war_exploded/mostrar-clases">
                 <i class="far fa-calendar-alt"></i>
                 <span>Reservar turno</span></a>
         </li>
@@ -35,7 +35,7 @@
         <hr class="sidebar-divider d-none d-md-block">
 
         <li class="nav-item">
-            <a class="nav-link" href="mostrar-turno">
+            <a class="nav-link" href="/proyecto_limpio_spring_war_exploded/mostrar-turno">
                 <i class="far fa-bookmark"></i>
                 <span>Mis turno</span></a>
         </li>

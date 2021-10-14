@@ -13,13 +13,13 @@
         <div class="col-lg-4 mb-2">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title text-center">Actividad </h5>
-              <p class="card-text"><span>Fecha: </span> </p>
-              <p class="card-text"><span>Hora:</span> </p>
-              <p class="card-text"><span>Cupos disponibles:</span> </p>
-              <div class="text-center">
-                <a href="#" class="btn btn-primary">Reservar turno</a>
-              </div>
+                <h5 class="card-title text-center">Actividad ${clase.actividadString} </h5>
+                <p class="card-text"><span>Fecha: ${clase.diaClase}</span> </p>
+                <p class="card-text"><span>Precio: ${clase.actividad.precio}$</span> </p>
+                <p class="card-text"><span>Modalidad: ${clase.modalidad}</span> </p>
+                <div class="text-center">
+                  <a href="/proyecto_limpio_spring_war_exploded/reservar-Turno/${clase.id}" class="btn btn-primary">Reservar turno</a>
+                </div>
             </div>
           </div>
         </div>

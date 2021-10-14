@@ -9,10 +9,10 @@ public class Turno {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Cliente cliente;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Clase clase;
 
     private LocalDate fechaYHoraDeReserva;
