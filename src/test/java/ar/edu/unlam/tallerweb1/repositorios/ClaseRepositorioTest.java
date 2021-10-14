@@ -14,7 +14,6 @@ import org.springframework.test.annotation.Rollback;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,10 +48,6 @@ public class ClaseRepositorioTest extends SpringTest {
         LocalDateTime antesDeAyer = LocalDateTime.now().minusDays(2);
         LocalDateTime pasadoManiana = mesActual ? LocalDateTime.now().plusDays(2) : LocalDateTime.now().plusMonths(1);
         Periodo periodo = new Periodo(antesDeAyer, pasadoManiana);
-
-        LocalTime ahora = LocalTime.now();
-        LocalTime enUnRato = LocalTime.now().plusHours(2);
-    //    Horario horario = new Horario(ahora, enUnRato);
 
         return new Actividad(nombreActividad, Tipo.CROSSFIT, 4000f, Frecuencia.CON_INICIO_Y_FIN, periodo);
     }

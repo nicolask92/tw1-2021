@@ -26,9 +26,9 @@ public class ClasesViewModelBuilder {
         for (int numeroDelDiaDelMes = 0; numeroDelDiaDelMes < cal.getMaximum(Calendar.DAY_OF_MONTH); numeroDelDiaDelMes++) {
             int finalNumeroDelDiaDelMes = numeroDelDiaDelMes;
             List<Clase> clasesParaEsteDia = clases.stream()
-                    .filter(clase -> clase.getDiaClase().getDayOfMonth() == finalNumeroDelDiaDelMes )
+                    .filter(clase -> (clase.getDiaClase().getDayOfMonth()-1) == finalNumeroDelDiaDelMes )
                     .collect(Collectors.toList());
-            fechaYClases.add(new FechaYClases(numeroDelDiaDelMes, clasesParaEsteDia));
+            fechaYClases.add(new FechaYClases(numeroDelDiaDelMes + 1, clasesParaEsteDia));
         }
 
         CalendarioDeActividades calendarioYClases = new CalendarioDeActividades(fechaYClases);
