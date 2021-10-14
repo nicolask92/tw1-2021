@@ -24,10 +24,10 @@
                 <tr>
             </c:if>
             <th scope="row">
-                <h6>Dia ${dia.dia + 1}</h6>
+                <h6>Dia ${dia.dia}</h6>
                 <c:forEach items="${dia.clases}" varStatus="loop" var="clase">
                     <a href="mostrar-clase/${clase.id}">
-                        <small>${clase.getActividadString()} - ${clase.getHorarioString(dia.dia - 1)}</small>
+                        <small>${clase.getActividadString()} - ${clase.getHorarioString(dia.dia)}</small>
                     </a>
                 </c:forEach>
             </th>

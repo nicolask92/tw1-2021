@@ -6,7 +6,7 @@ import java.util.List;
 
 @Entity
 @Table(name="usuario")
-public class Cliente extends Usuario{
+public class Cliente extends Usuario {
 
     @Enumerated(EnumType.STRING)
     Plan plan;
