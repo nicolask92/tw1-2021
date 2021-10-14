@@ -80,6 +80,8 @@ public class TurnoControllerTest {
     }
 
     private ModelAndView whenBorroTurnoExistente(Turno turno, Cliente cliente, HttpServletRequest session) {
+        when(session.getSession()).thenReturn(mockSession);
+        when(session.getSession().getAttribute("usuarioId")).thenReturn(cliente.getId());
         doNothing().when(turnoService).borrarTurno(turno.getId(),cliente.getId());
         return turnoController.borrarTurno(turno.getId(), session);
     }
