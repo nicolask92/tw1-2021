@@ -42,4 +42,17 @@ public class TurnoRepositorioImpl implements TurnoRepositorio {
         sessionFactory.getCurrentSession().save(turno);
     }
 
+    @Override
+    public Turno getTurnoById(Long idTurno) {
+        final Session session = sessionFactory.getCurrentSession();
+        return (Turno)session.createCriteria(Turno.class)
+                .add(Restrictions.eq("id", idTurno))
+                .uniqueResult();
+    }
+
+    @Override
+    public void borrarTurno(Turno turno) {
+        sessionFactory.getCurrentSession().delete(turno);
+    }
+
 }

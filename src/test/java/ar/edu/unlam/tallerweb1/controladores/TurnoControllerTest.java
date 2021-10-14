@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -58,6 +59,29 @@ public class TurnoControllerTest {
         ModelAndView mv = whenReservoTurnoSinLugar(clase.getId(), mockDeHttpServletSession, cliente.getId());
         thenNoPuedoReservarTurno(mv);
 
+    }
+
+    @Test
+    public void TestQueSeBorreReservaDeTurno(){
+        Cliente cliente = givenUnClienteActivo();
+        Turno turno = givenUnClienteConUnTurno(cliente);
+        ModelAndView mv = whenBorroTurnoExistente(turno, cliente, mockDeHttpServletSession);
+        thenBorroTurno(mv);
+    }
+
+    private Turno givenUnClienteConUnTurno(Cliente cliente) {
+        Turno turno = new Turno(cliente, new Clase(), LocalDate.now());
+        return turno;
+    }
+
+    private void thenBorroTurno(ModelAndView mv) {
+        assertThat(mv.getModel().get("msg")).isEqualTo("Se borro turno correctamente");
+        assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-turno");
+    }
+
+    private ModelAndView whenBorroTurnoExistente(Turno turno, Cliente cliente, HttpServletRequest session) {
+        doNothing().when(turnoService).borrarTurno(turno.getId(),cliente.getId());
+        return turnoController.borrarTurno(turno.getId(), session);
     }
 
     private Cliente givenUnUsuarioSinTurnos() {
@@ -124,7 +148,7 @@ public class TurnoControllerTest {
 
     private void thenReservoElTurnoCorrectamente(ModelAndView mv) {
         assertThat(mv.getModel().get("msg")).isEqualTo("Se guardo turno correctamente");
-        assertThat(mv.getViewName()).isEqualTo("redirect:/home");
+        assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-turno");
     }
 
     private void thenNoPuedoReservarTurno(ModelAndView mv) {

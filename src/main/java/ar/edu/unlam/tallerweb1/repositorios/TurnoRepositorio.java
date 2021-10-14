@@ -13,4 +13,8 @@ public interface TurnoRepositorio {
     List<Clase> getTurnosDeEsteMes();
 
     void guardarTurno(Cliente cliente, Clase clase);
+
+    Turno getTurnoById(Long idTurno);
+
+    void borrarTurno(Turno turno);
 }

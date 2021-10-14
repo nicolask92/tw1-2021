@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -50,5 +51,13 @@ public class TurnoServiceImpl implements TurnoService {
         if(turnos == null)
             throw new Exception();
         return turnos;
+    }
+
+    @Override
+    public void borrarTurno(Long idTurno, Long idCliente) {
+        Turno turno = turnoRepositorio.getTurnoById(idTurno);
+        Cliente cliente = clienteRepositorio.getById(idCliente);
+        if (Objects.equals(turno.getCliente().getId(), cliente.getId()))
+        turnoRepositorio.borrarTurno(turno);
     }
 }

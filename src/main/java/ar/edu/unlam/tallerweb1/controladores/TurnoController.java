@@ -9,6 +9,7 @@ import ar.edu.unlam.tallerweb1.viewBuilders.CalendarioDeActividades;
 import ar.edu.unlam.tallerweb1.viewBuilders.ClasesViewModelBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -89,6 +90,15 @@ public class TurnoController {
             return new ModelAndView("clases-para-turnos", model);
         }
 
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/borrar-turno/{idTurno}")
+    public ModelAndView borrarTurno(@PathVariable("idTurno") Long idTurno, HttpServletRequest sesion){
+        Long idUsuario = (Long)sesion.getSession().getAttribute("usuarioId");
+        ModelMap model = new ModelMap();
+        turnoService.borrarTurno(idTurno, idUsuario);
+        model.put("msgBorrado","Se borro turno correctamente");
+        return new ModelAndView("redirect:/mostrar-turno", model);
     }
 
 }
