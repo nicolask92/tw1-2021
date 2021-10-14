@@ -55,13 +55,6 @@ public class Actividad {
     public Actividad() {
     }
 
-    public String getActividadHorarioString(int dia) {
-        String comienzo = this.actividad.getHorario().getHoraInicio().format(DateTimeFormatter.ISO_LOCAL_TIME);
-        String fin = this.actividad.getHorario().getHoraFin().format(DateTimeFormatter.ISO_LOCAL_TIME);
-
-        return "(" + comienzo + " - " + fin + ")";
-    }
-
     public String getDescripcion() {
         return descripcion;
     }

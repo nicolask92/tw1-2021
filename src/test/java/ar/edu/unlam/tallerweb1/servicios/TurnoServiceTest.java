@@ -71,7 +71,7 @@ public class TurnoServiceTest {
         LocalTime enUnRato = LocalTime.now().plusHours(2);
         Horario horario = new Horario(ahora, enUnRato);
 
-        return new Actividad("Actividad de alto impacto", Tipo.CROSSFIT, 4000f, Frecuencia.CON_INICIO_Y_FIN, periodo, horario);
+        return new Actividad("Actividad de alto impacto", Tipo.CROSSFIT, 4000f, Frecuencia.CON_INICIO_Y_FIN, periodo);
     }
     private void whenGuardoTurno(Long idClase, Long idUsuario, Cliente cliente, Clase clase) throws Exception {
         when(claseRepositorio.getById(idClase)).thenReturn(clase);

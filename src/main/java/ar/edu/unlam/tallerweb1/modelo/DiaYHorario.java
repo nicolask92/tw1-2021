@@ -3,6 +3,7 @@ package ar.edu.unlam.tallerweb1.modelo;
 import ar.edu.unlam.tallerweb1.common.Dia;
 
 import javax.persistence.*;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 public class DiaYHorario {

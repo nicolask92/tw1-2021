@@ -5,8 +5,8 @@ import ar.edu.unlam.tallerweb1.modelo.Clase;
 import java.util.List;
 
 public class FechaYClases {
-    int dia;
-    List<Clase> clases;
+    private int dia;
+    private List<Clase> clases;
 
     public FechaYClases(int dia, List<Clase> clases) {
         this.dia = dia;

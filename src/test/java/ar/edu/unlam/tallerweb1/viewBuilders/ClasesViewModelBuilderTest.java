@@ -80,7 +80,7 @@ public class ClasesViewModelBuilderTest {
         LocalTime enUnRato = LocalTime.now().plusHours(2);
         Horario horario = new Horario(ahora, enUnRato);
 
-        return new Actividad(nombreActividad, Tipo.CROSSFIT, 4000f, Frecuencia.CON_INICIO_Y_FIN, periodo, horario);
+        return new Actividad(nombreActividad, Tipo.CROSSFIT, 4000f, Frecuencia.CON_INICIO_Y_FIN, periodo);
     }
 
 

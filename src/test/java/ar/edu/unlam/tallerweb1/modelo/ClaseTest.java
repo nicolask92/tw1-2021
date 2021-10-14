@@ -103,9 +103,9 @@ public class ClaseTest {
 
         LocalTime ahora = LocalTime.now();
         LocalTime enUnRato = LocalTime.now().plusHours(2);
-        Horario horario = new Horario(ahora, enUnRato);
+    //    Horario horario = new Horario(ahora, enUnRato);
 
-        return new Actividad("Actividad de alto impacto", Tipo.CROSSFIT, 4000f, Frecuencia.CON_INICIO_Y_FIN, periodo, horario);
+        return new Actividad("Actividad de alto impacto", Tipo.CROSSFIT, 4000f, Frecuencia.CON_INICIO_Y_FIN, periodo);
     }
 
     private Clase whenCreoLaClaseConActividad(Actividad actividadValida) throws Exception {

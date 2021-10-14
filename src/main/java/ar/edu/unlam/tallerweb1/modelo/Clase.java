@@ -2,6 +2,7 @@ package ar.edu.unlam.tallerweb1.modelo;
 
 import ar.edu.unlam.tallerweb1.common.Frecuencia;
 import ar.edu.unlam.tallerweb1.common.Modalidad;
+import com.sun.istack.NotNull;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -19,17 +20,21 @@ public class Clase {
     List<Cliente> clientes;
 
     @OneToMany
+    @NotNull
     List<Entrenador> profesores;
 
-    @OneToOne
+    @ManyToOne
     Actividad actividad;
 
     @Enumerated(EnumType.STRING)
     Modalidad modalidad;
 
-    LocalDateTime diaClase;
+    @OneToOne(optional = false)
+    Horario horario;
 
     Integer cupoMaximo = 20;
+
+    LocalDateTime diaClase;
 
     public Clase(LocalDateTime diaClase, Actividad actividad, Modalidad modalidad) throws Exception {
         if (actividad.frecuencia == Frecuencia.CON_INICIO_Y_FIN) {
@@ -54,16 +59,15 @@ public class Clase {
         return clientes;
     }
 
+    public String getHorarioString(int dia) {
+        String comienzo = this.horario.getHoraInicio().format(DateTimeFormatter.ISO_LOCAL_TIME);
+        String fin = this.horario.getHoraFin().format(DateTimeFormatter.ISO_LOCAL_TIME);
+
+        return "(" + comienzo + " - " + fin + ")";
+    }
+
     public String getActividadString() {
         return this.actividad.descripcion;
-    }
-
-    public LocalDateTime getDiaClase() {
-        return diaClase;
-    }
-
-    public void setDiaClase(LocalDateTime diaClase) {
-        this.diaClase = diaClase;
     }
 
     public void setClientes(List<Cliente> clientes) {
@@ -116,5 +120,9 @@ public class Clase {
 
     public void setCantidadMaxima(int nuevaCantidadMaxima) {
         this.cupoMaximo = nuevaCantidadMaxima;
+    }
+
+    public LocalDateTime getDiaClase() {
+        return diaClase;
     }
 }
