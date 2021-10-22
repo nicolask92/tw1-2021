@@ -9,6 +9,7 @@ import java.util.List;
 
 @Entity
 public class Actividad {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,9 +26,6 @@ public class Actividad {
 
     @OneToMany
     List<DiaYHorario> diaYHorario;
-
-    @OneToMany
-    List<Clase> clases;
 
     @Enumerated(EnumType.STRING)
     Frecuencia frecuencia;
@@ -91,14 +89,6 @@ public class Actividad {
 
     public void setDiaYHorario(List<DiaYHorario> diaYHorario) {
         this.diaYHorario = diaYHorario;
-    }
-
-    public List<Clase> getClases() {
-        return clases;
-    }
-
-    public void setClases(List<Clase> clases) {
-        this.clases = clases;
     }
 
     public Frecuencia getFrecuencia() {

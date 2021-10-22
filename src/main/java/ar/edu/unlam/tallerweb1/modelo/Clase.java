@@ -2,7 +2,6 @@ package ar.edu.unlam.tallerweb1.modelo;
 
 import ar.edu.unlam.tallerweb1.common.Frecuencia;
 import ar.edu.unlam.tallerweb1.common.Modalidad;
-import com.sun.istack.NotNull;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,6 +11,7 @@ import java.util.List;
 
 @Entity
 public class Clase {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,7 +32,7 @@ public class Clase {
     )
     List<Entrenador> profesores;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     Actividad actividad;
 
     @Enumerated(EnumType.STRING)

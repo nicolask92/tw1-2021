@@ -5,16 +5,18 @@ import java.time.LocalDate;
 
 @Entity
 public class Turno {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Cliente cliente;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Clase clase;
 
+    @Column(name="fecha_y_hora_de_reserva")
     private LocalDate fechaYHoraDeReserva;
 
     private boolean asisitio = false;

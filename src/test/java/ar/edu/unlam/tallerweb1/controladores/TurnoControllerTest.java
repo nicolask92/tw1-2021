@@ -43,7 +43,6 @@ public class TurnoControllerTest {
         thenMuestroQueNoTieneTurnos(mv);
     }
 
-
     @Test
     public void testQueSePuedaReservarTurno() throws Exception {
         Clase clase = givenQueLaClaseTengaLugar();

@@ -60,7 +60,7 @@ public class ClaseRepositorioImpl implements ClaseRepositorio {
                 .add(Restrictions.eq("id",id))
                 .uniqueResult();
 
-        if (clase == null) throw new Exception();
+        if (clase == null) throw new Exception("No existe la clase");
 
         return clase;
     }

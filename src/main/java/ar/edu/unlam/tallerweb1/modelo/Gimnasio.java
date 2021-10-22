@@ -13,9 +13,6 @@ public class Gimnasio {
     String nombre;
     String direccion;
 
-    @OneToMany
-    List<Usuario> usuarios;
-
     @OneToOne
     Calendario calendario;
 

@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 
 @Entity
-@Table(name="usuario")
 public class Cliente extends Usuario {
 
     @Enumerated(EnumType.STRING)

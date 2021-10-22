@@ -10,7 +10,9 @@ public class Horario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name="hora_inicio")
     private LocalTime horaInicio;
+    @Column(name="hora_fin")
     private LocalTime horaFin;
 
     public Long getId() {
