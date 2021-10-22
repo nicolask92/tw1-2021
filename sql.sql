@@ -5,16 +5,16 @@ values ("Cliente", true, "Cliente", "cliente@gmail.com", "Jorge", "cliente123", 
 insert into calendario(id)
 values    (1 );
 
-insert into horario (id, horaFin, horaInicio)
+insert into horario (id, hora_fin, hora_inicio)
 values (1, "10:30:20", "12:30:20");
 
-insert into horario (id, horaFin, horaInicio)
+insert into horario (id, hora_fin, hora_inicio)
 values (2, "14:30:20", "16:30:20");
 
-insert into horario (id, horaFin, horaInicio)
+insert into horario (id, hora_fin, hora_inicio)
 values (3, "14:30:20", "16:30:20");
 
-insert into horario (id, horaFin, horaInicio)
+insert into horario (id, hora_fin, hora_inicio)
 values (4, "14:30:20", "16:30:20");
 
 insert into actividad (id, descripcion, precio, tipo, calendario_id)
@@ -41,7 +41,7 @@ values (1, "Lunes", 1);
 insert into actividad_diayhorario (Actividad_id, diaYHorario_id)
 values (1, 1);
 
-INSERT INTO turno(id, asisitio, fechaYHoraDeReserva, clase_id, cliente_id) VALUES (1, 'false', '2021-10-03 10:15:30.000000', 4, 1);
+INSERT INTO turno(id, asisitio, fecha_y_hora_de_reserva, clase_id, cliente_id) VALUES (1, 'false', '2021-10-03 10:15:30.000000', 4, 1);
 
 insert into usuario  (id, DTYPE, activo, apellido, email, nombre, password, rol)
 values (2, "Entrenador", true, "Entrenador 1", "entranador@gmail.com", "Lopez", "entrenador123", "Rol de entrenador");
