@@ -1,6 +1,7 @@
 package ar.edu.unlam.tallerweb1.controladores;
 
 import ar.edu.unlam.tallerweb1.Exceptiones.ElClienteDelNoCorrespondeAlTurnoException;
+import ar.edu.unlam.tallerweb1.Exceptiones.LaClaseEsDeUnaFechaAnterioALaActualException;
 import ar.edu.unlam.tallerweb1.common.Mes;
 import ar.edu.unlam.tallerweb1.modelo.Clase;
 import ar.edu.unlam.tallerweb1.modelo.Turno;
@@ -84,11 +85,15 @@ public class TurnoController {
         ModelMap model = new ModelMap();
         try {
             turnoService.guardarTurno(idClase, idUsuario);
-            model.put("msg", "Se guardo turno correctamente");
+            model.put("msgGuardado", "Se guardo turno correctamente");
             return new ModelAndView("redirect:/mostrar-turno", model);
         } catch (Exception e) {
             model.put("msg", "Cupo máximo alcanzado");
-            return new ModelAndView("clases-para-turnos", model);
+            return new ModelAndView("redirect:/mostrar-clases", model);
+        }catch(LaClaseEsDeUnaFechaAnterioALaActualException e){
+            model.put("msg", "La clase ya expiro");
+            return new ModelAndView("redirect:/mostrar-clases", model);
+
         }
 
     }

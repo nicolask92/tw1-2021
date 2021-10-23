@@ -8,7 +8,11 @@
 
     <!-- Page Heading -->
     <h1 class="h3 mb-4 text-gray-800">Calendario de turnos</h1>
-
+    <c:if test="${not empty param['msg']}">
+        <div class="alert alert-danger" role="alert">
+                ${param['msg']}
+        </div>
+    </c:if>
     <table class="table">
         <thead>
             <tr>

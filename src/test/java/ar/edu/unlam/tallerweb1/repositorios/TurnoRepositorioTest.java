@@ -12,6 +12,7 @@ import org.springframework.test.annotation.Rollback;
 import javax.transaction.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class TurnoRepositorioTest extends SpringTest {
 
@@ -29,16 +30,6 @@ public class TurnoRepositorioTest extends SpringTest {
         thenElTurnoYaNoExiste(turno);
     }
 
-    private void thenElTurnoYaNoExiste(Turno turno) throws Exception {
-        Assert.assertNotNull(claseRepositorio.getById(turno.getClase().getId()));
-
-        Assert.assertNull(turnoRepositorio.getTurnoById(turno.getId()));
-    }
-
-    private void whenQuieroEliminarElTurno(Turno turno) {
-        turnoRepositorio.borrarTurno(turno);
-    }
-
     private Turno givenQueHayUnTurno() {
         Cliente cliente = new Cliente();
         cliente.setApellido("Locaso");
@@ -51,6 +42,16 @@ public class TurnoRepositorioTest extends SpringTest {
         Turno turno = new Turno(cliente, clase, LocalDate.now());
         session().save(turno);
         return turno;
+    }
+
+    private void whenQuieroEliminarElTurno(Turno turno) {
+        turnoRepositorio.borrarTurno(turno);
+    }
+
+    private void thenElTurnoYaNoExiste(Turno turno) throws Exception {
+        Assert.assertNotNull(claseRepositorio.getById(turno.getClase().getId()));
+
+        Assert.assertNull(turnoRepositorio.getTurnoById(turno.getId()));
     }
 
 }
