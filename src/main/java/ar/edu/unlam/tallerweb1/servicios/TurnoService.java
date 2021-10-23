@@ -13,5 +13,5 @@ public interface TurnoService {
 
     List<Turno> getTurnosByIdCliente(Long id) throws Exception;
 
-    void borrarTurno(Long idTurno, Long idCliente);
+    void borrarTurno(Long idTurno, Long idCliente) throws Exception;
 }

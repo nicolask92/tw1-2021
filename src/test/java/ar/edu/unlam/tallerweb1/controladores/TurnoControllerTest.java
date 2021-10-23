@@ -61,7 +61,7 @@ public class TurnoControllerTest {
     }
 
     @Test
-    public void TestQueSeBorreReservaDeTurno(){
+    public void TestQueSeBorreReservaDeTurno() throws Exception {
         Cliente cliente = givenUnClienteActivo();
         Turno turno = givenUnClienteConUnTurno(cliente);
         ModelAndView mv = whenBorroTurnoExistente(turno, cliente, mockDeHttpServletSession);
@@ -78,7 +78,7 @@ public class TurnoControllerTest {
         assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-turno");
     }
 
-    private ModelAndView whenBorroTurnoExistente(Turno turno, Cliente cliente, HttpServletRequest session) {
+    private ModelAndView whenBorroTurnoExistente(Turno turno, Cliente cliente, HttpServletRequest session) throws Exception {
         when(session.getSession()).thenReturn(mockSession);
         when(session.getSession().getAttribute("usuarioId")).thenReturn(cliente.getId());
         doNothing().when(turnoService).borrarTurno(turno.getId(),cliente.getId());

@@ -54,10 +54,14 @@ public class TurnoServiceImpl implements TurnoService {
     }
 
     @Override
-    public void borrarTurno(Long idTurno, Long idCliente) {
+    public void borrarTurno(Long idTurno, Long idCliente) throws Exception {
         Turno turno = turnoRepositorio.getTurnoById(idTurno);
         Cliente cliente = clienteRepositorio.getById(idCliente);
-        if (Objects.equals(turno.getCliente().getId(), cliente.getId()))
+
+        if (!(Objects.equals(turno.getCliente().getId(), cliente.getId())))
+          throw new Exception();
+
         turnoRepositorio.borrarTurno(turno);
+
     }
 }

@@ -10,6 +10,7 @@ import ar.edu.unlam.tallerweb1.repositorios.TurnoRepositorio;
 import org.junit.Test;
 import org.mockito.Mock;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -48,13 +49,42 @@ public class TurnoServiceTest {
         thenNoSeGuarda();
     }
 
+    @Test
+    public void QueSePuedeBorrarTurno() throws Exception {
+        Cliente cliente = givenUnClienteActivo();
+        Turno turno = givenTurno(cliente);
+        whenBorroTurno(turno, cliente);
+        thenSeBorraElTurno(turno.getId(), cliente.getId());
+
+    }
+
+    @Test(expected = Exception.class)
+    public void QueNoSePuedaBorrarTurnoConUsuarioDistintoAlUsurioDelTurno() throws Exception {
+        Turno turno = givenTurnoConCliente();
+        Cliente cliente = givenUnClienteActivo();
+        whenBorroTurno(turno, cliente);
+        thenNoSeBorraElTurno(turno);
+    }
+
+    private Turno givenTurnoConCliente() {
+        return new Turno (new Cliente() , new Clase(), LocalDate.now());
+    }
+
+    private Turno givenTurno(Cliente cliente) {
+        Turno turno = new Turno(cliente , new Clase(), LocalDate.now());
+        turno.setId(1L);
+        return turno;
+    }
+
     private void givenLaClaseNoExiste() throws Exception {
         when(claseRepositorio.getById(IDCLASE)).thenReturn(null);
     }
 
 
     private Cliente givenUnClienteActivo() {
-        return new Cliente("Arturo" + LocalDateTime.now(), "Frondizi", "arturitoElMasCapo@gmail.com");
+        Cliente cliente = new Cliente( "Arturo" + LocalDateTime.now(), "Frondizi", "arturitoElMasCapo@gmail.com");
+        cliente.setId(1L);
+        return cliente;
     }
 
     private Clase givenClaseConLugar() throws Exception {
@@ -73,6 +103,7 @@ public class TurnoServiceTest {
 
         return new Actividad("Actividad de alto impacto", Tipo.CROSSFIT, 4000f, Frecuencia.CON_INICIO_Y_FIN, periodo);
     }
+
     private void whenGuardoTurno(Long idClase, Long idUsuario, Cliente cliente, Clase clase) throws Exception {
         when(claseRepositorio.getById(idClase)).thenReturn(clase);
         when(clienteRepositorio.getById(idUsuario)).thenReturn(cliente);
@@ -80,20 +111,33 @@ public class TurnoServiceTest {
         turnoService.guardarTurno(idClase, idUsuario);
 
     }
+
     private void whenGuardoTurnoIncorrectamente(Cliente cliente) throws Exception {
        when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
        turnoService.guardarTurno(IDCLASE, cliente.getId());
     }
 
+    private void whenBorroTurno(Turno turno, Cliente cliente) throws Exception {
+        when(turnoRepositorio.getTurnoById(turno.getId())).thenReturn(turno);
+        when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
+        turnoService.borrarTurno(turno.getId(), cliente.getId());
+    }
     private void thenSeIncrementaEn1LaCantidadDeClientesEnLaClase(Clase clase) throws Exception {
         assertThat(clase.getClientes().size()).isEqualTo(1);
         verify(turnoRepositorio, times(1)).guardarTurno(any(),any());
         verify(claseRepositorio,times(1)).getById(clase.getId());
     }
-
     private void thenNoSeGuarda() {
         //verify(clase ,never()).agregarCliente(cliente);
         verify(turnoRepositorio, never()).guardarTurno(any(), any());
+    }
+
+    private void thenNoSeBorraElTurno(Turno turno) {
+        verify(turnoRepositorio, never()).borrarTurno(turno);
+    }
+
+    private void thenSeBorraElTurno(Long idTurno, Long idCliente) {
+        verify(turnoRepositorio, times(1)).getTurnoById(idTurno);
     }
 
 }

@@ -93,7 +93,7 @@ public class TurnoController {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/borrar-turno/{idTurno}")
-    public ModelAndView borrarTurno(@PathVariable("idTurno") Long idTurno, HttpServletRequest sesion){
+    public ModelAndView borrarTurno(@PathVariable("idTurno") Long idTurno, HttpServletRequest sesion) throws Exception {
         Long idUsuario = (Long)sesion.getSession().getAttribute("usuarioId");
         ModelMap model = new ModelMap();
         turnoService.borrarTurno(idTurno, idUsuario);
