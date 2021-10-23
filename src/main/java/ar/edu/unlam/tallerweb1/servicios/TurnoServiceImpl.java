@@ -1,6 +1,6 @@
 package ar.edu.unlam.tallerweb1.servicios;
 
-import ar.edu.unlam.tallerweb1.Exceptiones.ElClienteDelNoCorrespondeAlTurnoException;
+import ar.edu.unlam.tallerweb1.Exceptiones.ElClienteNoCorrespondeAlTurnoException;
 import ar.edu.unlam.tallerweb1.Exceptiones.LaClaseEsDeUnaFechaAnterioALaActualException;
 import ar.edu.unlam.tallerweb1.modelo.Clase;
 import ar.edu.unlam.tallerweb1.modelo.Cliente;
@@ -60,12 +60,12 @@ public class TurnoServiceImpl implements TurnoService {
     }
 
     @Override
-    public void borrarTurno(Long idTurno, Long idCliente) throws ElClienteDelNoCorrespondeAlTurnoException {
+    public void borrarTurno(Long idTurno, Long idCliente) throws ElClienteNoCorrespondeAlTurnoException {
         Turno turno = turnoRepositorio.getTurnoById(idTurno);
         Cliente cliente = clienteRepositorio.getById(idCliente);
 
         if (!(Objects.equals(turno.getCliente().getId(), cliente.getId())))
-          throw new ElClienteDelNoCorrespondeAlTurnoException();
+          throw new ElClienteNoCorrespondeAlTurnoException();
 
         turnoRepositorio.borrarTurno(turno);
 

@@ -1,6 +1,6 @@
 package ar.edu.unlam.tallerweb1.servicios;
 
-import ar.edu.unlam.tallerweb1.Exceptiones.ElClienteDelNoCorrespondeAlTurnoException;
+import ar.edu.unlam.tallerweb1.Exceptiones.ElClienteNoCorrespondeAlTurnoException;
 import ar.edu.unlam.tallerweb1.Exceptiones.LaClaseEsDeUnaFechaAnterioALaActualException;
 import ar.edu.unlam.tallerweb1.common.Frecuencia;
 import ar.edu.unlam.tallerweb1.common.Modalidad;
@@ -10,7 +10,6 @@ import ar.edu.unlam.tallerweb1.repositorios.ClaseRepositorio;
 import ar.edu.unlam.tallerweb1.repositorios.ClienteRepositorio;
 import ar.edu.unlam.tallerweb1.repositorios.TurnoRepositorio;
 import org.junit.Test;
-import org.mockito.Mock;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,7 +17,6 @@ import java.time.LocalTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.never;
@@ -52,7 +50,7 @@ public class TurnoServiceTest {
     }
 
     @Test
-    public void QueSePuedeBorrarTurno() throws Exception, ElClienteDelNoCorrespondeAlTurnoException {
+    public void QueSePuedeBorrarTurno() throws Exception, ElClienteNoCorrespondeAlTurnoException {
         Cliente cliente = givenUnClienteActivo();
         Turno turno = givenTurno(cliente);
         whenBorroTurno(turno, cliente);
@@ -60,8 +58,8 @@ public class TurnoServiceTest {
 
     }
 
-    @Test(expected = ElClienteDelNoCorrespondeAlTurnoException.class)
-    public void QueNoSePuedaBorrarTurnoConUsuarioDistintoAlUsurioDelTurno() throws ElClienteDelNoCorrespondeAlTurnoException, Exception {
+    @Test(expected = ElClienteNoCorrespondeAlTurnoException.class)
+    public void QueNoSePuedaBorrarTurnoConUsuarioDistintoAlUsurioDelTurno() throws ElClienteNoCorrespondeAlTurnoException, Exception {
         Turno turno = givenTurnoConCliente();
         Cliente cliente = givenUnClienteActivo();
         whenBorroTurno(turno, cliente);
@@ -142,7 +140,7 @@ public class TurnoServiceTest {
        turnoService.guardarTurno(IDCLASE, cliente.getId());
     }
 
-    private void whenBorroTurno(Turno turno, Cliente cliente) throws Exception, ElClienteDelNoCorrespondeAlTurnoException {
+    private void whenBorroTurno(Turno turno, Cliente cliente) throws Exception, ElClienteNoCorrespondeAlTurnoException {
         when(turnoRepositorio.getTurnoById(turno.getId())).thenReturn(turno);
         when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
         turnoService.borrarTurno(turno.getId(), cliente.getId());

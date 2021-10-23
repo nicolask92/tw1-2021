@@ -1,6 +1,6 @@
 package ar.edu.unlam.tallerweb1.controladores;
 
-import ar.edu.unlam.tallerweb1.Exceptiones.ElClienteDelNoCorrespondeAlTurnoException;
+import ar.edu.unlam.tallerweb1.Exceptiones.ElClienteNoCorrespondeAlTurnoException;
 import ar.edu.unlam.tallerweb1.Exceptiones.LaClaseEsDeUnaFechaAnterioALaActualException;
 import ar.edu.unlam.tallerweb1.common.Mes;
 import ar.edu.unlam.tallerweb1.modelo.Clase;
@@ -11,7 +11,6 @@ import ar.edu.unlam.tallerweb1.viewBuilders.CalendarioDeActividades;
 import ar.edu.unlam.tallerweb1.viewBuilders.ClasesViewModelBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Optional;
 
@@ -99,12 +97,18 @@ public class TurnoController {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/borrar-turno/{idTurno}")
-    public ModelAndView borrarTurno(@PathVariable("idTurno") Long idTurno, HttpServletRequest sesion) throws ElClienteDelNoCorrespondeAlTurnoException {
+    public ModelAndView borrarTurno(@PathVariable("idTurno") Long idTurno, HttpServletRequest sesion) throws ElClienteNoCorrespondeAlTurnoException {
         Long idUsuario = (Long)sesion.getSession().getAttribute("usuarioId");
         ModelMap model = new ModelMap();
-        turnoService.borrarTurno(idTurno, idUsuario);
-        model.put("msgBorrado","Se borro turno correctamente");
-        return new ModelAndView("redirect:/mostrar-turno", model);
+
+        try {
+            turnoService.borrarTurno(idTurno, idUsuario);
+            model.put("msgBorrado","Se borro turno correctamente");
+            return new ModelAndView("redirect:/mostrar-turno", model);
+        }catch (ElClienteNoCorrespondeAlTurnoException e){
+            model.put("msgUsuarioNoValido", "El turno no corresponde al usuario");
+            return new ModelAndView("redirect:/mostrar-turno",model);
+        }
     }
 
 }
