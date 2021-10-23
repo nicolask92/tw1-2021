@@ -1,5 +1,6 @@
 package ar.edu.unlam.tallerweb1.servicios;
 
+import ar.edu.unlam.tallerweb1.Exceptiones.ElClienteDelNoCorrespondeAlTurnoException;
 import ar.edu.unlam.tallerweb1.common.Frecuencia;
 import ar.edu.unlam.tallerweb1.common.Modalidad;
 import ar.edu.unlam.tallerweb1.common.Tipo;
@@ -50,7 +51,7 @@ public class TurnoServiceTest {
     }
 
     @Test
-    public void QueSePuedeBorrarTurno() throws Exception {
+    public void QueSePuedeBorrarTurno() throws Exception, ElClienteDelNoCorrespondeAlTurnoException {
         Cliente cliente = givenUnClienteActivo();
         Turno turno = givenTurno(cliente);
         whenBorroTurno(turno, cliente);
@@ -58,8 +59,8 @@ public class TurnoServiceTest {
 
     }
 
-    @Test(expected = Exception.class)
-    public void QueNoSePuedaBorrarTurnoConUsuarioDistintoAlUsurioDelTurno() throws Exception {
+    @Test(expected = ElClienteDelNoCorrespondeAlTurnoException.class)
+    public void QueNoSePuedaBorrarTurnoConUsuarioDistintoAlUsurioDelTurno() throws ElClienteDelNoCorrespondeAlTurnoException, Exception {
         Turno turno = givenTurnoConCliente();
         Cliente cliente = givenUnClienteActivo();
         whenBorroTurno(turno, cliente);
@@ -117,7 +118,7 @@ public class TurnoServiceTest {
        turnoService.guardarTurno(IDCLASE, cliente.getId());
     }
 
-    private void whenBorroTurno(Turno turno, Cliente cliente) throws Exception {
+    private void whenBorroTurno(Turno turno, Cliente cliente) throws Exception, ElClienteDelNoCorrespondeAlTurnoException {
         when(turnoRepositorio.getTurnoById(turno.getId())).thenReturn(turno);
         when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
         turnoService.borrarTurno(turno.getId(), cliente.getId());

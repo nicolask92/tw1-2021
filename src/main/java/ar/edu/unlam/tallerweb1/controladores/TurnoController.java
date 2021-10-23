@@ -1,5 +1,6 @@
 package ar.edu.unlam.tallerweb1.controladores;
 
+import ar.edu.unlam.tallerweb1.Exceptiones.ElClienteDelNoCorrespondeAlTurnoException;
 import ar.edu.unlam.tallerweb1.common.Mes;
 import ar.edu.unlam.tallerweb1.modelo.Clase;
 import ar.edu.unlam.tallerweb1.modelo.Turno;
@@ -93,7 +94,7 @@ public class TurnoController {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/borrar-turno/{idTurno}")
-    public ModelAndView borrarTurno(@PathVariable("idTurno") Long idTurno, HttpServletRequest sesion) throws Exception {
+    public ModelAndView borrarTurno(@PathVariable("idTurno") Long idTurno, HttpServletRequest sesion) throws ElClienteDelNoCorrespondeAlTurnoException {
         Long idUsuario = (Long)sesion.getSession().getAttribute("usuarioId");
         ModelMap model = new ModelMap();
         turnoService.borrarTurno(idTurno, idUsuario);

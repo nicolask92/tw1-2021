@@ -1,5 +1,6 @@
 package ar.edu.unlam.tallerweb1.controladores;
 
+import ar.edu.unlam.tallerweb1.Exceptiones.ElClienteDelNoCorrespondeAlTurnoException;
 import ar.edu.unlam.tallerweb1.common.Frecuencia;
 import ar.edu.unlam.tallerweb1.common.Modalidad;
 import ar.edu.unlam.tallerweb1.common.Tipo;
@@ -61,7 +62,7 @@ public class TurnoControllerTest {
     }
 
     @Test
-    public void TestQueSeBorreReservaDeTurno() throws Exception {
+    public void TestQueSeBorreReservaDeTurno() throws Exception, ElClienteDelNoCorrespondeAlTurnoException {
         Cliente cliente = givenUnClienteActivo();
         Turno turno = givenUnClienteConUnTurno(cliente);
         ModelAndView mv = whenBorroTurnoExistente(turno, cliente, mockDeHttpServletSession);
@@ -78,7 +79,7 @@ public class TurnoControllerTest {
         assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-turno");
     }
 
-    private ModelAndView whenBorroTurnoExistente(Turno turno, Cliente cliente, HttpServletRequest session) throws Exception {
+    private ModelAndView whenBorroTurnoExistente(Turno turno, Cliente cliente, HttpServletRequest session) throws Exception, ElClienteDelNoCorrespondeAlTurnoException {
         when(session.getSession()).thenReturn(mockSession);
         when(session.getSession().getAttribute("usuarioId")).thenReturn(cliente.getId());
         doNothing().when(turnoService).borrarTurno(turno.getId(),cliente.getId());
