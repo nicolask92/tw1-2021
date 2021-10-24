@@ -1,5 +1,7 @@
 package ar.edu.unlam.tallerweb1.servicios;
 
+import ar.edu.unlam.tallerweb1.Exceptiones.ElClienteNoCorrespondeAlTurnoException;
+import ar.edu.unlam.tallerweb1.Exceptiones.LaClaseEsDeUnaFechaAnterioALaActualException;
 import ar.edu.unlam.tallerweb1.modelo.Clase;
 import ar.edu.unlam.tallerweb1.modelo.Cliente;
 import ar.edu.unlam.tallerweb1.modelo.Turno;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,11 +37,14 @@ public class TurnoServiceImpl implements TurnoService {
     }
 
     @Override
-    public void guardarTurno(Long idClase, Long idUsuario) throws Exception {
+    public void guardarTurno(Long idClase, Long idUsuario) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException {
         Clase clase = claseRepositorio.getById(idClase);
         Cliente cliente = clienteRepositorio.getById(idUsuario);
         if (clase == null)
             throw new Exception();
+        if(clase.getDiaClase().isBefore(LocalDateTime.now()))
+            throw new LaClaseEsDeUnaFechaAnterioALaActualException();
+
         clase.agregarCliente(cliente); //exepcion de si tiene cupo disponible
         turnoRepositorio.guardarTurno(cliente, clase);
 
@@ -54,10 +60,14 @@ public class TurnoServiceImpl implements TurnoService {
     }
 
     @Override
-    public void borrarTurno(Long idTurno, Long idCliente) {
+    public void borrarTurno(Long idTurno, Long idCliente) throws ElClienteNoCorrespondeAlTurnoException {
         Turno turno = turnoRepositorio.getTurnoById(idTurno);
         Cliente cliente = clienteRepositorio.getById(idCliente);
-        if (Objects.equals(turno.getCliente().getId(), cliente.getId()))
+
+        if (!(Objects.equals(turno.getCliente().getId(), cliente.getId())))
+          throw new ElClienteNoCorrespondeAlTurnoException();
+
         turnoRepositorio.borrarTurno(turno);
+
     }
 }

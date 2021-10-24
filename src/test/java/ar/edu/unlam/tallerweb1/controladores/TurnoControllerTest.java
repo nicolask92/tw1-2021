@@ -1,5 +1,7 @@
 package ar.edu.unlam.tallerweb1.controladores;
 
+import ar.edu.unlam.tallerweb1.Exceptiones.ElClienteNoCorrespondeAlTurnoException;
+import ar.edu.unlam.tallerweb1.Exceptiones.LaClaseEsDeUnaFechaAnterioALaActualException;
 import ar.edu.unlam.tallerweb1.common.Frecuencia;
 import ar.edu.unlam.tallerweb1.common.Modalidad;
 import ar.edu.unlam.tallerweb1.common.Tipo;
@@ -44,7 +46,7 @@ public class TurnoControllerTest {
     }
 
     @Test
-    public void testQueSePuedaReservarTurno() throws Exception {
+    public void testQueSePuedaReservarTurno() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException {
         Clase clase = givenQueLaClaseTengaLugar();
         Cliente cliente = new Cliente();
         ModelAndView mv = whenReservoTurno(clase.getId(), mockDeHttpServletSession, cliente.getId());
@@ -52,7 +54,7 @@ public class TurnoControllerTest {
     }
 
     @Test
-    public void testQueNoSePuedaReservarTurno() throws Exception {
+    public void testQueNoSePuedaReservarTurno() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException {
         Clase clase = givenQueLaClaseNoTengaLugar();
         Cliente cliente = givenUnClienteActivo();
         ModelAndView mv = whenReservoTurnoSinLugar(clase.getId(), mockDeHttpServletSession, cliente.getId());
@@ -61,28 +63,33 @@ public class TurnoControllerTest {
     }
 
     @Test
-    public void TestQueSeBorreReservaDeTurno(){
+    public void TestQueSeBorreReservaDeTurno() throws Exception, ElClienteNoCorrespondeAlTurnoException {
         Cliente cliente = givenUnClienteActivo();
         Turno turno = givenUnClienteConUnTurno(cliente);
         ModelAndView mv = whenBorroTurnoExistente(turno, cliente, mockDeHttpServletSession);
         thenBorroTurno(mv);
     }
 
+    @Test
+    public void queNoSePuedaReservarTurnoDespuesDeLaFechaDeLaClase() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException {
+        Cliente cliente =givenUnClienteActivo();
+        Clase clase = givenClaseConFechaAnterioAlDiaDeHoy();
+        ModelAndView mv = whenReservoTurnoConFechaAnteriorALaActual(clase.getId(), mockDeHttpServletSession, cliente.getId());
+        thenElTurnoNoSeReseva(mv);
+    }
+    @Test
+    public void QueNoSePuedaBorrarTurnoConUsuarioDistintoAlUsurioDelTurno() throws ElClienteNoCorrespondeAlTurnoException, Exception {
+        Cliente cliente =givenUnClienteActivo();
+        Cliente cliente2 = givenUnClienteActivo();
+        Turno turno = givenUnClienteConUnTurno(cliente);
+        ModelAndView mv = whenBorroTurnoConUsuarioDistintoAlDelTurno(turno, cliente2, mockDeHttpServletSession);
+        thenElTurnoNoSeBorraYRedirigeALaViewTurnos(mv);
+    }
+
+
     private Turno givenUnClienteConUnTurno(Cliente cliente) {
         Turno turno = new Turno(cliente, new Clase(), LocalDate.now());
         return turno;
-    }
-
-    private void thenBorroTurno(ModelAndView mv) {
-        assertThat(mv.getModel().get("msgBorrado")).isEqualTo("Se borro turno correctamente");
-        assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-turno");
-    }
-
-    private ModelAndView whenBorroTurnoExistente(Turno turno, Cliente cliente, HttpServletRequest session) {
-        when(session.getSession()).thenReturn(mockSession);
-        when(session.getSession().getAttribute("usuarioId")).thenReturn(cliente.getId());
-        doNothing().when(turnoService).borrarTurno(turno.getId(),cliente.getId());
-        return turnoController.borrarTurno(turno.getId(), session);
     }
 
     private Cliente givenUnUsuarioSinTurnos() {
@@ -117,18 +124,31 @@ public class TurnoControllerTest {
         return new Actividad("Actividad de alto impacto", Tipo.CROSSFIT, 4000f, Frecuencia.CON_INICIO_Y_FIN, periodo);
     }
 
-    private ModelAndView whenReservoTurno(Long id,HttpServletRequest session, Long idUsuario) throws Exception {
+    private Clase givenClaseConFechaAnterioAlDiaDeHoy() throws Exception {
+        Clase clase =new Clase(LocalDateTime.now().minusDays(1), new Actividad(), Modalidad.PRESENCIAL);
+        clase.setId(1L);
+        return clase;
+    }
+
+    private ModelAndView whenReservoTurno(Long id,HttpServletRequest session, Long idUsuario) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException {
         when(session.getSession()).thenReturn(mockSession);
         when(session.getSession().getAttribute("usuarioId")).thenReturn(idUsuario);
         doNothing().when(turnoService).guardarTurno(id, idUsuario);
         return turnoController.reservarTurno(id, session);
     }
 
-    private ModelAndView whenReservoTurnoSinLugar(Long id, HttpServletRequest session, Long idUsuario) throws Exception {
+    private ModelAndView whenReservoTurnoSinLugar(Long id, HttpServletRequest session, Long idUsuario) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException {
         when(session.getSession()).thenReturn(mockSession);
         when(session.getSession().getAttribute("usuarioId")).thenReturn(idUsuario);
         doThrow(Exception.class).when(turnoService).guardarTurno(id, idUsuario);
         return turnoController.reservarTurno(id, session);
+    }
+
+    private ModelAndView whenBorroTurnoExistente(Turno turno, Cliente cliente, HttpServletRequest session) throws Exception, ElClienteNoCorrespondeAlTurnoException {
+        when(session.getSession()).thenReturn(mockSession);
+        when(session.getSession().getAttribute("usuarioId")).thenReturn(cliente.getId());
+        doNothing().when(turnoService).borrarTurno(turno.getId(),cliente.getId());
+        return turnoController.borrarTurno(turno.getId(), session);
     }
 
     private ModelAndView whenConsultoElTurnoConUnUsuario(Turno turno, HttpServletRequest session,Long usuarioId) throws Exception {
@@ -147,14 +167,33 @@ public class TurnoControllerTest {
         return turnoController.mostrarTurnoPorId(session);
     }
 
+    private ModelAndView whenReservoTurnoConFechaAnteriorALaActual(Long idClase, HttpServletRequest session, Long idUsuario) throws LaClaseEsDeUnaFechaAnterioALaActualException, Exception {
+        when(session.getSession()).thenReturn(mockSession);
+        when(session.getSession().getAttribute("usuarioId")).thenReturn(idUsuario);
+        doThrow(LaClaseEsDeUnaFechaAnterioALaActualException.class).when(turnoService).guardarTurno(idClase, idUsuario);
+        return turnoController.reservarTurno(idClase, session);
+    }
+
+    private ModelAndView whenBorroTurnoConUsuarioDistintoAlDelTurno(Turno turno, Cliente cliente2, HttpServletRequest session) throws ElClienteNoCorrespondeAlTurnoException {
+        when(session.getSession()).thenReturn(mockSession);
+        when(session.getSession().getAttribute("usuarioId")).thenReturn(turno.getCliente().getId());
+        doThrow(ElClienteNoCorrespondeAlTurnoException.class).when(turnoService).borrarTurno(turno.getId(), cliente2.getId());
+        return turnoController.borrarTurno(turno.getId(), session);
+    }
+
     private void thenReservoElTurnoCorrectamente(ModelAndView mv) {
-        assertThat(mv.getModel().get("msg")).isEqualTo("Se guardo turno correctamente");
+        assertThat(mv.getModel().get("msgGuardado")).isEqualTo("Se guardo turno correctamente");
         assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-turno");
     }
 
     private void thenNoPuedoReservarTurno(ModelAndView mv) {
         assertThat(mv.getModel().get("msg")).isEqualTo("Cupo máximo alcanzado");
-        assertThat(mv.getViewName()).isEqualTo("clases-para-turnos");
+        assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-clases");
+    }
+
+    private void thenBorroTurno(ModelAndView mv) {
+        assertThat(mv.getModel().get("msgBorrado")).isEqualTo("Se borro turno correctamente");
+        assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-turno");
     }
 
     private void thenMuestroLosTurnosDelUsuario(ModelAndView mv, Turno turno) {
@@ -165,5 +204,15 @@ public class TurnoControllerTest {
     private void thenMuestroQueNoTieneTurnos(ModelAndView mv) {
         assertThat(mv.getModel().get("turnos")).isEqualTo(null);
         assertThat(mv.getModel().get("msg")).isEqualTo("No hay turnos disponibles");
+    }
+
+    private void thenElTurnoNoSeReseva(ModelAndView mv) {
+        assertThat(mv.getModel().get("msg")).isEqualTo("La clase ya expiro");
+        assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-clases");
+    }
+
+    private void thenElTurnoNoSeBorraYRedirigeALaViewTurnos(ModelAndView mv) {
+        assertThat(mv.getModel().get("msgUsuarioNoValido")).isEqualTo("El turno no corresponde al usuario");
+        assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-turno");
     }
 }

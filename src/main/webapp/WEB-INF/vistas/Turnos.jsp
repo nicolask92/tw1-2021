@@ -8,8 +8,18 @@
     <!-- Page Heading -->
     <h1 class="h3 mb-4 text-gray-800 text-center">Mis Turnos</h1>
 
-    <c:if test="${not empty msg}">
-        <h2>${msg}</h2>
+    <c:if test="${not empty param['msgBorrado']}">
+        <div class="alert alert-success" role="alert">
+           ${param['msgBorrado']}
+        </div>
+       <br>
+
+    </c:if>
+    <c:if test="${not empty param['msgGuardado']}">
+        <div class="alert alert-success" role="alert">
+            ${param['msgGuardado']}
+        </div>
+        <br>
     </c:if>
 
     <c:if test="${not empty turnos}">
