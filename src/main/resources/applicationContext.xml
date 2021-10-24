@@ -27,6 +27,13 @@
 	<context:component-scan base-package="ar.edu.unlam.tallerweb1.repositorios" />
 	<context:component-scan base-package="ar.edu.unlam.tallerweb1.servicios" />
 	<context:component-scan base-package="ar.edu.unlam.tallerweb1.viewBuilders" />
+	<context:component-scan base-package="ar.edu.unlam.tallerweb1.intercepters" />
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<bean id="loginServiceInterceptor" class="ar.edu.unlam.tallerweb1.intercepters.LoginServiceInterceptor"/>
+		</mvc:interceptor>
+	</mvc:interceptors>
 
 </beans>
 
