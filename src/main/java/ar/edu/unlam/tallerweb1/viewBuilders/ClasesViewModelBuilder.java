@@ -45,7 +45,11 @@ public class ClasesViewModelBuilder {
     }
 
     private int getNumeroDeMes(Optional<Mes> mes, Calendar calendario) {
-        return mes.map(Enum::ordinal).orElseGet(() -> calendario.get(Calendar.MONTH));
+        if (mes.isPresent()) {
+            return mes.get().getNumeroDelMes();
+        } else {
+            return calendario.get(Calendar.MONTH);
+        }
     }
 
     private List<String> generarListaDeDias(Calendar calendario) throws Exception {

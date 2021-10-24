@@ -31,15 +31,16 @@ public class ClaseRepositorioImpl implements ClaseRepositorio {
 
         if (mes.isPresent()) {
 
-            int numeroDeMes = mes.get().ordinal();
+            int numeroDeMes = mes.get().getNumeroDelMes();
             LocalDateTime primeroDiaDelMes = LocalDateTime.of(Year.now().getValue(), Month.of(numeroDeMes), 1, 0, 0, 0);
             Calendar cal = Calendar.getInstance();
-            cal.set(Year.now().getValue(), Month.of(numeroDeMes).getValue(), 1);
-            int ultimoDiaDelMes = cal.getMaximum(Calendar.DAY_OF_MONTH);
+            // Month.of(numeroDeMes).getValue()
+            cal.set(Year.now().getValue(), numeroDeMes+1, 1);
+            int ultimoDiaDelMes = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
             LocalDateTime fechaCompletaUltimoDia = LocalDateTime.of(Year.now().getValue(), Month.of(numeroDeMes), ultimoDiaDelMes - 1, 23, 59, 59);
             return session.createCriteria(Clase.class)
-                    .add(Restrictions.between("diaClase", primeroDiaDelMes, fechaCompletaUltimoDia))
-                    .list();
+                .add(Restrictions.between("diaClase", primeroDiaDelMes, fechaCompletaUltimoDia))
+                .list();
         } else {
             Calendar cal = Calendar.getInstance();
             int numeroDeMes = LocalDate.now().getMonth().getValue();
@@ -47,9 +48,8 @@ public class ClaseRepositorioImpl implements ClaseRepositorio {
             int ultimoDiaDelMes = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
             LocalDateTime fechaCompletaUltimoDia = LocalDateTime.of(Year.now().getValue(), Month.of(numeroDeMes), ultimoDiaDelMes, 23, 59, 59);
             return session.createCriteria(Clase.class)
-                    .add(Restrictions.between("diaClase", primeroDiaDelMes, fechaCompletaUltimoDia))
-                    .list();
-
+                .add(Restrictions.between("diaClase", primeroDiaDelMes, fechaCompletaUltimoDia))
+                .list();
         }
     }
 

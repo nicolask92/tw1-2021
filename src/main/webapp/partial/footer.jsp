@@ -1,3 +1,4 @@
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 </div>
 <!-- End of Main Content -->
 
@@ -36,9 +37,9 @@
       <div class="modal-body">Selecciona cerrar sesion para desloguearte, de lo contrario presiona cancelar</div>
       <div class="modal-footer">
         <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-        <form action = "cerrar-sesion" method="post">
+        <form:form action = "cerrar-sesion" method="post">
           <button type="submit" class="btn btn-primary">Cerrar Sesion</button>
-        </form>
+        </form:form>
       </div>
     </div>
   </div>
