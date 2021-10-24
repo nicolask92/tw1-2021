@@ -31,8 +31,8 @@
                 <h6>Dia ${dia.dia}</h6>
                 <c:forEach items="${dia.clases}" varStatus="loop" var="clase">
                     <a href="mostrar-clase/${clase.id}">
-                        <small>${clase.getActividadString()} - ${clase.getHorarioString(dia.dia)}</small>
-                    </a>
+                        <small>${clase.getActividadString()} - ${clase.horarioString}</small>
+                    </a><br>
                 </c:forEach>
             </th>
 
@@ -40,13 +40,35 @@
                 </tr>
             </c:if>
         </c:forEach>
-
         </tbody>
     </table>
 
     <!--
         <div id='calendar'></div>
     -->
+    <br>
+    <hr class="sidebar-divider">
+    <br>
+
+    <c:if test="${not empty turnosDelDia}">
+
+        <h2>Turnos para hoy</h2>
+
+        <div class="row">
+            <c:forEach items="${turnosDelDia}" var="t">
+                <div class="col-lg-4 mb-2">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Actividad: ${t.clase.actividadString}</h5>
+                            <p class="card-text"><span>Fecha: ${t.clase.fechaString}</span> </p>
+                            <p class="card-text"><span>Hora: ${t.clase.horarioString}</span> </p>
+                        </div>
+                    </div>
+                </div>
+            </c:forEach>
+
+        </div>
+    </c:if>
 
 </div>
 

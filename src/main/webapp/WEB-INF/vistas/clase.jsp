@@ -14,7 +14,8 @@
           <div class="card">
             <div class="card-body">
                 <h5 class="card-title text-center">Actividad ${clase.actividadString} </h5>
-                <p class="card-text"><span>Fecha: ${clase.diaClase}</span> </p>
+                <p class="card-text"><span>Fecha: ${clase.fechaString}</span> </p>
+                <p class="card-text"><span>Hora: ${clase.horarioString}</span> </p>
                 <p class="card-text"><span>Precio: ${clase.actividad.precio}$</span> </p>
                 <p class="card-text"><span>Modalidad: ${clase.modalidad}</span> </p>
                 <div class="text-center">

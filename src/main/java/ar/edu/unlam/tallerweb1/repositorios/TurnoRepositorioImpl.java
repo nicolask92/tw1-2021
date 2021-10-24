@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Repository
@@ -57,7 +59,15 @@ public class TurnoRepositorioImpl implements TurnoRepositorio {
 
     @Override
     public List<Turno> getTurnosParaHoy(Cliente cliente) {
-        return null;
+        final Session session = sessionFactory.getCurrentSession();
+        final LocalDate hoy = LocalDate.now();
+        final LocalDateTime diaYHoraInicial = LocalDateTime.of(hoy, LocalTime.of(0,0));
+        final LocalDateTime diaYHoraFinal = LocalDateTime.of(hoy, LocalTime.of(23, 59, 59));
+        return session.createCriteria(Turno.class)
+                .createAlias("clase", "c")
+                .add(Restrictions.eq("cliente", cliente))
+                .add(Restrictions.between("c.diaClase", diaYHoraInicial, diaYHoraFinal))
+                .list();
     }
 
 }

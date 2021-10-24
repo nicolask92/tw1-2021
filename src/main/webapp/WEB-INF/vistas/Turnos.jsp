@@ -29,9 +29,9 @@
                 <div class="col-lg-4 mb-2">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Actividad ${t.clase.actividadString}</h5>
-                            <p class="card-text"><span>Fecha ${t.clase.diaClase}</span> </p>
-                            <p class="card-text"><span>Hora</span> </p>
+                            <h5 class="card-title">Actividad: ${t.clase.actividadString}</h5>
+                            <p class="card-text"><span>Fecha: ${t.clase.fechaString}</span> </p>
+                            <p class="card-text"><span>Hora: ${t.clase.horarioString}</span> </p>
                             <a href="borrar-turno/${t.id}" class="btn btn-primary">Cancelar turno</a>
                         </div>
                     </div>

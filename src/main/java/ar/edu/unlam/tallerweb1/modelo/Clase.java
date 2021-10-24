@@ -68,11 +68,12 @@ public class Clase {
         return clientes;
     }
 
-    public String getHorarioString(int dia) {
-        String comienzo = this.horario.getHoraInicio().format(DateTimeFormatter.ISO_LOCAL_TIME);
-        String fin = this.horario.getHoraFin().format(DateTimeFormatter.ISO_LOCAL_TIME);
+    public String getHorarioString() {
+        return this.diaClase.format(DateTimeFormatter.ofPattern("HH:mm"));
+    }
 
-        return "(" + comienzo + " - " + fin + ")";
+    public String getFechaString() {
+        return this.diaClase.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
     public String getActividadString() {
@@ -129,6 +130,10 @@ public class Clase {
 
     public void setCantidadMaxima(int nuevaCantidadMaxima) {
         this.cupoMaximo = nuevaCantidadMaxima;
+    }
+
+    public void setDiaClase(LocalDateTime diaClase) {
+        this.diaClase = diaClase;
     }
 
     public LocalDateTime getDiaClase() {
