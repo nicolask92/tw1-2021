@@ -17,4 +17,6 @@ public interface TurnoRepositorio {
     Turno getTurnoById(Long idTurno);
 
     void borrarTurno(Turno turno);
+
+    List<Turno> getTurnosParaHoy(Cliente cliente);
 }

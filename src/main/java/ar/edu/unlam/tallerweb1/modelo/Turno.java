@@ -53,4 +53,16 @@ public class Turno {
     public void setClase(Clase clase) {
         this.clase = clase;
     }
+
+    public LocalDate getFechaYHoraDeReserva() {
+        return fechaYHoraDeReserva;
+    }
+
+    public void setFechaYHoraDeReserva(LocalDate horaYFecha) {
+        this.fechaYHoraDeReserva = horaYFecha;
+    }
+
+    public boolean asisitio() {
+        return asisitio;
+    }
 }

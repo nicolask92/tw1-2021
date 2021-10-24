@@ -15,6 +15,9 @@ public class CalendarioDeActividades {
         this.fechaYClases = fechaYClases;
     }
 
+    public CalendarioDeActividades() {
+    }
+
     public List<FechaYClases> getFechasYSusClases() {
         return fechaYClases;
     }

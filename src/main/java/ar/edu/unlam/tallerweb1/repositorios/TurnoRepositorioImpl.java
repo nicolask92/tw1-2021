@@ -55,4 +55,9 @@ public class TurnoRepositorioImpl implements TurnoRepositorio {
         sessionFactory.getCurrentSession().delete(turno);
     }
 
+    @Override
+    public List<Turno> getTurnosParaHoy(Cliente cliente) {
+        return null;
+    }
+
 }

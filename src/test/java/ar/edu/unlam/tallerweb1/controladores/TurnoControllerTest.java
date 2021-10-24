@@ -8,6 +8,8 @@ import ar.edu.unlam.tallerweb1.common.Tipo;
 import ar.edu.unlam.tallerweb1.modelo.*;
 import ar.edu.unlam.tallerweb1.servicios.ClaseService;
 import ar.edu.unlam.tallerweb1.servicios.TurnoService;
+import ar.edu.unlam.tallerweb1.viewBuilders.CalendarioDeActividades;
+import ar.edu.unlam.tallerweb1.viewBuilders.ClasesViewModelBuilder;
 import org.junit.Test;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -16,9 +18,12 @@ import javax.servlet.http.HttpSession;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
@@ -26,9 +31,11 @@ public class TurnoControllerTest {
 
     ClaseService claseService = mock(ClaseService.class);
     TurnoService turnoService = mock(TurnoService.class);
-    TurnoController turnoController = new TurnoController(claseService, turnoService);
     HttpServletRequest mockDeHttpServletSession = mock(HttpServletRequest.class);
     HttpSession mockSession = mock(HttpSession.class);
+    ClasesViewModelBuilder clasesViewModelBuilder = mock(ClasesViewModelBuilder.class);
+
+    TurnoController turnoController = new TurnoController(claseService, turnoService, clasesViewModelBuilder);
 
     @Test
     public void testQueSeMuestrenLosTurnosDeUnUsuarioEspecifico() throws Exception {
@@ -86,6 +93,18 @@ public class TurnoControllerTest {
         thenElTurnoNoSeBorraYRedirigeALaViewTurnos(mv);
     }
 
+    @Test
+    public void testSiHayTurnosParaElDiaDeHoySeLoRenderice() throws Exception {
+        Turno turno = givenHayUnTurnoParaHoy();
+        ModelAndView mv = whenMuestroLosTurnos(turno);
+        thenElTurnoSeMandaALaVista(mv, turno);
+    }
+
+    private Turno givenHayUnTurnoParaHoy() {
+        Turno turno = givenHayUnTurno();
+        turno.setFechaYHoraDeReserva(LocalDate.now());
+        return turno;
+    }
 
     private Turno givenUnClienteConUnTurno(Cliente cliente) {
         Turno turno = new Turno(cliente, new Clase(), LocalDate.now());
@@ -181,6 +200,13 @@ public class TurnoControllerTest {
         return turnoController.borrarTurno(turno.getId(), session);
     }
 
+
+    private ModelAndView whenMuestroLosTurnos(Turno turno) throws Exception {
+        when(clasesViewModelBuilder.getCalendarioCompleto(anyList(), any())).thenReturn(new CalendarioDeActividades());
+        when(turnoService.getTurnosParaHoy(anyLong())).thenReturn(List.of(turno));
+        return turnoController.mostrarClasesParaSacarTurnos(Optional.empty(), mockSession);
+    }
+
     private void thenReservoElTurnoCorrectamente(ModelAndView mv) {
         assertThat(mv.getModel().get("msgGuardado")).isEqualTo("Se guardo turno correctamente");
         assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-turno");
@@ -214,5 +240,10 @@ public class TurnoControllerTest {
     private void thenElTurnoNoSeBorraYRedirigeALaViewTurnos(ModelAndView mv) {
         assertThat(mv.getModel().get("msgUsuarioNoValido")).isEqualTo("El turno no corresponde al usuario");
         assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-turno");
+    }
+
+    private void thenElTurnoSeMandaALaVista(ModelAndView mv, Turno turno) {
+        assertThat(mv.getModel().get("turnosDelDia") == List.of(turno));
+        assertThat(mv.getViewName().equals("clases-para-turnos"));
     }
 }

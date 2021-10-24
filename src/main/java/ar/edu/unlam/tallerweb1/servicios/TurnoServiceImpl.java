@@ -42,7 +42,7 @@ public class TurnoServiceImpl implements TurnoService {
         Cliente cliente = clienteRepositorio.getById(idUsuario);
         if (clase == null)
             throw new Exception();
-        if(clase.getDiaClase().isBefore(LocalDateTime.now()))
+        if (clase.getDiaClase().isBefore(LocalDateTime.now()))
             throw new LaClaseEsDeUnaFechaAnterioALaActualException();
 
         clase.agregarCliente(cliente); //exepcion de si tiene cupo disponible
@@ -69,5 +69,11 @@ public class TurnoServiceImpl implements TurnoService {
 
         turnoRepositorio.borrarTurno(turno);
 
+    }
+
+    @Override
+    public List<Turno> getTurnosParaHoy(Long idCliente) {
+        Cliente cliente = clienteRepositorio.getById(idCliente);
+        return turnoRepositorio.getTurnosParaHoy(cliente);
     }
 }

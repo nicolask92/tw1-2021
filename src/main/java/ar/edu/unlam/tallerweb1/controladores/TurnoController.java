@@ -18,32 +18,36 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Optional;
 
 @Controller
 public class TurnoController {
 
-    @Autowired
-    ClasesViewModelBuilder clasesViewModelBuilder;
-
+    private ClasesViewModelBuilder clasesViewModelBuilder;
     private ClaseService claseService;
     private TurnoService turnoService;
 
     @Autowired
-    TurnoController(ClaseService claseService, TurnoService turnoService) {
+    TurnoController(ClaseService claseService, TurnoService turnoService, ClasesViewModelBuilder clasesViewModelBuilder) {
         this.claseService = claseService;
         this.turnoService = turnoService;
+        this.clasesViewModelBuilder = clasesViewModelBuilder;
     }
 
     @RequestMapping({"/mostrar-clases/{mes}", "/mostrar-clases"})
-    public ModelAndView mostrarClasesParaSacarTurnos(@PathVariable Optional<Mes> mes) throws Exception {
+    public ModelAndView mostrarClasesParaSacarTurnos(@PathVariable Optional<Mes> mes, HttpSession httpSession) throws Exception {
+
+        Long idUsuario = (Long) httpSession.getAttribute("usuarioId");
 
         List<Clase> clases = claseService.getClases(mes);
+        List<Turno> turnosDelDia = turnoService.getTurnosParaHoy(idUsuario);
 
         CalendarioDeActividades calendarioYActividades = clasesViewModelBuilder.getCalendarioCompleto(clases, mes);
 
         ModelMap model = new ModelMap();
+        model.put("turnosDelDia", turnosDelDia);
         model.put("mes", mes);
         model.put("calendario", calendarioYActividades);
 
