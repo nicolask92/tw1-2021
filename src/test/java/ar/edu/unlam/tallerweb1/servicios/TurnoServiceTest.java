@@ -3,6 +3,7 @@ package ar.edu.unlam.tallerweb1.servicios;
 import ar.edu.unlam.tallerweb1.Exceptiones.ElClienteNoCorrespondeAlTurnoException;
 import ar.edu.unlam.tallerweb1.Exceptiones.LaClaseEsDeUnaFechaAnterioALaActualException;
 import ar.edu.unlam.tallerweb1.Exceptiones.TurnoExpiroException;
+import ar.edu.unlam.tallerweb1.Exceptiones.YaHayTurnoDeLaMismaClaseException;
 import ar.edu.unlam.tallerweb1.common.Frecuencia;
 import ar.edu.unlam.tallerweb1.common.Modalidad;
 import ar.edu.unlam.tallerweb1.common.Tipo;
@@ -35,7 +36,7 @@ public class TurnoServiceTest {
 
 
     @Test
-    public void testQueSiGuardeTurnoSeAgregue1ClienteALaClase() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException {
+    public void testQueSiGuardeTurnoSeAgregue1ClienteALaClase() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException {
         Cliente cliente = givenUnClienteActivo();
         Clase clase = givenClaseConLugar();
         whenGuardoTurno(clase.getId(), cliente.getId(), cliente, clase);
@@ -44,7 +45,7 @@ public class TurnoServiceTest {
     }
 
     @Test(expected = Exception.class)
-    public void testQueLaClaseNoSeEncontro() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException {
+    public void testQueLaClaseNoSeEncontro() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException {
 
         Cliente cliente = givenUnClienteActivo();
         givenLaClaseNoExiste();
@@ -70,7 +71,7 @@ public class TurnoServiceTest {
     }
 
     @Test(expected = LaClaseEsDeUnaFechaAnterioALaActualException.class)
-    public void queNoSePuedaReservarTurnoDespuesDeLaFechaDeLaClase() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException {
+    public void queNoSePuedaReservarTurnoDespuesDeLaFechaDeLaClase() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException {
         Cliente cliente = givenUnClienteActivo();
         Clase clase =givenClaseConFechaAnterioAlDiaDeHoy();
         whenReservoTurno(cliente, clase);
@@ -169,7 +170,7 @@ public class TurnoServiceTest {
         return new Actividad("Actividad de alto impacto", Tipo.CROSSFIT, 4000f, Frecuencia.CON_INICIO_Y_FIN, periodo);
     }
 
-    private void whenGuardoTurno(Long idClase, Long idUsuario, Cliente cliente, Clase clase) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException {
+    private void whenGuardoTurno(Long idClase, Long idUsuario, Cliente cliente, Clase clase) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException {
         when(claseRepositorio.getById(idClase)).thenReturn(clase);
         when(clienteRepositorio.getById(idUsuario)).thenReturn(cliente);
         doNothing().when(turnoRepositorio).guardarTurno(cliente,clase);
@@ -177,7 +178,7 @@ public class TurnoServiceTest {
 
     }
 
-    private void whenGuardoTurnoIncorrectamente(Cliente cliente) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException {
+    private void whenGuardoTurnoIncorrectamente(Cliente cliente) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException {
        when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
        turnoService.guardarTurno(IDCLASE, cliente.getId());
     }
@@ -189,7 +190,7 @@ public class TurnoServiceTest {
 
     }
 
-    private void whenReservoTurno(Cliente cliente, Clase clase) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException {
+    private void whenReservoTurno(Cliente cliente, Clase clase) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException {
         when(claseRepositorio.getById(clase.getId())).thenReturn(clase);
         when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
         turnoService.guardarTurno(cliente.getId(), clase.getId());

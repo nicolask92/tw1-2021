@@ -3,6 +3,7 @@ package ar.edu.unlam.tallerweb1.controladores;
 import ar.edu.unlam.tallerweb1.Exceptiones.ElClienteNoCorrespondeAlTurnoException;
 import ar.edu.unlam.tallerweb1.Exceptiones.LaClaseEsDeUnaFechaAnterioALaActualException;
 import ar.edu.unlam.tallerweb1.Exceptiones.TurnoExpiroException;
+import ar.edu.unlam.tallerweb1.Exceptiones.YaHayTurnoDeLaMismaClaseException;
 import ar.edu.unlam.tallerweb1.common.Frecuencia;
 import ar.edu.unlam.tallerweb1.common.Modalidad;
 import ar.edu.unlam.tallerweb1.common.Tipo;
@@ -52,7 +53,7 @@ public class TurnoControllerTest {
     }
 
     @Test
-    public void testQueSePuedaReservarTurno() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException {
+    public void testQueSePuedaReservarTurno() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException {
         Clase clase = givenQueLaClaseTengaLugar();
         Cliente cliente = new Cliente();
         ModelAndView mv = whenReservoTurno(clase.getId(), mockDeHttpServletSession, cliente.getId());
@@ -60,7 +61,7 @@ public class TurnoControllerTest {
     }
 
     @Test
-    public void testQueNoSePuedaReservarTurno() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException {
+    public void testQueNoSePuedaReservarTurno() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException {
         Clase clase = givenQueLaClaseNoTengaLugar();
         Cliente cliente = givenUnClienteActivo();
         ModelAndView mv = whenReservoTurnoSinLugar(clase.getId(), mockDeHttpServletSession, cliente.getId());
@@ -77,7 +78,7 @@ public class TurnoControllerTest {
     }
 
     @Test
-    public void queNoSePuedaReservarTurnoDespuesDeLaFechaDeLaClase() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException {
+    public void queNoSePuedaReservarTurnoDespuesDeLaFechaDeLaClase() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException {
         Cliente cliente =givenUnClienteActivo();
         Clase clase = givenClaseConFechaAnterioAlDiaDeHoy();
         ModelAndView mv = whenReservoTurnoConFechaAnteriorALaActual(clase.getId(), mockDeHttpServletSession, cliente.getId());
@@ -107,7 +108,26 @@ public class TurnoControllerTest {
         thenElTurnoNoSeBorraYSaleAdvertencia(mv);
     }
 
+    @Test
+    public void noSePuedaSacarTurno2VecesDeLaMismaClase() throws LaClaseEsDeUnaFechaAnterioALaActualException, Exception, YaHayTurnoDeLaMismaClaseException {
+        Cliente cliente = givenUnClienteActivo();
+        Turno turno = givenHayUnTurnoParaHoy();
+        turno.setCliente(cliente);
+        ModelAndView mv = whenReservoTurnoDeLaMismaClase(turno.getClase().getId(), mockDeHttpServletSession, cliente.getId());
+        thenNoPuedoReservarTurnoDeLaMismaClase(mv);
+    }
 
+    private void thenNoPuedoReservarTurnoDeLaMismaClase(ModelAndView mv) {
+        assertThat(mv.getModel().get("msgTurnoExistente")).isEqualTo("Ya reservaste turno para esta clase");
+        assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-clases");
+    }
+
+    private ModelAndView whenReservoTurnoDeLaMismaClase(Long idTurno, HttpServletRequest session, Long idUsuario) throws LaClaseEsDeUnaFechaAnterioALaActualException, Exception, YaHayTurnoDeLaMismaClaseException {
+        when(session.getSession()).thenReturn(mockSession);
+        when(session.getSession().getAttribute("usuarioId")).thenReturn(idUsuario);
+        doThrow(YaHayTurnoDeLaMismaClaseException.class).when(turnoService).guardarTurno(idTurno, idUsuario);
+        return turnoController.reservarTurno(idTurno, session);
+    }
 
     private Turno givenHayUnTurnoDeAyer(Cliente cliente) {
         Clase clase = new Clase();
@@ -166,14 +186,14 @@ public class TurnoControllerTest {
         return clase;
     }
 
-    private ModelAndView whenReservoTurno(Long id,HttpServletRequest session, Long idUsuario) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException {
+    private ModelAndView whenReservoTurno(Long id,HttpServletRequest session, Long idUsuario) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException {
         when(session.getSession()).thenReturn(mockSession);
         when(session.getSession().getAttribute("usuarioId")).thenReturn(idUsuario);
         doNothing().when(turnoService).guardarTurno(id, idUsuario);
         return turnoController.reservarTurno(id, session);
     }
 
-    private ModelAndView whenReservoTurnoSinLugar(Long id, HttpServletRequest session, Long idUsuario) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException {
+    private ModelAndView whenReservoTurnoSinLugar(Long id, HttpServletRequest session, Long idUsuario) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException {
         when(session.getSession()).thenReturn(mockSession);
         when(session.getSession().getAttribute("usuarioId")).thenReturn(idUsuario);
         doThrow(Exception.class).when(turnoService).guardarTurno(id, idUsuario);
@@ -203,7 +223,7 @@ public class TurnoControllerTest {
         return turnoController.mostrarTurnoPorId(session);
     }
 
-    private ModelAndView whenReservoTurnoConFechaAnteriorALaActual(Long idClase, HttpServletRequest session, Long idUsuario) throws LaClaseEsDeUnaFechaAnterioALaActualException, Exception {
+    private ModelAndView whenReservoTurnoConFechaAnteriorALaActual(Long idClase, HttpServletRequest session, Long idUsuario) throws LaClaseEsDeUnaFechaAnterioALaActualException, Exception, YaHayTurnoDeLaMismaClaseException {
         when(session.getSession()).thenReturn(mockSession);
         when(session.getSession().getAttribute("usuarioId")).thenReturn(idUsuario);
         doThrow(LaClaseEsDeUnaFechaAnterioALaActualException.class).when(turnoService).guardarTurno(idClase, idUsuario);
