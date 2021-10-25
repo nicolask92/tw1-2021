@@ -13,6 +13,13 @@
                 ${param['msg']}
         </div>
     </c:if>
+
+    <c:if test="${not empty param['msgTurnoExistente']}">
+        <div class="alert alert-danger" role="alert">
+                ${param['msgTurnoExistente']}
+        </div>
+    </c:if>
+
     <table class="table">
         <thead>
             <tr>

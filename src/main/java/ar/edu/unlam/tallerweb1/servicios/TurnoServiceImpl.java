@@ -42,11 +42,17 @@ public class TurnoServiceImpl implements TurnoService {
     public void guardarTurno(Long idClase, Long idUsuario) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException {
         Clase clase = claseRepositorio.getById(idClase);
         Cliente cliente = clienteRepositorio.getById(idUsuario);
+        List<Turno> turnosDelCliente = turnoRepositorio.getTurnosByIdCliente(cliente);
         if (clase == null)
             throw new Exception();
+
         if (clase.getDiaClase().isBefore(LocalDateTime.now()))
             throw new LaClaseEsDeUnaFechaAnterioALaActualException();
 
+        for (Turno t : turnosDelCliente) {
+            if(t.getClase().getId().equals(clase.getId()))
+                throw new YaHayTurnoDeLaMismaClaseException();
+        }
         clase.agregarCliente(cliente); //exepcion de si tiene cupo disponible
         turnoRepositorio.guardarTurno(cliente, clase);
 

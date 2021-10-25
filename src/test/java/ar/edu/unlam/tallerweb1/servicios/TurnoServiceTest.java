@@ -39,7 +39,7 @@ public class TurnoServiceTest {
     public void testQueSiGuardeTurnoSeAgregue1ClienteALaClase() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException {
         Cliente cliente = givenUnClienteActivo();
         Clase clase = givenClaseConLugar();
-        whenGuardoTurno(clase.getId(), cliente.getId(), cliente, clase);
+        whenGuardoTurno(clase.getId(), cliente.getId(), cliente, clase, new Turno());
         thenSeIncrementaEn1LaCantidadDeClientesEnLaClase(clase);
 
     }
@@ -101,6 +101,13 @@ public class TurnoServiceTest {
         whenBorroTurno(turno, cliente);
     }
 
+    @Test(expected = YaHayTurnoDeLaMismaClaseException.class)
+    public void noSePuedaSacarTurno2VecesDeLaMismaClase() throws YaHayTurnoDeLaMismaClaseException, LaClaseEsDeUnaFechaAnterioALaActualException, Exception {
+        Cliente cliente = givenUnClienteActivo();
+        Turno turno = givenTurno(cliente);
+        whenGuardoTurno(turno.getClase().getId(), cliente.getId(), cliente, turno.getClase(), turno);
+    }
+
     private Turno givenHayUnTurnoDeAyer(Cliente cliente) {
         Clase clase = new Clase();
         clase.setDiaClase(LocalDateTime.now().minusDays(1));
@@ -137,8 +144,10 @@ public class TurnoServiceTest {
         return new Turno (new Cliente() , new Clase(), LocalDate.now());
     }
 
-    private Turno givenTurno(Cliente cliente) {
-        Turno turno = new Turno(cliente , new Clase(), LocalDate.now());
+    private Turno givenTurno(Cliente cliente) throws Exception {
+        Clase clase = new Clase(LocalDateTime.now().plusDays(2), new Actividad(), Modalidad.PRESENCIAL);
+        clase.setId(1L);
+        Turno turno = new Turno(cliente , clase, LocalDate.now());
         turno.setId(1L);
         return turno;
     }
@@ -170,9 +179,10 @@ public class TurnoServiceTest {
         return new Actividad("Actividad de alto impacto", Tipo.CROSSFIT, 4000f, Frecuencia.CON_INICIO_Y_FIN, periodo);
     }
 
-    private void whenGuardoTurno(Long idClase, Long idUsuario, Cliente cliente, Clase clase) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException {
+    private void whenGuardoTurno(Long idClase, Long idUsuario, Cliente cliente, Clase clase, Turno turno) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException {
         when(claseRepositorio.getById(idClase)).thenReturn(clase);
         when(clienteRepositorio.getById(idUsuario)).thenReturn(cliente);
+        when(turnoRepositorio.getTurnosByIdCliente(cliente)).thenReturn(List.of(turno));
         doNothing().when(turnoRepositorio).guardarTurno(cliente,clase);
         turnoService.guardarTurno(idClase, idUsuario);
 
