@@ -102,13 +102,14 @@ public class TurnoControllerTest {
 
     private Turno givenHayUnTurnoParaHoy() {
         Turno turno = givenHayUnTurno();
-        turno.setFechaYHoraDeReserva(LocalDate.now());
+        Clase clase = new Clase();
+        clase.setDiaClase(LocalDateTime.now());
+        turno.setClase(clase);
         return turno;
     }
 
     private Turno givenUnClienteConUnTurno(Cliente cliente) {
-        Turno turno = new Turno(cliente, new Clase(), LocalDate.now());
-        return turno;
+        return new Turno(cliente, new Clase(), LocalDate.now());
     }
 
     private Cliente givenUnUsuarioSinTurnos() {

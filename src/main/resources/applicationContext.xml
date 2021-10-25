@@ -31,6 +31,9 @@
 	<mvc:interceptors>
 		<mvc:interceptor>
 			<mvc:mapping path="/**"/>
+			<mvc:exclude-mapping path="/css/**"/>
+			<mvc:exclude-mapping path="/img/**"/>
+			<mvc:exclude-mapping path="/js/**"/>
 			<bean id="loginServiceInterceptor" class="ar.edu.unlam.tallerweb1.intercepters.LoginServiceInterceptor"/>
 		</mvc:interceptor>
 	</mvc:interceptors>
