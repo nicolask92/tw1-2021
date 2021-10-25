@@ -22,6 +22,13 @@
         <br>
     </c:if>
 
+    <c:if test="${not empty param['msgTurnoExpiro']}">
+        <div class="alert alert-danger" role="alert">
+                ${param['msgTurnoExpiro']}
+        </div>
+        <br>
+    </c:if>
+
     <c:if test="${not empty turnos}">
 
         <div class="row">
