@@ -2,6 +2,7 @@ package ar.edu.unlam.tallerweb1.servicios;
 
 import ar.edu.unlam.tallerweb1.Exceptiones.ElClienteNoCorrespondeAlTurnoException;
 import ar.edu.unlam.tallerweb1.Exceptiones.LaClaseEsDeUnaFechaAnterioALaActualException;
+import ar.edu.unlam.tallerweb1.Exceptiones.TurnoExpiroException;
 import ar.edu.unlam.tallerweb1.modelo.Cliente;
 import ar.edu.unlam.tallerweb1.modelo.Turno;
 
@@ -15,7 +16,7 @@ public interface TurnoService {
 
     List<Turno> getTurnosByIdCliente(Long id) throws Exception;
 
-    void borrarTurno(Long idTurno, Long idCliente) throws ElClienteNoCorrespondeAlTurnoException;
+    void borrarTurno(Long idTurno, Long idCliente) throws ElClienteNoCorrespondeAlTurnoException, TurnoExpiroException;
 
     List<Turno> getTurnosParaHoy(Long idCliente);
 }

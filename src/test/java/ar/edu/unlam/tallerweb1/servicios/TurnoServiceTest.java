@@ -2,6 +2,7 @@ package ar.edu.unlam.tallerweb1.servicios;
 
 import ar.edu.unlam.tallerweb1.Exceptiones.ElClienteNoCorrespondeAlTurnoException;
 import ar.edu.unlam.tallerweb1.Exceptiones.LaClaseEsDeUnaFechaAnterioALaActualException;
+import ar.edu.unlam.tallerweb1.Exceptiones.TurnoExpiroException;
 import ar.edu.unlam.tallerweb1.common.Frecuencia;
 import ar.edu.unlam.tallerweb1.common.Modalidad;
 import ar.edu.unlam.tallerweb1.common.Tipo;
@@ -52,7 +53,7 @@ public class TurnoServiceTest {
     }
 
     @Test
-    public void QueSePuedeBorrarTurno() throws Exception, ElClienteNoCorrespondeAlTurnoException {
+    public void QueSePuedeBorrarTurno() throws Exception, ElClienteNoCorrespondeAlTurnoException, TurnoExpiroException {
         Cliente cliente = givenUnClienteActivo();
         Turno turno = givenTurno(cliente);
         whenBorroTurno(turno, cliente);
@@ -61,7 +62,7 @@ public class TurnoServiceTest {
     }
 
     @Test(expected = ElClienteNoCorrespondeAlTurnoException.class)
-    public void QueNoSePuedaBorrarTurnoConUsuarioDistintoAlUsurioDelTurno() throws ElClienteNoCorrespondeAlTurnoException, Exception {
+    public void QueNoSePuedaBorrarTurnoConUsuarioDistintoAlUsurioDelTurno() throws ElClienteNoCorrespondeAlTurnoException, Exception, TurnoExpiroException {
         Turno turno = givenTurnoConCliente();
         Cliente cliente = givenUnClienteActivo();
         whenBorroTurno(turno, cliente);
@@ -90,6 +91,19 @@ public class TurnoServiceTest {
         List<Turno> turnosDeAyer = givenTurnos(false);
         List<Turno> turnosDevueltosPorRepo = whenBuscoLosTurnosDelClienteParaElDiaDeHoy(cliente, turnosDeAyer, false);
         thenElListadoDeTurnosDelDiaDeHoyEsVacio(turnosDevueltosPorRepo);
+    }
+
+    @Test(expected = TurnoExpiroException.class)
+    public void noSePuedeBorrarTurnoAnteriorALaFechaActual() throws ElClienteNoCorrespondeAlTurnoException, Exception, TurnoExpiroException {
+        Cliente cliente = givenUnClienteActivo();
+        Turno turno = givenHayUnTurnoDeAyer(cliente);
+        whenBorroTurno(turno, cliente);
+    }
+
+    private Turno givenHayUnTurnoDeAyer(Cliente cliente) {
+        Clase clase = new Clase();
+        clase.setDiaClase(LocalDateTime.now().minusDays(1));
+        return new Turno(cliente, clase , LocalDate.now().minusDays(5));
     }
 
     private List<Turno> givenTurnos(boolean paraHoy) {
@@ -168,10 +182,11 @@ public class TurnoServiceTest {
        turnoService.guardarTurno(IDCLASE, cliente.getId());
     }
 
-    private void whenBorroTurno(Turno turno, Cliente cliente) throws Exception, ElClienteNoCorrespondeAlTurnoException {
+    private void whenBorroTurno(Turno turno, Cliente cliente) throws Exception, ElClienteNoCorrespondeAlTurnoException, TurnoExpiroException {
         when(turnoRepositorio.getTurnoById(turno.getId())).thenReturn(turno);
         when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
         turnoService.borrarTurno(turno.getId(), cliente.getId());
+
     }
 
     private void whenReservoTurno(Cliente cliente, Clase clase) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException {

@@ -2,6 +2,7 @@ package ar.edu.unlam.tallerweb1.controladores;
 
 import ar.edu.unlam.tallerweb1.Exceptiones.ElClienteNoCorrespondeAlTurnoException;
 import ar.edu.unlam.tallerweb1.Exceptiones.LaClaseEsDeUnaFechaAnterioALaActualException;
+import ar.edu.unlam.tallerweb1.Exceptiones.TurnoExpiroException;
 import ar.edu.unlam.tallerweb1.common.Mes;
 import ar.edu.unlam.tallerweb1.modelo.Clase;
 import ar.edu.unlam.tallerweb1.modelo.Turno;
@@ -111,6 +112,9 @@ public class TurnoController {
             return new ModelAndView("redirect:/mostrar-turno", model);
         }catch (ElClienteNoCorrespondeAlTurnoException e){
             model.put("msgUsuarioNoValido", "El turno no corresponde al usuario");
+            return new ModelAndView("redirect:/mostrar-turno",model);
+        }catch (TurnoExpiroException e){
+            model.put("msgTurnoExpiro", "No se puede borrar turno porque es de una fecha anterior a la actual");
             return new ModelAndView("redirect:/mostrar-turno",model);
         }
     }

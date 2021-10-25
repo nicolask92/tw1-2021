@@ -2,6 +2,7 @@ package ar.edu.unlam.tallerweb1.controladores;
 
 import ar.edu.unlam.tallerweb1.Exceptiones.ElClienteNoCorrespondeAlTurnoException;
 import ar.edu.unlam.tallerweb1.Exceptiones.LaClaseEsDeUnaFechaAnterioALaActualException;
+import ar.edu.unlam.tallerweb1.Exceptiones.TurnoExpiroException;
 import ar.edu.unlam.tallerweb1.common.Frecuencia;
 import ar.edu.unlam.tallerweb1.common.Modalidad;
 import ar.edu.unlam.tallerweb1.common.Tipo;
@@ -18,10 +19,8 @@ import javax.servlet.http.HttpSession;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,7 +69,7 @@ public class TurnoControllerTest {
     }
 
     @Test
-    public void TestQueSeBorreReservaDeTurno() throws Exception, ElClienteNoCorrespondeAlTurnoException {
+    public void TestQueSeBorreReservaDeTurno() throws Exception, ElClienteNoCorrespondeAlTurnoException, TurnoExpiroException {
         Cliente cliente = givenUnClienteActivo();
         Turno turno = givenUnClienteConUnTurno(cliente);
         ModelAndView mv = whenBorroTurnoExistente(turno, cliente, mockDeHttpServletSession);
@@ -85,7 +84,7 @@ public class TurnoControllerTest {
         thenElTurnoNoSeReseva(mv);
     }
     @Test
-    public void QueNoSePuedaBorrarTurnoConUsuarioDistintoAlUsurioDelTurno() throws ElClienteNoCorrespondeAlTurnoException, Exception {
+    public void QueNoSePuedaBorrarTurnoConUsuarioDistintoAlUsurioDelTurno() throws ElClienteNoCorrespondeAlTurnoException, Exception, TurnoExpiroException {
         Cliente cliente =givenUnClienteActivo();
         Cliente cliente2 = givenUnClienteActivo();
         Turno turno = givenUnClienteConUnTurno(cliente);
@@ -98,6 +97,23 @@ public class TurnoControllerTest {
         Turno turno = givenHayUnTurnoParaHoy();
         ModelAndView mv = whenMuestroLosTurnos(turno);
         thenElTurnoSeMandaALaVista(mv, turno);
+    }
+
+    @Test
+    public void noSePuedeBorrarTurnoAnteriorALaFechaActual() throws ElClienteNoCorrespondeAlTurnoException, TurnoExpiroException {
+        Cliente cliente = givenUnClienteActivo();
+        Turno turno = givenHayUnTurnoDeAyer(cliente);
+        ModelAndView mv = whenBorroTurnoDeAyer(turno, cliente, mockDeHttpServletSession);
+        thenElTurnoNoSeBorraYSaleAdvertencia(mv);
+    }
+
+
+
+    private Turno givenHayUnTurnoDeAyer(Cliente cliente) {
+        Clase clase = new Clase();
+        clase.setDiaClase(LocalDateTime.now().minusDays(1));
+        return new Turno(cliente, clase , LocalDate.now().minusDays(5));
+
     }
 
     private Turno givenHayUnTurnoParaHoy() {
@@ -164,7 +180,7 @@ public class TurnoControllerTest {
         return turnoController.reservarTurno(id, session);
     }
 
-    private ModelAndView whenBorroTurnoExistente(Turno turno, Cliente cliente, HttpServletRequest session) throws Exception, ElClienteNoCorrespondeAlTurnoException {
+    private ModelAndView whenBorroTurnoExistente(Turno turno, Cliente cliente, HttpServletRequest session) throws Exception, ElClienteNoCorrespondeAlTurnoException, TurnoExpiroException {
         when(session.getSession()).thenReturn(mockSession);
         when(session.getSession().getAttribute("usuarioId")).thenReturn(cliente.getId());
         doNothing().when(turnoService).borrarTurno(turno.getId(),cliente.getId());
@@ -194,7 +210,7 @@ public class TurnoControllerTest {
         return turnoController.reservarTurno(idClase, session);
     }
 
-    private ModelAndView whenBorroTurnoConUsuarioDistintoAlDelTurno(Turno turno, Cliente cliente2, HttpServletRequest session) throws ElClienteNoCorrespondeAlTurnoException {
+    private ModelAndView whenBorroTurnoConUsuarioDistintoAlDelTurno(Turno turno, Cliente cliente2, HttpServletRequest session) throws ElClienteNoCorrespondeAlTurnoException, TurnoExpiroException {
         when(session.getSession()).thenReturn(mockSession);
         when(session.getSession().getAttribute("usuarioId")).thenReturn(turno.getCliente().getId());
         doThrow(ElClienteNoCorrespondeAlTurnoException.class).when(turnoService).borrarTurno(turno.getId(), cliente2.getId());
@@ -206,6 +222,14 @@ public class TurnoControllerTest {
         when(clasesViewModelBuilder.getCalendarioCompleto(anyList(), any())).thenReturn(new CalendarioDeActividades());
         when(turnoService.getTurnosParaHoy(anyLong())).thenReturn(List.of(turno));
         return turnoController.mostrarClasesParaSacarTurnos(Optional.empty(), mockSession);
+    }
+
+    private ModelAndView whenBorroTurnoDeAyer(Turno turno, Cliente cliente, HttpServletRequest session ) throws ElClienteNoCorrespondeAlTurnoException, TurnoExpiroException {
+        when(session.getSession()).thenReturn(mockSession);
+        when(session.getSession().getAttribute("usuarioId")).thenReturn(cliente.getId());
+        doThrow(TurnoExpiroException.class).when(turnoService).borrarTurno(turno.getId(),cliente.getId());
+
+        return turnoController.borrarTurno(turno.getId(), session);
     }
 
     private void thenReservoElTurnoCorrectamente(ModelAndView mv) {
@@ -246,5 +270,10 @@ public class TurnoControllerTest {
     private void thenElTurnoSeMandaALaVista(ModelAndView mv, Turno turno) {
         assertThat(mv.getModel().get("turnosDelDia") == List.of(turno));
         assertThat(mv.getViewName().equals("clases-para-turnos"));
+    }
+
+    private void thenElTurnoNoSeBorraYSaleAdvertencia(ModelAndView mv) {
+        assertThat(mv.getModel().get("msgTurnoExpiro")).isEqualTo("No se puede borrar turno porque es de una fecha anterior a la actual");
+        assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-turno");
     }
 }
