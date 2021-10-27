@@ -39,9 +39,9 @@ public class TurnoServiceTest {
     public void testQueSiGuardeTurnoSeAgregue1ClienteALaClase() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException {
         Cliente cliente = givenUnClienteActivo();
         Clase clase = givenClaseConLugar();
-        whenGuardoTurno(clase.getId(), cliente.getId(), cliente, clase, new Turno());
+        Turno turno = givenTurnoDeOtraClase();
+        whenGuardoTurno(clase.getId(), cliente.getId(), cliente, clase, turno);
         thenSeIncrementaEn1LaCantidadDeClientesEnLaClase(clase);
-
     }
 
     @Test(expected = Exception.class)
@@ -73,7 +73,7 @@ public class TurnoServiceTest {
     @Test(expected = LaClaseEsDeUnaFechaAnterioALaActualException.class)
     public void queNoSePuedaReservarTurnoDespuesDeLaFechaDeLaClase() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException {
         Cliente cliente = givenUnClienteActivo();
-        Clase clase =givenClaseConFechaAnterioAlDiaDeHoy();
+        Clase clase = givenClaseConFechaAnterioAlDiaDeHoy();
         whenReservoTurno(cliente, clase);
         thenElTurnoNoSeReserva();
     }
@@ -106,6 +106,13 @@ public class TurnoServiceTest {
         Cliente cliente = givenUnClienteActivo();
         Turno turno = givenTurno(cliente);
         whenGuardoTurno(turno.getClase().getId(), cliente.getId(), cliente, turno.getClase(), turno);
+    }
+
+    private Turno givenTurnoDeOtraClase() throws Exception {
+        Clase clase = givenClaseConFechaAnterioAlDiaDeHoy();
+        Turno turno = new Turno();
+        turno.setClase(clase);
+        return turno;
     }
 
     private Turno givenHayUnTurnoDeAyer(Cliente cliente) {
@@ -172,10 +179,6 @@ public class TurnoServiceTest {
         LocalDateTime pasadoManiana = LocalDateTime.now().plusDays(2);
         Periodo periodo = new Periodo(antesDeAyer, pasadoManiana);
 
-        LocalTime ahora = LocalTime.now();
-        LocalTime enUnRato = LocalTime.now().plusHours(2);
-        Horario horario = new Horario(ahora, enUnRato);
-
         return new Actividad("Actividad de alto impacto", Tipo.CROSSFIT, 4000f, Frecuencia.CON_INICIO_Y_FIN, periodo);
     }
 
@@ -185,7 +188,6 @@ public class TurnoServiceTest {
         when(turnoRepositorio.getTurnosByIdCliente(cliente)).thenReturn(List.of(turno));
         doNothing().when(turnoRepositorio).guardarTurno(cliente,clase);
         turnoService.guardarTurno(idClase, idUsuario);
-
     }
 
     private void whenGuardoTurnoIncorrectamente(Cliente cliente) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException {

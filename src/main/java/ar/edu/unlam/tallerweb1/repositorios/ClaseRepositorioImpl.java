@@ -32,14 +32,12 @@ public class ClaseRepositorioImpl implements ClaseRepositorio {
         if (mes.isPresent()) {
 
             int numeroDeMes = mes.get().getNumeroDelMes();
+
             LocalDateTime primeroDiaDelMes = LocalDateTime.of(Year.now().getValue(), Month.of(numeroDeMes), 1, 0, 0, 0);
-            Calendar cal = Calendar.getInstance();
-            // Month.of(numeroDeMes).getValue()
-            cal.set(Year.now().getValue(), numeroDeMes+1, 1);
-            int ultimoDiaDelMes = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-            LocalDateTime fechaCompletaUltimoDia = LocalDateTime.of(Year.now().getValue(), Month.of(numeroDeMes), ultimoDiaDelMes - 1, 23, 59, 59);
+            LocalDateTime ultimoDiaDelMes = primeroDiaDelMes.withDayOfMonth(primeroDiaDelMes.toLocalDate().lengthOfMonth()).with(LocalTime.of(23, 59, 59));
+
             return session.createCriteria(Clase.class)
-                .add(Restrictions.between("diaClase", primeroDiaDelMes, fechaCompletaUltimoDia))
+                .add(Restrictions.between("diaClase", primeroDiaDelMes, ultimoDiaDelMes))
                 .list();
         } else {
             Calendar cal = Calendar.getInstance();

@@ -32,7 +32,7 @@ public class Clase {
     )
     List<Entrenador> profesores;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     Actividad actividad;
 
     @Enumerated(EnumType.STRING)

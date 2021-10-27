@@ -5,6 +5,8 @@ import ar.edu.unlam.tallerweb1.modelo.Clase;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,7 +25,7 @@ public class ClasesViewModelBuilder {
     private CalendarioDeActividades armarCalendario(Calendar cal, List<Clase> clases) throws Exception {
         List<FechaYClases> fechaYClases = new ArrayList<>();
 
-        for (int numeroDelDiaDelMes = 0; numeroDelDiaDelMes < cal.getMaximum(Calendar.DAY_OF_MONTH); numeroDelDiaDelMes++) {
+        for (int numeroDelDiaDelMes = 0; numeroDelDiaDelMes < cal.getActualMaximum(Calendar.DAY_OF_MONTH); numeroDelDiaDelMes++) {
             int finalNumeroDelDiaDelMes = numeroDelDiaDelMes;
             List<Clase> clasesParaEsteDia = clases.stream()
                     .filter(clase -> (clase.getDiaClase().getDayOfMonth()-1) == finalNumeroDelDiaDelMes )
@@ -40,7 +42,11 @@ public class ClasesViewModelBuilder {
         Calendar calendario = Calendar.getInstance();
         int numeroDeMes = getNumeroDeMes(mes, calendario);
         int anioActual = calendario.get(Calendar.YEAR);
-        calendario.set(anioActual, numeroDeMes, 1);
+        if (mes.isPresent()) {
+            calendario.set(anioActual, numeroDeMes - 1, 1);
+        } else {
+            calendario.set(anioActual, numeroDeMes, 1);
+        }
         return calendario;
     }
 
@@ -55,9 +61,10 @@ public class ClasesViewModelBuilder {
     private List<String> generarListaDeDias(Calendar calendario) throws Exception {
         List<String> dias = new ArrayList<>();
         Date diaYFecha = calendario.getTime();
-        String diaEnString = new SimpleDateFormat("EEEE").format(diaYFecha);
-        switch (diaEnString) {
-            case "lunes":
+        LocalDate diaYFechaEnLocalDate = LocalDate.ofInstant(diaYFecha.toInstant(), ZoneId.systemDefault());
+        int primerDiaDelMes = diaYFechaEnLocalDate.getDayOfWeek().ordinal() + 1;
+        switch (primerDiaDelMes) {
+            case 1:
                 dias.add("Lunes");
                 dias.add("Martes");
                 dias.add("Miercoles");
@@ -66,7 +73,7 @@ public class ClasesViewModelBuilder {
                 dias.add("Sabado");
                 dias.add("Domingo");
                 break;
-            case "martes":
+            case 2:
                 dias.add("Martes");
                 dias.add("Miercoles");
                 dias.add("Jueves");
@@ -75,7 +82,7 @@ public class ClasesViewModelBuilder {
                 dias.add("Domingo");
                 dias.add("Lunes");
                 break;
-            case "miércoles":
+            case 3:
                 dias.add("Miercoles");
                 dias.add("Jueves");
                 dias.add("Viernes");
@@ -84,7 +91,7 @@ public class ClasesViewModelBuilder {
                 dias.add("Lunes");
                 dias.add("Martes");
                 break;
-            case "jueves":
+            case 4:
                 dias.add("Jueves");
                 dias.add("Viernes");
                 dias.add("Sabado");
@@ -93,7 +100,7 @@ public class ClasesViewModelBuilder {
                 dias.add("Martes");
                 dias.add("Miercoles");
                 break;
-            case "viernes":
+            case 5:
                 dias.add("Viernes");
                 dias.add("Sabado");
                 dias.add("Domingo");
@@ -102,7 +109,7 @@ public class ClasesViewModelBuilder {
                 dias.add("Miercoles");
                 dias.add("Jueves");
                 break;
-            case "sabado":
+            case 6:
                 dias.add("Sabado");
                 dias.add("Domingo");
                 dias.add("Lunes");
@@ -111,7 +118,7 @@ public class ClasesViewModelBuilder {
                 dias.add("Jueves");
                 dias.add("Viernes");
                 break;
-            case "domingo":
+            case 7:
                 dias.add("Domingo");
                 dias.add("Lunes");
                 dias.add("Martes");
@@ -121,7 +128,7 @@ public class ClasesViewModelBuilder {
                 dias.add("Sabado");
                 break;
             default:
-                throw new Exception("No hay dia con ese nombre, dia=" + diaEnString);
+                throw new Exception("No hay dia con ese nombre, dia=");
         }
         return dias;
     }

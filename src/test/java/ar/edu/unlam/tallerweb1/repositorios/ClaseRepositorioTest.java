@@ -75,7 +75,8 @@ public class ClaseRepositorioTest extends SpringTest {
     }
 
     private List<Clase> whenBuscoLaDemesSiguiente() {
-        Optional<Mes> mesSiguiente = Optional.ofNullable(Mes.values[LocalDate.now().getMonth().getValue() + 1]);
+        Optional<Mes> mesSiguiente = Optional.ofNullable(Mes.values[LocalDate.now().getMonth().getValue()]);
+        assert mesSiguiente.get().getNumeroDelMes() == LocalDate.now().plusMonths(1).getMonth().getValue();
         return claseRepositorio.getClases(mesSiguiente);
     }
 
