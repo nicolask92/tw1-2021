@@ -36,7 +36,13 @@ insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
 values(20        , "2021-10-20T10:15:30", "PRESENCIAL", 1, 4);
 
 insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
-values(20        , "2021-30-20T10:15:30", "PRESENCIAL", 1, 4);
+values(20        , "2021-10-27T23:15:30", "PRESENCIAL", 1, 4);
+
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2021-10-29T02:15:30", "PRESENCIAL", 1, 4);
+
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2021-10-30T10:15:30", "PRESENCIAL", 1, 4);
 
 insert into diayhorario (id, dia, horario_id)
 values (1, "Lunes", 1);
