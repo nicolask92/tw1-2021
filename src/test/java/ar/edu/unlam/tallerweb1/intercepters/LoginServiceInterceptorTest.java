@@ -1,5 +1,6 @@
 package ar.edu.unlam.tallerweb1.intercepters;
 
+import ar.edu.unlam.tallerweb1.modelo.Plan;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.web.servlet.ModelAndView;
@@ -49,6 +50,13 @@ public class LoginServiceInterceptorTest {
         thenElPostHandlerNoHaceNada();
     }
 
+    @Test
+    public void siElClienteLogueadoEntraAUnaVistaSinTenerPlanLoRedirigeALaVistaParaComprarPlan() throws Exception {
+        givenUnUsuarioLogueado();
+        whenUsuarioEntraAVerLasClasesYNoTienePlan();
+        thenElPreHandlerRedirigeALaVistaDePLanes();
+    }
+
     private void givenUnUsuarioLogueado() {
         when(request.getSession()).thenReturn(session);
         when(request.getSession().getAttribute("usuarioId")).thenReturn(1L);
@@ -66,11 +74,15 @@ public class LoginServiceInterceptorTest {
 
     private void whenUsuarioEntraALosTurnosNoHaceNadaElPostHandle() throws Exception {
         when(modelAndView.getViewName()).thenReturn("http://misupergym.com/mostrar-clases");
+        when(request.getSession().getAttribute("plan")).thenReturn(Plan.BASICO);
+        when(request.getSession().getAttribute("cliente")).thenReturn(true);
         loginServiceInterceptor.postHandle(request, response, handler, modelAndView);
     }
 
     private void whenUsuarioEntraAlLoginLoMandaALosTurnos() throws Exception {
         when(modelAndView.getViewName()).thenReturn("http://misupergym.com/login");
+        when(request.getSession().getAttribute("plan")).thenReturn(Plan.BASICO);
+        when(request.getSession().getAttribute("cliente")).thenReturn(true);
         loginServiceInterceptor.postHandle(request, response, handler, modelAndView);
     }
 
@@ -83,6 +95,14 @@ public class LoginServiceInterceptorTest {
         when(request.getSession()).thenReturn(session);
         when(request.getSession().getAttribute("usuarioId")).thenReturn(null);
         return loginServiceInterceptor.preHandle(request, response, handler);
+    }
+
+    private void whenUsuarioEntraAVerLasClasesYNoTienePlan() throws Exception {
+        when(modelAndView.getViewName()).thenReturn("http://misupergym.com/mostrar-clases");
+        when(request.getSession()).thenReturn(session);
+        when(request.getSession().getAttribute("plan")).thenReturn(Plan.NINGUNO);
+        when(request.getSession().getAttribute("cliente")).thenReturn(true);
+        loginServiceInterceptor.preHandle(request, response, handler);
     }
 
     private void thenElPostHandlerNoHaceNada() throws IOException {
@@ -101,5 +121,9 @@ public class LoginServiceInterceptorTest {
     private void thenElPreHandlerDejaContinuarYNoRedirige(boolean pasoElPreHandler) throws IOException {
         verify(response, times(0)).sendRedirect("/proyecto_limpio_spring_war_exploded/login");
         Assert.assertTrue(pasoElPreHandler);
+    }
+
+    private void thenElPreHandlerRedirigeALaVistaDePLanes() throws IOException {
+        verify(response, times(1)).sendRedirect("/proyecto_limpio_spring_war_exploded/planes");
     }
 }

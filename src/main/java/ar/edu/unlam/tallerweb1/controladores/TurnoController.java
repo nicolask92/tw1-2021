@@ -1,11 +1,9 @@
 package ar.edu.unlam.tallerweb1.controladores;
 
-import ar.edu.unlam.tallerweb1.Exceptiones.ElClienteNoCorrespondeAlTurnoException;
-import ar.edu.unlam.tallerweb1.Exceptiones.LaClaseEsDeUnaFechaAnterioALaActualException;
-import ar.edu.unlam.tallerweb1.Exceptiones.TurnoExpiroException;
-import ar.edu.unlam.tallerweb1.Exceptiones.YaHayTurnoDeLaMismaClaseException;
+import ar.edu.unlam.tallerweb1.exceptiones.*;
 import ar.edu.unlam.tallerweb1.common.Mes;
 import ar.edu.unlam.tallerweb1.modelo.Clase;
+import ar.edu.unlam.tallerweb1.modelo.Plan;
 import ar.edu.unlam.tallerweb1.modelo.Turno;
 import ar.edu.unlam.tallerweb1.servicios.ClaseService;
 import ar.edu.unlam.tallerweb1.servicios.TurnoService;
@@ -21,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,6 +41,7 @@ public class TurnoController {
     public ModelAndView mostrarClasesParaSacarTurnos(@PathVariable Optional<Mes> mes, HttpSession httpSession) throws Exception {
 
         Long idUsuario = (Long) httpSession.getAttribute("usuarioId");
+        LocalDate hoy = LocalDate.now();
 
         List<Clase> clases = claseService.getClases(mes);
         List<Turno> turnosDelDia = turnoService.getTurnosParaHoy(idUsuario);
@@ -50,7 +50,8 @@ public class TurnoController {
 
         ModelMap model = new ModelMap();
         model.put("turnosDelDia", turnosDelDia);
-        model.put("mes", mes);
+        model.put("mes", mes.isPresent() ? mes.get() : hoy.getMonth().toString());
+        model.put("anio", hoy.getYear());
         model.put("calendario", calendarioYActividades);
 
         return new ModelAndView("clases-para-turnos", model);
@@ -85,8 +86,14 @@ public class TurnoController {
     @RequestMapping(method = RequestMethod.GET, path = "/reservar-Turno/{idClase}")
     public ModelAndView reservarTurno(@PathVariable("idClase") Long idClase, HttpServletRequest sesion) throws Exception {
         Long idUsuario = (Long)sesion.getSession().getAttribute("usuarioId");
-
+        Plan plan = (Plan) sesion.getSession().getAttribute("plan");
         ModelMap model = new ModelMap();
+
+        if (plan == null || plan == Plan.NINGUNO) {
+            model.put("msg", "No tenes plan, por lo tanto no podes reservar turnos");
+            return new ModelAndView("redirect:/planes", model);
+        }
+
         try {
             turnoService.guardarTurno(idClase, idUsuario);
             model.put("msgGuardado", "Se guardo turno correctamente");
@@ -94,14 +101,19 @@ public class TurnoController {
         } catch (Exception e) {
             model.put("msg", "Cupo máximo alcanzado");
             return new ModelAndView("redirect:/mostrar-clases", model);
-        }catch (LaClaseEsDeUnaFechaAnterioALaActualException e){
+        } catch (LaClaseEsDeUnaFechaAnterioALaActualException e){
             model.put("msg", "La clase ya expiro");
             return new ModelAndView("redirect:/mostrar-clases", model);
-        }catch (YaHayTurnoDeLaMismaClaseException e){
+        } catch (YaHayTurnoDeLaMismaClaseException e){
             model.put("msgTurnoExistente","Ya reservaste turno para esta clase");
             return new ModelAndView("redirect:/mostrar-clases", model);
+        } catch (SinPlanException e) {
+            model.put("msgTurnoExistente","No puede reservar turnos porque no tiene Plan");
+            return new ModelAndView("redirect:/planes", model);
+        } catch (SuPlanNoPermiteMasInscripcionesPorDiaException e) {
+            model.put("msg", "Su plan no permite inscribirse a mas clases");
+            return new ModelAndView("redirect:/mostrar-clases", model);
         }
-
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/borrar-turno/{idTurno}")

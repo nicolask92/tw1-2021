@@ -26,4 +26,13 @@ public class Cliente extends Usuario {
 
     public Cliente() {
     }
+
+    public Plan setPlan(Plan plan) {
+        this.plan = plan;
+        return this.plan;
+    }
+
+    public Plan getPlan() {
+        return this.plan;
+    }
 }

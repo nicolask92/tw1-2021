@@ -52,4 +52,7 @@ values (2, "Entrenador", true, "Entrenador 1", "entranador@gmail.com", "Lopez", 
 insert into usuario  (id, DTYPE, activo, apellido, email, nombre, password, rol)
 values (3, "Entrenador", true, "Entrenador 2", "entranador2@gmail.com", "Luis", "entrenador123", "Rol de entrenador");
 
+insert into usuario(DTYPE, activo, apellido, email, nombre, password, rol, plan)
+values ("Cliente", true, "clienteSinPlan", "cliente2@gmail.com", "Manuel", "cliente123", "Rol de cliente", "NINGUNO")
+
 

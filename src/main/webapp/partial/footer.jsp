@@ -54,6 +54,9 @@
 
 <!-- Custom scripts for all pages-->
 <script src="/proyecto_limpio_spring_war_exploded/js/sb-admin-2.min.js"></script>
+<script src='/proyecto_limpio_spring_war_exploded/fullcalendar/main.js'></script>
+
+<script src="/proyecto_limpio_spring_war_exploded/js/calendario.js"></script>
 
 </body>
 

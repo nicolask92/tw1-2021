@@ -1,5 +1,6 @@
 package ar.edu.unlam.tallerweb1.intercepters;
 
+import ar.edu.unlam.tallerweb1.modelo.Plan;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -13,12 +14,20 @@ public class LoginServiceInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Long usuarioId = (Long) request.getSession().getAttribute("usuarioId");
+        Boolean esCliente = (Boolean) request.getSession().getAttribute("cliente");
+        Plan planUsuario = (Plan) request.getSession().getAttribute("plan");
         String uri = this.getURL(request);
         // Judge whether the user logs in or not
         if (usuarioId == null && !uri.endsWith(("login"))) {
             // User not logged in, redirect to login page
             response.sendRedirect("/proyecto_limpio_spring_war_exploded/login");
             return false;
+        } else if ((esCliente != null) && (!esCliente || planUsuario == Plan.NINGUNO)) {
+            if (!uri.endsWith(("planes"))) {
+                response.sendRedirect("/proyecto_limpio_spring_war_exploded/planes");
+                return false;
+            }
+            return true;
         }
         return true;
     }
@@ -26,7 +35,7 @@ public class LoginServiceInterceptor implements HandlerInterceptor {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         Long usuarioId = (Long) request.getSession().getAttribute("usuarioId");
-        // If the request ends with login
+
         if (modelAndView.getViewName().endsWith("login") && usuarioId != null) {
             // The login page will no longer be displayed
             response.sendRedirect("/proyecto_limpio_spring_war_exploded/mostrar-clases");

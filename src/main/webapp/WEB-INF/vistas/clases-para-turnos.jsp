@@ -7,7 +7,7 @@
 <div class="container-fluid">
 
     <!-- Page Heading -->
-    <h1 class="h3 mb-4 text-gray-800">Calendario de turnos</h1>
+    <h1 class="h3 mb-4 text-gray-800">Calendario de turnos del mes de ${mes} - ${anio}</h1>
     <c:if test="${not empty param['msg']}">
         <div class="alert alert-danger" role="alert">
                 ${param['msg']}
@@ -34,10 +34,15 @@
             <c:if test="${(loop.index % 7) == 0}">
                 <tr>
             </c:if>
-            <th scope="row">
+            <c:if test="${dia.esDomingo}">
+                <th scope="row" class="p-3 mb-2 bg-danger text-white">
+            </c:if>
+            <c:if test="${dia.esDomingo == false}">
+                <th scope="row">
+            </c:if>
                 <h6>Dia ${dia.dia}</h6>
                 <c:forEach items="${dia.clases}" varStatus="loop" var="clase">
-                    <a href="mostrar-clase/${clase.id}">
+                    <a href="/proyecto_limpio_spring_war_exploded/mostrar-clase/${clase.id}">
                         <small>${clase.getActividadString()} - ${clase.horarioString}</small>
                     </a><br>
                 </c:forEach>

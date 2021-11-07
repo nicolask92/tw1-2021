@@ -114,7 +114,7 @@ public class ClasesViewModelBuilderTest {
         int tamanioDeClase = calcularClasesEnCalendario(calendario);
         int hoy = LocalDateTime.now().getDayOfMonth();
         assertEquals(2, tamanioDeClase);
-        assertEquals(Calendar.getInstance().getMaximum(Calendar.DAY_OF_MONTH), calendario.getFechasYSusClases().size());
+        assertEquals(Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH), calendario.getFechasYSusClases().size());
         FechaYClases fechaHoyYSusClases = calendario.getFechasYSusClases()
                 .stream()
                 .filter(fechaYClase -> fechaYClase.getDia() == hoy)

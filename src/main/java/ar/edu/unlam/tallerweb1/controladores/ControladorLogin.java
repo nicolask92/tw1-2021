@@ -1,5 +1,6 @@
 package ar.edu.unlam.tallerweb1.controladores;
 
+import ar.edu.unlam.tallerweb1.modelo.Cliente;
 import ar.edu.unlam.tallerweb1.modelo.Usuario;
 import ar.edu.unlam.tallerweb1.servicios.ServicioLogin;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,12 @@ public class ControladorLogin {
 		if (usuarioBuscado != null) {
 			//request.getSession(true).setAttribute("ROL", usuarioBuscado.getRol());
 			request.getSession(true).setAttribute("usuarioId", usuarioBuscado.getId());
+
+			if (usuarioBuscado instanceof Cliente) {
+				request.getSession(true).setAttribute("cliente", true);
+				request.getSession(true).setAttribute("plan", ((Cliente)usuarioBuscado).getPlan());
+			}
+
 			//session.setAttribute("usuarioId", usuarioBuscado.getId());
 			return new ModelAndView("redirect:/home");
 		} else {
@@ -76,6 +83,8 @@ public class ControladorLogin {
 	@RequestMapping(path = "/cerrar-sesion", method = RequestMethod.POST)
 	public ModelAndView cerrarSesion(HttpSession httpSession) {
 		httpSession.setAttribute("usuarioId", null);
+		httpSession.setAttribute("plan", null);
+		httpSession.setAttribute("cliente", null);
 
 		return new ModelAndView("redirect:/login");
 	}

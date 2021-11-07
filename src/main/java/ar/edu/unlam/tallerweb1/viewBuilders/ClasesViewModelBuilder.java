@@ -30,12 +30,18 @@ public class ClasesViewModelBuilder {
             List<Clase> clasesParaEsteDia = clases.stream()
                     .filter(clase -> (clase.getDiaClase().getDayOfMonth()-1) == finalNumeroDelDiaDelMes )
                     .collect(Collectors.toList());
-            fechaYClases.add(new FechaYClases(numeroDelDiaDelMes + 1, clasesParaEsteDia));
+
+            fechaYClases.add(new FechaYClases(numeroDelDiaDelMes + 1, esDomingo(numeroDelDiaDelMes, cal), clasesParaEsteDia));
         }
 
         CalendarioDeActividades calendarioYClases = new CalendarioDeActividades(fechaYClases);
         calendarioYClases.setConjuntoDias(this.generarListaDeDias(cal));
         return calendarioYClases;
+    }
+
+    private boolean esDomingo(int diaDelMes, Calendar calendario) {
+        LocalDate fecha = LocalDate.of(calendario.get(Calendar.YEAR), calendario.get(Calendar.MONTH) + 1, diaDelMes+1);
+        return fecha.getDayOfWeek().getValue() == 7;
     }
 
     private Calendar setearCalendario(Optional<Mes> mes) {

@@ -1,9 +1,6 @@
 package ar.edu.unlam.tallerweb1.servicios;
 
-import ar.edu.unlam.tallerweb1.Exceptiones.ElClienteNoCorrespondeAlTurnoException;
-import ar.edu.unlam.tallerweb1.Exceptiones.LaClaseEsDeUnaFechaAnterioALaActualException;
-import ar.edu.unlam.tallerweb1.Exceptiones.TurnoExpiroException;
-import ar.edu.unlam.tallerweb1.Exceptiones.YaHayTurnoDeLaMismaClaseException;
+import ar.edu.unlam.tallerweb1.exceptiones.*;
 import ar.edu.unlam.tallerweb1.modelo.Clase;
 import ar.edu.unlam.tallerweb1.modelo.Cliente;
 import ar.edu.unlam.tallerweb1.modelo.Turno;
@@ -22,9 +19,9 @@ import java.util.Objects;
 @Transactional
 public class TurnoServiceImpl implements TurnoService {
 
-    private TurnoRepositorio turnoRepositorio;
-    private ClaseRepositorio claseRepositorio;
-    private ClienteRepositorio clienteRepositorio;
+    private final TurnoRepositorio turnoRepositorio;
+    private final ClaseRepositorio claseRepositorio;
+    private final ClienteRepositorio clienteRepositorio;
 
     @Autowired
     public TurnoServiceImpl(TurnoRepositorio turnoRepositorio, ClaseRepositorio claseRepositorio, ClienteRepositorio clienteRepositorio){
@@ -39,12 +36,35 @@ public class TurnoServiceImpl implements TurnoService {
     }
 
     @Override
-    public void guardarTurno(Long idClase, Long idUsuario) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException {
+    public void guardarTurno(Long idClase, Long idUsuario) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException {
         Clase clase = claseRepositorio.getById(idClase);
         Cliente cliente = clienteRepositorio.getById(idUsuario);
         List<Turno> turnosDelCliente = turnoRepositorio.getTurnosByIdCliente(cliente);
         if (clase == null)
             throw new Exception();
+
+        long cantidadDeClasesEnElDia = turnosDelCliente
+            .stream()
+            .filter( turno ->
+                turno.getClase().getDiaClase().toLocalDate().equals(clase.getDiaClase().toLocalDate())
+            )
+            .count();
+
+        switch (cliente.getPlan()) {
+            case NINGUNO:
+                throw new SinPlanException();
+            case BASICO:
+                if (cantidadDeClasesEnElDia == 1) {
+                    throw new SuPlanNoPermiteMasInscripcionesPorDiaException();
+                }
+                break;
+            case ESTANDAR:
+                if (cantidadDeClasesEnElDia == 3) {
+                    throw new SuPlanNoPermiteMasInscripcionesPorDiaException();
+                }
+                break;
+            case PREMIUM:
+        }
 
         if (clase.getDiaClase().isBefore(LocalDateTime.now()))
             throw new LaClaseEsDeUnaFechaAnterioALaActualException();
