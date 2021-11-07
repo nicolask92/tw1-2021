@@ -71,7 +71,9 @@
                 <div class="col-lg-4 mb-2">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Actividad: ${t.clase.actividadString}</h5>
+                            <div class="card-header bg-gradient-primary text-white text-center h-50">
+                                <h5>Actividad: ${t.clase.actividadString}</h5>
+                            </div>
                             <p class="card-text"><span>Fecha: ${t.clase.fechaString}</span> </p>
                             <p class="card-text"><span>Hora: ${t.clase.horarioString}</span> </p>
                         </div>
