@@ -18,5 +18,5 @@ public interface TurnoService {
 
     List<Turno> getTurnosParaHoy(Long idCliente);
 
-    List<Clase> buscarClase(String claseABuscar);
+    List<Clase> buscarClase(String claseABuscar) throws NoSeEncontroClaseConEseNombreException;
 }

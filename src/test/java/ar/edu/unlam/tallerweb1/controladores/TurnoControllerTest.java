@@ -124,15 +124,23 @@ public class TurnoControllerTest {
     }
 
     @Test
-    public void testBuscarClaseYQueSeEncuntre() throws Exception {
-        String claseABuscar = givenClaseABuscar();
+    public void testBuscarClaseYQueSeEncuntre() throws Exception, NoSeEncontroClaseConEseNombreException {
+        String claseABuscar = givenClaseABuscar("CROSSFIT");
         Clase clase = givenQueLaClaseTengaLugar();
         ModelAndView mv = whenBuscoLaClase(claseABuscar, clase);
         thenEncuentroLaClaseBuscada(mv, clase);
     }
 
-    private String givenClaseABuscar() {
-        return "CROSSFIT";
+    @Test
+    public void testBuscarClaseYNoSeEncuentra() throws NoSeEncontroClaseConEseNombreException, Exception {
+        String claseABuscar = givenClaseABuscar("asd");
+        Clase clase = givenQueLaClaseTengaLugar();
+        ModelAndView mv  = whenBuscoLaClase(claseABuscar, clase);
+        thenNoEncuentroLaClaseBuscada(mv);
+    }
+
+    private String givenClaseABuscar(String claseABuscar) {
+        return claseABuscar;
     }
 
     private Turno givenHayUnTurnoDeAyer(Cliente cliente) {
@@ -278,8 +286,9 @@ public class TurnoControllerTest {
         return turnoController.reservarTurno(idClase, session);
     }
 
-    private ModelAndView whenBuscoLaClase(String claseABuscar, Clase clase) {
+    private ModelAndView whenBuscoLaClase(String claseABuscar, Clase clase) throws NoSeEncontroClaseConEseNombreException {
         when(turnoService.buscarClase(claseABuscar)).thenReturn(List.of(clase));
+        doThrow(NoSeEncontroClaseConEseNombreException.class).when(turnoService).buscarClase(claseABuscar);
         return turnoController.buscarClase(claseABuscar);
     }
 
@@ -340,6 +349,11 @@ public class TurnoControllerTest {
 
     private void thenEncuentroLaClaseBuscada(ModelAndView mv, Clase clase) {
         assertThat(mv.getModel().get("clasesBuscadas") == List.of(clase));
+        assertThat(mv.getViewName()).isEqualTo("clase-buscada");
+    }
+
+    private void thenNoEncuentroLaClaseBuscada(ModelAndView mv) {
+        assertThat(mv.getModel().get("claseNoEncontrada")).isEqualTo("No hay clases con ese Nombre");
         assertThat(mv.getViewName()).isEqualTo("clase-buscada");
     }
 }

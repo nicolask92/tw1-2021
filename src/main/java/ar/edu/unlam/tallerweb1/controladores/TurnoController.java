@@ -138,9 +138,15 @@ public class TurnoController {
     @RequestMapping(method = RequestMethod.GET, path = "/buscar-clase")
     public ModelAndView buscarClase(@RequestParam ("claseABuscar") String claseABuscar) {
 
-        List<Clase> clasesBuscadas = turnoService.buscarClase(claseABuscar);
         ModelMap model = new ModelMap();
-        model.put("clasesBuscadas", clasesBuscadas);
-        return new ModelAndView("clase-buscada", model);
+        try {
+
+            List<Clase> clasesBuscadas = turnoService.buscarClase(claseABuscar);
+            model.put("clasesBuscadas", clasesBuscadas);
+            return new ModelAndView("clase-buscada", model);
+        } catch (NoSeEncontroClaseConEseNombreException e){
+            model.put("claseNoEncontrada", "No hay clases con ese Nombre");
+            return new ModelAndView("clase-buscada", model);
+        }
     }
 }

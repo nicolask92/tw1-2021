@@ -113,16 +113,23 @@ public class TurnoServiceTest {
     }
 
     @Test
-    public void testBuscarClasesYQueSeEncuentren() throws Exception {
-        String claseBuscada = givenClaseABuscada();
+    public void testBuscarClasesYQueSeEncuentren() throws Exception, NoSeEncontroClaseConEseNombreException {
+        String claseBuscada = givenClaseABuscada("CROSSFIT");
         Clase clase = givenClaseConLugar();
         List<Clase> clasesEncontradas = whenBuscoClases(claseBuscada, clase);
         thenEncuntroLasClases(clasesEncontradas);
     }
 
+    @Test(expected = NoSeEncontroClaseConEseNombreException.class)
+    public void testBuscarClaseYQueNoSeEncuentre() throws NoSeEncontroClaseConEseNombreException {
+        String claseBuscada = givenClaseABuscada("baile");
+        Clase clase = new Clase();
+        whenBuscoClasesNoLaEncuentra(claseBuscada, clase);
+    }
 
-    private String givenClaseABuscada() {
-        return "CROSSFIT";
+
+    private String givenClaseABuscada(String claseBuscada) {
+        return claseBuscada;
     }
 
     private Turno givenTurnoDeOtraClase() throws Exception {
@@ -240,7 +247,12 @@ public class TurnoServiceTest {
         turnoService.guardarTurno(clase.getId(), cliente.getId());
     }
 
-    private List<Clase> whenBuscoClases(String claseBuscada, Clase clase) {
+    private List<Clase> whenBuscoClases(String claseBuscada, Clase clase) throws NoSeEncontroClaseConEseNombreException {
+        when(turnoRepositorio.buscarClases(claseBuscada)).thenReturn(List.of(clase));
+        return turnoService.buscarClase(claseBuscada);
+    }
+
+    private List<Clase> whenBuscoClasesNoLaEncuentra(String claseBuscada, Clase clase) throws NoSeEncontroClaseConEseNombreException {
         when(turnoRepositorio.buscarClases(claseBuscada)).thenReturn(List.of(clase));
         return turnoService.buscarClase(claseBuscada);
     }

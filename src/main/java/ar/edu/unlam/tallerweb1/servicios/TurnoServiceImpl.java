@@ -110,9 +110,12 @@ public class TurnoServiceImpl implements TurnoService {
     }
 
     @Override
-    public List<Clase> buscarClase(String claseABuscar) {
+    public List<Clase> buscarClase(String claseABuscar) throws NoSeEncontroClaseConEseNombreException {
 
         List<Clase> clasesBuscadas = turnoRepositorio.buscarClases(claseABuscar.toUpperCase());
+
+        if(clasesBuscadas == null)
+            throw new NoSeEncontroClaseConEseNombreException();
 
         return clasesBuscadas;
     }
