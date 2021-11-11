@@ -51,16 +51,21 @@ public class TurnoRepositorioTest extends SpringTest {
     @Transactional
     public void testBuscarClasesYQueSeEncuentren() throws Exception {
         List<Clase> clases = givenClases(2, true);
-        List<Clase> clasesEncontradas = whenBuscoClases();
+        List<Clase> clasesEncontradas = whenBuscoClases("cross");
         thenEncuntroLasClases(clases, clasesEncontradas);
     }
 
-    private void thenEncuntroLasClases(List<Clase> clases, List<Clase> clasesEncontradas) {
-        assertThat(clases.size()).isEqualTo(clasesEncontradas.size());
+    @Test
+    @Rollback
+    @Transactional
+    public void testBucarClasesYQueNoSeEncuentren() throws Exception {
+        //List<Clase> clases = givenClases(2,true);
+        List<Clase> clasesEncontradas = whenBuscoClases("xyxy");
+        thenNoEncuentroLasClasesBuscadas(clasesEncontradas);
     }
 
-    private List<Clase> whenBuscoClases() {
-        return turnoRepositorio.buscarClases("ossf");
+    private List<Clase> whenBuscoClases(String claseBuscada) {
+        return turnoRepositorio.buscarClases(claseBuscada);
     }
 
     private List<Clase> givenClases(int cantitdadClases, boolean mesActual) throws Exception {
@@ -125,6 +130,14 @@ public class TurnoRepositorioTest extends SpringTest {
         Assert.assertNotNull(claseRepositorio.getById(turno.getClase().getId()));
 
         Assert.assertNull(turnoRepositorio.getTurnoById(turno.getId()));
+    }
+
+    private void thenEncuntroLasClases(List<Clase> clases, List<Clase> clasesEncontradas) {
+        assertThat(clases.size()).isEqualTo(clasesEncontradas.size());
+    }
+
+    private void thenNoEncuentroLasClasesBuscadas(List<Clase> clasesEncontradas) {
+        assertThat(clasesEncontradas.size()).isEqualTo(0);
     }
 
 }
