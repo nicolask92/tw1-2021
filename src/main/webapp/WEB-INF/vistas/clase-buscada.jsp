@@ -9,6 +9,16 @@
     <!-- Page Heading -->
     <h1 class="h3 mb-4 text-gray-800 text-center">Clases Buscadas</h1>
 
+
+    <c:if test="${not empty requestScope['claseNoEncontrada']}">
+        <div class="alert alert-danger" role="alert">
+                ${requestScope['claseNoEncontrada']}
+        </div>
+    </c:if>
+
+    <c:if test="${empty requestScope['claseNoEncontrada']}">
+
+
     <table class="table">
         <thead class="thead-light">
         <tr>
@@ -33,7 +43,7 @@
         </c:forEach>
         </tbody>
     </table>
-
+    </c:if>
 
 
 

@@ -144,7 +144,7 @@ public class TurnoController {
             List<Clase> clasesBuscadas = turnoService.buscarClase(claseABuscar);
             model.put("clasesBuscadas", clasesBuscadas);
             return new ModelAndView("clase-buscada", model);
-        } catch (NoSeEncontroClaseConEseNombreException e){
+        } catch (IllegalArgumentException | NoSeEncontroClaseConEseNombreException e){
             model.put("claseNoEncontrada", "No hay clases con ese Nombre");
             return new ModelAndView("clase-buscada", model);
         }

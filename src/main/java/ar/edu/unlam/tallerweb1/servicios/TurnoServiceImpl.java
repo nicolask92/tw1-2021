@@ -114,7 +114,7 @@ public class TurnoServiceImpl implements TurnoService {
 
         List<Clase> clasesBuscadas = turnoRepositorio.buscarClases(claseABuscar.toUpperCase());
 
-        if(clasesBuscadas == null)
+        if(clasesBuscadas.size() == 0)
             throw new NoSeEncontroClaseConEseNombreException();
 
         return clasesBuscadas;

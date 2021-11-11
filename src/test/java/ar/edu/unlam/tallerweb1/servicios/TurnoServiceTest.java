@@ -121,10 +121,10 @@ public class TurnoServiceTest {
     }
 
     @Test(expected = NoSeEncontroClaseConEseNombreException.class)
-    public void testBuscarClaseYQueNoSeEncuentre() throws NoSeEncontroClaseConEseNombreException {
-        String claseBuscada = givenClaseABuscada("baile");
-        Clase clase = new Clase();
-        whenBuscoClasesNoLaEncuentra(claseBuscada, clase);
+    public void testBuscarClaseYQueNoSeEncuentre() throws NoSeEncontroClaseConEseNombreException, Exception {
+        String claseBuscada = givenClaseABuscada("asd");
+        Clase clase = givenClaseConLugar();
+        List<Clase> clases = whenBuscoClasesNoLaEncuentra(claseBuscada, clase);
     }
 
 
