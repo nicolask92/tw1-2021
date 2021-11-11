@@ -123,6 +123,18 @@ public class TurnoControllerTest {
         thenRedirigeALaVistaDePlanes(mv);
     }
 
+    @Test
+    public void testBuscarClaseYQueSeEncuntre() throws Exception {
+        String claseABuscar = givenClaseABuscar();
+        Clase clase = givenQueLaClaseTengaLugar();
+        ModelAndView mv = whenBuscoLaClase(claseABuscar, clase);
+        thenEncuentroLaClaseBuscada(mv, clase);
+    }
+
+    private String givenClaseABuscar() {
+        return "CROSSFIT";
+    }
+
     private Turno givenHayUnTurnoDeAyer(Cliente cliente) {
         Clase clase = new Clase();
         clase.setDiaClase(LocalDateTime.now().minusDays(1));
@@ -266,6 +278,11 @@ public class TurnoControllerTest {
         return turnoController.reservarTurno(idClase, session);
     }
 
+    private ModelAndView whenBuscoLaClase(String claseABuscar, Clase clase) {
+        when(turnoService.buscarClase(claseABuscar)).thenReturn(List.of(clase));
+        return turnoController.buscarClase(claseABuscar);
+    }
+
     private void thenReservoElTurnoCorrectamente(ModelAndView mv) {
         assertThat(mv.getModel().get("msgGuardado")).isEqualTo("Se guardo turno correctamente");
         assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-turno");
@@ -319,5 +336,10 @@ public class TurnoControllerTest {
     private void thenRedirigeALaVistaDePlanes(ModelAndView mv) {
         assertThat(mv.getModel().get("msg")).isEqualTo("No tenes plan, por lo tanto no podes reservar turnos");
         assertThat(mv.getViewName()).isEqualTo("redirect:/planes");
+    }
+
+    private void thenEncuentroLaClaseBuscada(ModelAndView mv, Clase clase) {
+        assertThat(mv.getModel().get("clasesBuscadas") == List.of(clase));
+        assertThat(mv.getViewName()).isEqualTo("clase-buscada");
     }
 }

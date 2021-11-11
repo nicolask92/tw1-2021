@@ -112,6 +112,19 @@ public class TurnoServiceTest {
         whenGuardoTurnoSaltaExcepcionDeTurnosPorDia(turno, cliente, turno2.getClase());
     }
 
+    @Test
+    public void testBuscarClasesYQueSeEncuentren() throws Exception {
+        String claseBuscada = givenClaseABuscada();
+        Clase clase = givenClaseConLugar();
+        List<Clase> clasesEncontradas = whenBuscoClases(claseBuscada, clase);
+        thenEncuntroLasClases(clasesEncontradas);
+    }
+
+
+    private String givenClaseABuscada() {
+        return "CROSSFIT";
+    }
+
     private Turno givenTurnoDeOtraClase() throws Exception {
         Clase clase = givenClaseConFechaAnterioAlDiaDeHoy();
         Turno turno = new Turno();
@@ -227,6 +240,11 @@ public class TurnoServiceTest {
         turnoService.guardarTurno(clase.getId(), cliente.getId());
     }
 
+    private List<Clase> whenBuscoClases(String claseBuscada, Clase clase) {
+        when(turnoRepositorio.buscarClases(claseBuscada)).thenReturn(List.of(clase));
+        return turnoService.buscarClase(claseBuscada);
+    }
+
     private void thenSeIncrementaEn1LaCantidadDeClientesEnLaClase(Clase clase) throws Exception {
         assertThat(clase.getClientes().size()).isEqualTo(1);
         verify(turnoRepositorio, times(1)).guardarTurno(any(),any());
@@ -253,6 +271,11 @@ public class TurnoServiceTest {
 
     private void thenElListadoDeTurnosDelDiaDeHoyEsVacio(List<Turno> turnosDevueltosPorRepo) {
         assertThat(turnosDevueltosPorRepo == null);
+    }
+
+    private void thenEncuntroLasClases(List<Clase> clasesEncontradas) {
+        assertThat(clasesEncontradas.size()).isEqualTo(1);
+        verify(turnoRepositorio, times(1)).buscarClases(anyString());
     }
 
 }

@@ -1,5 +1,6 @@
 package ar.edu.unlam.tallerweb1.repositorios;
 
+import ar.edu.unlam.tallerweb1.common.Tipo;
 import ar.edu.unlam.tallerweb1.modelo.Clase;
 import ar.edu.unlam.tallerweb1.modelo.Cliente;
 import ar.edu.unlam.tallerweb1.modelo.Turno;
@@ -70,4 +71,15 @@ public class TurnoRepositorioImpl implements TurnoRepositorio {
                 .list();
     }
 
+    @Override
+    public List<Clase> buscarClases(String claseBuscada) {
+        final Session session = sessionFactory.getCurrentSession();
+        Tipo clasetipo = tipoFromString(claseBuscada);
+        return session.createQuery("from Clase where actividad.tipo=:tipo_actividad")
+                .setParameter("tipo_actividad", clasetipo).list();
+    }
+
+    private Tipo tipoFromString (String clase){
+        return Tipo.valueOf(clase);
+    }
 }

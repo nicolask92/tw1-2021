@@ -1,10 +1,12 @@
 package ar.edu.unlam.tallerweb1.repositorios;
 
 import ar.edu.unlam.tallerweb1.SpringTest;
-import ar.edu.unlam.tallerweb1.modelo.Clase;
-import ar.edu.unlam.tallerweb1.modelo.Cliente;
-import ar.edu.unlam.tallerweb1.modelo.Turno;
+import ar.edu.unlam.tallerweb1.common.Frecuencia;
+import ar.edu.unlam.tallerweb1.common.Modalidad;
+import ar.edu.unlam.tallerweb1.common.Tipo;
+import ar.edu.unlam.tallerweb1.modelo.*;
 import org.junit.Assert;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
@@ -44,6 +46,44 @@ public class TurnoRepositorioTest extends SpringTest {
         thenDevuelveLosTurnosParaHoy(turnosParaHoy, turnosConseguidos, turnosDeAyer);
     }
 
+    @Test
+    @Rollback
+    @Transactional
+    public void testBuscarClasesYQueSeEncuentren() throws Exception {
+        List<Clase> clases = givenClases(2, true);
+        List<Clase> clasesEncontradas = whenBuscoClases();
+        thenEncuntroLasClases(clases, clasesEncontradas);
+    }
+
+    private void thenEncuntroLasClases(List<Clase> clases, List<Clase> clasesEncontradas) {
+        assertThat(clases.size()).isEqualTo(clasesEncontradas.size());
+    }
+
+    private List<Clase> whenBuscoClases() {
+        return turnoRepositorio.buscarClases("CROSSFIT");
+    }
+
+    private List<Clase> givenClases(int cantitdadClases, boolean mesActual) throws Exception {
+        List<Clase> clases = new ArrayList<>();
+        for (int i = 0; i < cantitdadClases; i++) {
+            Clase clase = givenUnaClaseConLugarDisponible("clase"+i, mesActual);
+            session().save(clase);
+            clases.add(clase);
+        }
+        return clases;
+    }
+    private Clase givenUnaClaseConLugarDisponible(String nombreActividad, boolean mesActual) throws Exception {
+        Actividad actividad = givenUnaActividadConPeriodoValidoYHorarioValido(nombreActividad, mesActual);
+        return new Clase(mesActual ? LocalDateTime.now() : LocalDateTime.now().plusMonths(1), actividad, Modalidad.PRESENCIAL);
+    }
+    private Actividad givenUnaActividadConPeriodoValidoYHorarioValido(String nombreActividad, boolean mesActual) throws Exception {
+        LocalDateTime antesDeAyer = LocalDateTime.now().minusDays(2);
+        LocalDateTime pasadoManiana = mesActual ? LocalDateTime.now().plusDays(2) : LocalDateTime.now().plusMonths(1);
+        Periodo periodo = new Periodo(antesDeAyer, pasadoManiana);
+
+        return new Actividad(nombreActividad, Tipo.CROSSFIT, 4000f, Frecuencia.CON_INICIO_Y_FIN, periodo);
+    }
+
     private void thenDevuelveLosTurnosParaHoy(List<Turno> turnosParaHoy, List<Turno> turnosConseguidos, List<Turno> turnosdeAyer) {
         assert turnosConseguidos.size() == 1;
         Assert.assertTrue(turnosParaHoy.containsAll(turnosConseguidos));
@@ -61,7 +101,6 @@ public class TurnoRepositorioTest extends SpringTest {
         }
         return turnos;
     }
-
 
     private Turno givenQueHayUnTurno(int iteracion, boolean paraHoy) {
         Cliente cliente = new Cliente();

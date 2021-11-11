@@ -19,4 +19,6 @@ public interface TurnoRepositorio {
     void borrarTurno(Turno turno);
 
     List<Turno> getTurnosParaHoy(Cliente cliente);
+
+    List<Clase> buscarClases(String claseBuscada);
 }

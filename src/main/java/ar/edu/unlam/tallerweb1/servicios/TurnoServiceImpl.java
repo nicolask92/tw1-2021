@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 @Service
@@ -106,5 +107,13 @@ public class TurnoServiceImpl implements TurnoService {
     public List<Turno> getTurnosParaHoy(Long idCliente) {
         Cliente cliente = clienteRepositorio.getById(idCliente);
         return turnoRepositorio.getTurnosParaHoy(cliente);
+    }
+
+    @Override
+    public List<Clase> buscarClase(String claseABuscar) {
+
+        List<Clase> clasesBuscadas = turnoRepositorio.buscarClases(claseABuscar.toUpperCase());
+
+        return clasesBuscadas;
     }
 }
