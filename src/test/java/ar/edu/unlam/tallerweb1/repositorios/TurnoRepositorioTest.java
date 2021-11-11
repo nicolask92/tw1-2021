@@ -74,7 +74,7 @@ public class TurnoRepositorioTest extends SpringTest {
     }
     private Clase givenUnaClaseConLugarDisponible(String nombreActividad, boolean mesActual) throws Exception {
         Actividad actividad = givenUnaActividadConPeriodoValidoYHorarioValido(nombreActividad, mesActual);
-        return new Clase(mesActual ? LocalDateTime.now() : LocalDateTime.now().plusMonths(1), actividad, Modalidad.PRESENCIAL);
+        return new Clase(mesActual ? LocalDateTime.now().plusHours(5) : LocalDateTime.now().plusMonths(1), actividad, Modalidad.PRESENCIAL);
     }
     private Actividad givenUnaActividadConPeriodoValidoYHorarioValido(String nombreActividad, boolean mesActual) throws Exception {
         LocalDateTime antesDeAyer = LocalDateTime.now().minusDays(2);
