@@ -37,7 +37,7 @@ public class Actividad {
         this.descripcion = descripcion;
         this.tipo = tipo;
         this.precio = precio;
-        this.frecuencia = Frecuencia.CON_INICIO_Y_FIN;
+        this.frecuencia = frecuencia;
         this.periodo = periodo;
     }
 

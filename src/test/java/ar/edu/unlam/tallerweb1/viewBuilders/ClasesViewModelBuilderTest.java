@@ -7,6 +7,7 @@ import ar.edu.unlam.tallerweb1.common.Tipo;
 import ar.edu.unlam.tallerweb1.modelo.Actividad;
 import ar.edu.unlam.tallerweb1.modelo.Clase;
 import ar.edu.unlam.tallerweb1.modelo.Periodo;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.LocalDate;
@@ -69,9 +70,6 @@ public class ClasesViewModelBuilderTest {
         return List.of(clase1, clase2);
     }
 
-    private void thenElListadoEsCorrectoYMarcaLosDiasDomingosCorrectamente(CalendarioDeActividades calendario) {
-    }
-
     private List<Clase> givenDasClasesEnDiferentesDias() throws Exception {
         Actividad actividad = givenUnaActividadConPeriodoValidoYHorarioValido("actividad", true);
         Clase clase1 = new Clase(LocalDateTime.now().minusDays(1), actividad, Modalidad.PRESENCIAL);
@@ -96,7 +94,7 @@ public class ClasesViewModelBuilderTest {
         LocalDateTime pasadoManiana = mesActual ? LocalDateTime.now().plusDays(2) : LocalDateTime.now().plusMonths(2);
         Periodo periodo = new Periodo(antesDeAyer, pasadoManiana);
 
-        return new Actividad(nombreActividad, Tipo.CROSSFIT, 4000f, Frecuencia.CON_INICIO_Y_FIN, periodo);
+        return new Actividad(nombreActividad, Tipo.CROSSFIT, 4000f, Frecuencia.REPETITIVA, periodo);
     }
 
 
@@ -163,6 +161,23 @@ public class ClasesViewModelBuilderTest {
                 .anyMatch(fechaYClase -> fechaYClase.getClases().stream().anyMatch( clase -> estaDentroDelRango(clase.getDiaClase(), inicioMes, finDeMes)
                 ));
         assertFalse(hayClasesEnEsteMes);
+    }
+
+    private void thenElListadoEsCorrectoYMarcaLosDiasDomingosCorrectamente(CalendarioDeActividades calendario) {
+        List<Boolean> diasDomingoMesDiciembre = calendario
+                .getFechasYSusClases()
+                .stream()
+                .filter( fecha ->
+                        fecha.getDia() == 5 ||
+                                fecha.getDia() == 12 ||
+                                fecha.getDia() ==26 ||
+                                fecha.getDia() == 19
+                )
+                .map(FechaYClases::isEsDomingo)
+                .collect(Collectors.toList());
+
+        Boolean sonDomingos = diasDomingoMesDiciembre.stream().allMatch( esDomingo -> esDomingo );
+        Assert.assertEquals(true, sonDomingos);
     }
 
     private List<Clase> crearClasesPorCriterios(int cantitdadClases, boolean mesActual) throws Exception {
