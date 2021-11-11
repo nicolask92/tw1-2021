@@ -80,8 +80,4 @@ public class TurnoRepositorioImpl implements TurnoRepositorio {
                 .setParameter("fecha_actual", LocalDateTime.now())
                 .list();
     }
-
-    private Tipo tipoFromString (String clase){
-        return Tipo.valueOf(clase);
-    }
 }
