@@ -51,7 +51,7 @@ public class TurnoRepositorioTest extends SpringTest {
     @Transactional
     public void testBuscarClasesYQueSeEncuentren() throws Exception {
         List<Clase> clases = givenClases(2, true);
-        List<Clase> clasesEncontradas = whenBuscoClases("cross");
+        List<Clase> clasesEncontradas = whenBuscoClases("Cross");
         thenEncuntroLasClases(clases, clasesEncontradas);
     }
 
