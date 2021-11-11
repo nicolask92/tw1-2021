@@ -74,10 +74,9 @@ public class TurnoRepositorioImpl implements TurnoRepositorio {
     @Override
     public List<Clase> buscarClases(String claseBuscada) {
         final Session session = sessionFactory.getCurrentSession();
-        Tipo clasetipo = tipoFromString(claseBuscada);
 
-        return session.createQuery("from Clase where actividad.tipo=:tipo_actividad AND diaClase >=:fecha_actual")
-                .setParameter("tipo_actividad", clasetipo)
+        return session.createQuery("from Clase where actividad.descripcion like :descripcion AND diaClase >=:fecha_actual")
+                .setParameter("descripcion", "%" + claseBuscada + "%")
                 .setParameter("fecha_actual", LocalDateTime.now())
                 .list();
     }

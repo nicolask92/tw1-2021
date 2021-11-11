@@ -60,13 +60,13 @@ public class TurnoRepositorioTest extends SpringTest {
     }
 
     private List<Clase> whenBuscoClases() {
-        return turnoRepositorio.buscarClases("CROSSFIT");
+        return turnoRepositorio.buscarClases("ossf");
     }
 
     private List<Clase> givenClases(int cantitdadClases, boolean mesActual) throws Exception {
         List<Clase> clases = new ArrayList<>();
         for (int i = 0; i < cantitdadClases; i++) {
-            Clase clase = givenUnaClaseConLugarDisponible("clase"+i, mesActual);
+            Clase clase = givenUnaClaseConLugarDisponible("Crossfit", mesActual);
             session().save(clase);
             clases.add(clase);
         }

@@ -1,6 +1,7 @@
 package ar.edu.unlam.tallerweb1.viewBuilders;
 
 import ar.edu.unlam.tallerweb1.common.Frecuencia;
+import ar.edu.unlam.tallerweb1.common.Mes;
 import ar.edu.unlam.tallerweb1.common.Modalidad;
 import ar.edu.unlam.tallerweb1.common.Tipo;
 import ar.edu.unlam.tallerweb1.modelo.Actividad;
@@ -8,7 +9,9 @@ import ar.edu.unlam.tallerweb1.modelo.Clase;
 import ar.edu.unlam.tallerweb1.modelo.Periodo;
 import org.junit.Test;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,6 +53,25 @@ public class ClasesViewModelBuilderTest {
         thenElListadoDeClasesSeHaceCorrectamenteEnDiasDiferentes(calendario);
     }
 
+    @Test
+    public void testEnUnMesParticularMarcaBienLosDiasQueSonDomingos() throws Exception {
+        List<Clase> listaClasesParaUnMesEnParticular = givenClasesEnMesDeDiciembre();
+        CalendarioDeActividades calendario = whenRenderizoElMesConMes(listaClasesParaUnMesEnParticular, Mes.DICIEMBRE);
+        thenElListadoEsCorrectoYMarcaLosDiasDomingosCorrectamente(calendario);
+    }
+
+    private List<Clase> givenClasesEnMesDeDiciembre() throws Exception {
+        Actividad actividad = givenUnaActividadConPeriodoValidoYHorarioValido("actividad", true);
+        LocalDateTime diaLunes = LocalDateTime.of(2021, 12, 6, 14, 30);
+        LocalDateTime diaViernes = LocalDateTime.of(2021, 12, 24, 14, 30);
+        Clase clase1 = new Clase(diaLunes, actividad, Modalidad.PRESENCIAL);
+        Clase clase2 = new Clase(diaViernes, actividad, Modalidad.PRESENCIAL);
+        return List.of(clase1, clase2);
+    }
+
+    private void thenElListadoEsCorrectoYMarcaLosDiasDomingosCorrectamente(CalendarioDeActividades calendario) {
+    }
+
     private List<Clase> givenDasClasesEnDiferentesDias() throws Exception {
         Actividad actividad = givenUnaActividadConPeriodoValidoYHorarioValido("actividad", true);
         Clase clase1 = new Clase(LocalDateTime.now().minusDays(1), actividad, Modalidad.PRESENCIAL);
@@ -80,6 +102,10 @@ public class ClasesViewModelBuilderTest {
 
     private CalendarioDeActividades whenRenderizoElMes(List<Clase> clases) throws Exception {
         return clasesBuilder.getCalendarioCompleto(clases, Optional.empty());
+    }
+
+    private CalendarioDeActividades whenRenderizoElMesConMes(List<Clase> clases, Mes mes) throws Exception {
+        return clasesBuilder.getCalendarioCompleto(clases, Optional.ofNullable(mes));
     }
 
     private void thenLaCantidadDeClasesADevolverEsCero(CalendarioDeActividades calendario) {

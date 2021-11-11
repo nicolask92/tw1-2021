@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Controller
 public class PlanController {
 
-    PlanService planService;
+    private PlanService planService;
 
     @Autowired
     public PlanController(PlanService planService) {
