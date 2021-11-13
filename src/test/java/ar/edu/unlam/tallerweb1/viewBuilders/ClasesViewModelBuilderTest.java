@@ -168,7 +168,7 @@ public class ClasesViewModelBuilderTest {
                 .getFechasYSusClases()
                 .stream()
                 .filter( fecha ->
-                        fecha.getDia() == 5 ||
+                                fecha.getDia() == 5 ||
                                 fecha.getDia() == 12 ||
                                 fecha.getDia() ==26 ||
                                 fecha.getDia() == 19
