@@ -60,7 +60,7 @@ public class TurnoControllerTest {
     @Test
     public void testQueNoSePuedaReservarTurno() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException {
         Clase clase = givenQueLaClaseNoTengaLugar();
-        Cliente cliente = givenUnClienteActivo(true);
+        Cliente cliente = givenUnClienteActivo(true, Plan.BASICO);
         ModelAndView mv = whenReservoTurnoSinLugar(clase.getId(), mockDeHttpServletSession, cliente.getId());
         thenNoPuedoReservarTurno(mv);
 
@@ -68,7 +68,7 @@ public class TurnoControllerTest {
 
     @Test
     public void TestQueSeBorreReservaDeTurno() throws Exception, ElClienteNoCorrespondeAlTurnoException, TurnoExpiroException {
-        Cliente cliente = givenUnClienteActivo(true);
+        Cliente cliente = givenUnClienteActivo(true, Plan.BASICO);
         Turno turno = givenUnClienteConUnTurno(cliente);
         ModelAndView mv = whenBorroTurnoExistente(turno, cliente, mockDeHttpServletSession);
         thenBorroTurno(mv);
@@ -76,7 +76,7 @@ public class TurnoControllerTest {
 
     @Test
     public void queNoSePuedaReservarTurnoDespuesDeLaFechaDeLaClase() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException {
-        Cliente cliente =givenUnClienteActivo(true);
+        Cliente cliente =givenUnClienteActivo(true, Plan.BASICO);
         Clase clase = givenClaseConFechaAnterioAlDiaDeHoy();
         ModelAndView mv = whenReservoTurnoConFechaAnteriorALaActual(clase.getId(), mockDeHttpServletSession, cliente.getId());
         thenElTurnoNoSeReseva(mv);
@@ -84,8 +84,8 @@ public class TurnoControllerTest {
 
     @Test
     public void QueNoSePuedaBorrarTurnoConUsuarioDistintoAlUsurioDelTurno() throws ElClienteNoCorrespondeAlTurnoException, Exception, TurnoExpiroException {
-        Cliente cliente =givenUnClienteActivo(true);
-        Cliente cliente2 = givenUnClienteActivo(true);
+        Cliente cliente =givenUnClienteActivo(true, Plan.BASICO);
+        Cliente cliente2 = givenUnClienteActivo(true , Plan.BASICO);
         Turno turno = givenUnClienteConUnTurno(cliente);
         ModelAndView mv = whenBorroTurnoConUsuarioDistintoAlDelTurno(turno, cliente2, mockDeHttpServletSession);
         thenElTurnoNoSeBorraYRedirigeALaViewTurnos(mv);
@@ -100,7 +100,7 @@ public class TurnoControllerTest {
 
     @Test
     public void noSePuedeBorrarTurnoAnteriorALaFechaActual() throws ElClienteNoCorrespondeAlTurnoException, TurnoExpiroException {
-        Cliente cliente = givenUnClienteActivo(true);
+        Cliente cliente = givenUnClienteActivo(true, Plan.BASICO);
         Turno turno = givenHayUnTurnoDeAyer(cliente);
         ModelAndView mv = whenBorroTurnoDeAyer(turno, cliente, mockDeHttpServletSession);
         thenElTurnoNoSeBorraYSaleAdvertencia(mv);
@@ -108,7 +108,7 @@ public class TurnoControllerTest {
 
     @Test
     public void noSePuedaSacarTurno2VecesDeLaMismaClase() throws LaClaseEsDeUnaFechaAnterioALaActualException, Exception, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException {
-        Cliente cliente = givenUnClienteActivo(true);
+        Cliente cliente = givenUnClienteActivo(true, Plan.BASICO);
         Turno turno = givenHayUnTurnoParaHoy();
         turno.setCliente(cliente);
         ModelAndView mv = whenReservoTurnoDeLaMismaClase(turno.getClase().getId(), mockDeHttpServletSession, cliente.getId());
@@ -117,7 +117,7 @@ public class TurnoControllerTest {
 
     @Test
     public void testQueNoSePuedaReservarTurnoSiElTipoNoTienePlan() throws Exception {
-        Cliente cliente = givenUnClienteActivo(false);
+        Cliente cliente = givenUnClienteActivo(false , Plan.BASICO);
         Clase clase = givenClaseConFechaAnterioAlDiaDeHoy();
         ModelAndView mv = whenReservoTurnoSinPlan(clase.getId(), mockDeHttpServletSession, cliente.getId());
         thenRedirigeALaVistaDePlanes(mv);
@@ -137,6 +137,20 @@ public class TurnoControllerTest {
         Clase clase = givenQueLaClaseTengaLugar();
         ModelAndView mv  = whenBuscoLaClase(claseABuscar, clase);
         thenNoEncuentroLaClaseBuscada(mv);
+    }
+
+    @Test
+    public void ConPlanBasicoNoSePuedeSacarMasDe1TurnoPorDia() throws Exception, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, LaClaseEsDeUnaFechaAnterioALaActualException, SinPlanException {
+        Cliente clienteConPlanBasico = givenUnClienteActivo(true, Plan.BASICO);
+        ModelAndView mv = whenReservoMasDe1TurnoConPlanBasico(clienteConPlanBasico, mockDeHttpServletSession);
+        thenReservoTurnoSaleExpecionDeCantidadMaximaDeTurnosPorDia(mv);
+    }
+
+    @Test
+    public void ConPlanEstandarNoSePuedeSacarMasDe3TurnoPorDia() throws Exception, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, LaClaseEsDeUnaFechaAnterioALaActualException, SinPlanException {
+        Cliente clienteConPlanBasico = givenUnClienteActivo(true, Plan.ESTANDAR);
+        ModelAndView mv = whenReservoMasDe1TurnoConPlanBasico(clienteConPlanBasico, mockDeHttpServletSession);
+        thenReservoTurnoSaleExpecionDeCantidadMaximaDeTurnosPorDia(mv);
     }
 
     private String givenClaseABuscar(String claseABuscar) {
@@ -170,9 +184,9 @@ public class TurnoControllerTest {
         return new Turno();
     }
 
-    private Cliente givenUnClienteActivo(boolean conPlan) {
+    private Cliente givenUnClienteActivo(boolean conPlan, Plan tipoPlan) {
         Cliente cliente = new Cliente("Arturo" + LocalDateTime.now(), "Frondizi", "arturitoElMasCapo@gmail.com");
-        cliente.setPlan(conPlan ? Plan.BASICO : Plan.NINGUNO);
+        cliente.setPlan(conPlan ? tipoPlan : Plan.NINGUNO);
         return cliente;
     }
 
@@ -292,6 +306,14 @@ public class TurnoControllerTest {
         return turnoController.buscarClase(claseABuscar);
     }
 
+    private ModelAndView whenReservoMasDe1TurnoConPlanBasico(Cliente clienteConPlanBasico, HttpServletRequest session) throws YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, LaClaseEsDeUnaFechaAnterioALaActualException, SinPlanException, Exception {
+        when(session.getSession()).thenReturn(mockSession);
+        when(session.getSession().getAttribute("usuarioId")).thenReturn(clienteConPlanBasico.getId());
+        when(session.getSession().getAttribute("plan")).thenReturn(Plan.BASICO);
+        doThrow(SuPlanNoPermiteMasInscripcionesPorDiaException.class).when(turnoService).guardarTurno(1L, clienteConPlanBasico.getId());
+        return turnoController.reservarTurno(1L, session);
+    }
+
     private void thenReservoElTurnoCorrectamente(ModelAndView mv) {
         assertThat(mv.getModel().get("msgGuardado")).isEqualTo("Se guardo turno correctamente");
         assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-turno");
@@ -355,5 +377,10 @@ public class TurnoControllerTest {
     private void thenNoEncuentroLaClaseBuscada(ModelAndView mv) {
         assertThat(mv.getModel().get("claseNoEncontrada")).isEqualTo("No hay clases con ese Nombre");
         assertThat(mv.getViewName()).isEqualTo("clase-buscada");
+    }
+
+    private void thenReservoTurnoSaleExpecionDeCantidadMaximaDeTurnosPorDia(ModelAndView mv) {
+        assertThat(mv.getModel().get("msg")).isEqualTo("Su plan no permite inscribirse a mas clases");
+        assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-clases");
     }
 }

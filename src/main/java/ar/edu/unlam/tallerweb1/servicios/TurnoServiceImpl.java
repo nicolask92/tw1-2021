@@ -55,12 +55,12 @@ public class TurnoServiceImpl implements TurnoService {
             case NINGUNO:
                 throw new SinPlanException();
             case BASICO:
-                if (cantidadDeClasesEnElDia == 1) {
+                if (cantidadDeClasesEnElDia >= 1) {
                     throw new SuPlanNoPermiteMasInscripcionesPorDiaException();
                 }
                 break;
             case ESTANDAR:
-                if (cantidadDeClasesEnElDia == 3) {
+                if (cantidadDeClasesEnElDia >= 3) {
                     throw new SuPlanNoPermiteMasInscripcionesPorDiaException();
                 }
                 break;

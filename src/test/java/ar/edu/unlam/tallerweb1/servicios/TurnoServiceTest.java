@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,7 +34,7 @@ public class TurnoServiceTest {
 
     @Test
     public void testQueSiGuardeTurnoSeAgregue1ClienteALaClase() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException {
-        Cliente cliente = givenUnClienteActivo();
+        Cliente cliente = givenUnClienteActivo(Plan.BASICO);
         Clase clase = givenClaseConLugar();
         Turno turno = givenTurnoDeOtraClase();
         whenGuardoTurno(clase.getId(), cliente.getId(), cliente, clase, turno);
@@ -43,7 +44,7 @@ public class TurnoServiceTest {
     @Test(expected = Exception.class)
     public void testQueLaClaseNoSeEncontro() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException {
 
-        Cliente cliente = givenUnClienteActivo();
+        Cliente cliente = givenUnClienteActivo(Plan.BASICO);
         givenLaClaseNoExiste();
         whenGuardoTurnoIncorrectamente(cliente);
         thenNoSeGuarda();
@@ -51,7 +52,7 @@ public class TurnoServiceTest {
 
     @Test
     public void QueSePuedeBorrarTurno() throws Exception, ElClienteNoCorrespondeAlTurnoException, TurnoExpiroException {
-        Cliente cliente = givenUnClienteActivo();
+        Cliente cliente = givenUnClienteActivo(Plan.BASICO);
         Turno turno = givenTurno(cliente);
         whenBorroTurno(turno, cliente);
         thenSeBorraElTurno(turno.getId(), cliente.getId());
@@ -61,14 +62,14 @@ public class TurnoServiceTest {
     @Test(expected = ElClienteNoCorrespondeAlTurnoException.class)
     public void QueNoSePuedaBorrarTurnoConUsuarioDistintoAlUsurioDelTurno() throws ElClienteNoCorrespondeAlTurnoException, Exception, TurnoExpiroException {
         Turno turno = givenTurnoConCliente();
-        Cliente cliente = givenUnClienteActivo();
+        Cliente cliente = givenUnClienteActivo(Plan.BASICO);
         whenBorroTurno(turno, cliente);
         thenNoSeBorraElTurno(turno);
     }
 
     @Test(expected = LaClaseEsDeUnaFechaAnterioALaActualException.class)
     public void queNoSePuedaReservarTurnoDespuesDeLaFechaDeLaClase() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException {
-        Cliente cliente = givenUnClienteActivo();
+        Cliente cliente = givenUnClienteActivo(Plan.BASICO);
         Clase clase = givenClaseConFechaAnterioAlDiaDeHoy();
         whenReservoTurno(cliente, clase);
         thenElTurnoNoSeReserva();
@@ -76,7 +77,7 @@ public class TurnoServiceTest {
 
     @Test
     public void testQueSeDevuelvanLosTurnosDelDiaLoHagaCorrectamente() {
-        Cliente cliente = givenUnClienteActivo();
+        Cliente cliente = givenUnClienteActivo(Plan.BASICO);
         List<Turno> turnos = givenTurnos(true);
         List<Turno> turnosDevueltosPorRepo = whenBuscoLosTurnosDelClienteParaElDiaDeHoy(cliente, turnos, true);
         thenTraeLosTurnosDelDiaDeHoy(turnosDevueltosPorRepo, turnos);
@@ -84,7 +85,7 @@ public class TurnoServiceTest {
 
     @Test
     public void testQueNoHayanTurnosParaHoyNoDevuelveNada() {
-        Cliente cliente = givenUnClienteActivo();
+        Cliente cliente = givenUnClienteActivo(Plan.BASICO);
         List<Turno> turnosDeAyer = givenTurnos(false);
         List<Turno> turnosDevueltosPorRepo = whenBuscoLosTurnosDelClienteParaElDiaDeHoy(cliente, turnosDeAyer, false);
         thenElListadoDeTurnosDelDiaDeHoyEsVacio(turnosDevueltosPorRepo);
@@ -92,7 +93,7 @@ public class TurnoServiceTest {
 
     @Test(expected = TurnoExpiroException.class)
     public void noSePuedeBorrarTurnoAnteriorALaFechaActual() throws ElClienteNoCorrespondeAlTurnoException, Exception, TurnoExpiroException {
-        Cliente cliente = givenUnClienteActivo();
+        Cliente cliente = givenUnClienteActivo(Plan.BASICO);
         Turno turno = givenHayUnTurnoDeAyer(cliente);
         whenBorroTurno(turno, cliente);
     }
@@ -106,11 +107,36 @@ public class TurnoServiceTest {
 
     @Test(expected = SuPlanNoPermiteMasInscripcionesPorDiaException.class)
     public void testQueSiTieneElPlanBasicoYTieneUnTurnoSacadoNoDejaSacarOtroTurnoMasEnElMismoDia() throws Exception, YaHayTurnoDeLaMismaClaseException, LaClaseEsDeUnaFechaAnterioALaActualException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException {
-        Cliente cliente = givenUnClienteActivo();
+        Cliente cliente = givenUnClienteActivo(Plan.BASICO);
         Turno turno = givenTurno(cliente);
         Turno turno2 = givenTurno(cliente);
         whenIntentoReservar2DoTurnoSaltaExcepcionDeTurnosPorDia(turno, cliente, turno2.getClase());
     }
+
+    @Test(expected = SuPlanNoPermiteMasInscripcionesPorDiaException.class)
+    public void testQueSiTieneElPlanEstadarYTiene3TurnosSacadosNoDejaSacarOtroTurnoMasEnElMismoDia() throws Exception, YaHayTurnoDeLaMismaClaseException, LaClaseEsDeUnaFechaAnterioALaActualException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException {
+        Cliente cliente = givenUnClienteActivo(Plan.ESTANDAR);
+        Turno turno = givenTurno(cliente);
+        Turno turno2 = givenTurno(cliente);
+        Turno turno3 = givenTurno(cliente);
+        Clase clase = givenClaseConLugarDentroDe2Dias();
+        List<Turno> turnos = List.of(turno, turno2, turno3);
+        whenIntentoReservar4ToTurnoSaltaExcepcionDeTurnosPorDia(turnos, cliente, clase);
+    }
+
+    @Test
+    public void testQueSiTieneElPlanEPremiumPuedaSacarMasDe3TurnosPorDia() throws Exception, YaHayTurnoDeLaMismaClaseException, LaClaseEsDeUnaFechaAnterioALaActualException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException {
+        Cliente cliente = givenUnClienteActivo(Plan.PREMIUM);
+        Turno turno = givenTurno(cliente);
+        Turno turno2 = givenTurno(cliente);
+        Turno turno3 = givenTurno(cliente);
+        Clase clase = givenClaseConLugarDentroDe2Dias();
+        List<Turno> turnos = List.of(turno, turno2, turno3);
+        whenIntentoReservar4ToTurnoSaltaExcepcionDeTurnosPorDia(turnos, cliente, clase);
+        thenReservo4Turno();
+    }
+
+
 
     @Test
     public void testBuscarClasesYQueSeEncuentren() throws Exception, NoSeEncontroClaseConEseNombreException {
@@ -155,6 +181,10 @@ public class TurnoServiceTest {
         return List.of(turno, turno2);
     }
 
+    private Clase givenClaseConLugarDentroDe2Dias() throws Exception {
+        return new Clase(LocalDateTime.now().plusDays(2), new Actividad(), Modalidad.PRESENCIAL);
+    }
+
     private List<Turno> whenBuscoLosTurnosDelClienteParaElDiaDeHoy(Cliente cliente, List<Turno> turnos, boolean turnosDeHoy) {
         when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
         if (turnosDeHoy) {
@@ -187,10 +217,10 @@ public class TurnoServiceTest {
         when(claseRepositorio.getById(IDCLASE)).thenReturn(null);
     }
 
-    private Cliente givenUnClienteActivo() {
+    private Cliente givenUnClienteActivo(Plan tipoPlan) {
         Cliente cliente = new Cliente( "Arturo" + LocalDateTime.now(), "Frondizi", "arturitoElMasCapo@gmail.com");
         cliente.setId(1L);
-        cliente.setPlan(Plan.BASICO);
+        cliente.setPlan(tipoPlan);
         return cliente;
     }
 
@@ -247,6 +277,13 @@ public class TurnoServiceTest {
         turnoService.guardarTurno(clase.getId(), cliente.getId());
     }
 
+    private void whenIntentoReservar4ToTurnoSaltaExcepcionDeTurnosPorDia(List<Turno> turno, Cliente cliente, Clase clase) throws Exception, YaHayTurnoDeLaMismaClaseException, LaClaseEsDeUnaFechaAnterioALaActualException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException {
+        when(claseRepositorio.getById(clase.getId())).thenReturn(clase);
+        when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
+        when(turnoRepositorio.getTurnosByIdCliente(cliente)).thenReturn(turno);
+        turnoService.guardarTurno(clase.getId(), cliente.getId());
+    }
+
     private List<Clase> whenBuscoClases(String claseBuscada, Clase clase) throws NoSeEncontroClaseConEseNombreException {
         when(turnoRepositorio.buscarClases(claseBuscada)).thenReturn(List.of(clase));
         return turnoService.buscarClase(claseBuscada);
@@ -288,6 +325,10 @@ public class TurnoServiceTest {
     private void thenEncuntroLasClases(List<Clase> clasesEncontradas) {
         assertThat(clasesEncontradas.size()).isEqualTo(1);
         verify(turnoRepositorio, times(1)).buscarClases(anyString());
+    }
+
+    private void thenReservo4Turno() {
+        verify(turnoRepositorio, times(1)).guardarTurno(any(),any());
     }
 
 }
