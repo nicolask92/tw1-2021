@@ -114,6 +114,9 @@ public class TurnoController {
         } catch (SuPlanNoPermiteMasInscripcionesPorDiaException e) {
             model.put("msg", "Su plan no permite inscribirse a mas clases");
             return new ModelAndView("redirect:/mostrar-clases", model);
+        } catch (SuPlanNoPermiteMasInscripcionesPorSemanaException e) {
+            model.put("msg", "Su plan no permite sacar mas clases por semana");
+            return new ModelAndView("redirect:/mostrar-clases", model);
         }
     }
 

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
@@ -37,7 +38,7 @@ public class TurnoServiceImpl implements TurnoService {
     }
 
     @Override
-    public void guardarTurno(Long idClase, Long idUsuario) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException {
+    public void guardarTurno(Long idClase, Long idUsuario) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException {
         Clase clase = claseRepositorio.getById(idClase);
         Cliente cliente = clienteRepositorio.getById(idUsuario);
         List<Turno> turnosDelCliente = turnoRepositorio.getTurnosByIdCliente(cliente);
@@ -51,6 +52,8 @@ public class TurnoServiceImpl implements TurnoService {
             )
             .count();
 
+        long cantidadDeClasesEnLaSemana = getCantidadTurnosPorSemana(clase, turnosDelCliente);
+
         switch (cliente.getPlan()) {
             case NINGUNO:
                 throw new SinPlanException();
@@ -58,10 +61,16 @@ public class TurnoServiceImpl implements TurnoService {
                 if (cantidadDeClasesEnElDia >= 1) {
                     throw new SuPlanNoPermiteMasInscripcionesPorDiaException();
                 }
+                if (cantidadDeClasesEnLaSemana >= 3) {
+                    throw new SuPlanNoPermiteMasInscripcionesPorSemanaException();
+                }
                 break;
             case ESTANDAR:
                 if (cantidadDeClasesEnElDia >= 3) {
                     throw new SuPlanNoPermiteMasInscripcionesPorDiaException();
+                }
+                if (cantidadDeClasesEnLaSemana >= 6) {
+                    throw new SuPlanNoPermiteMasInscripcionesPorSemanaException();
                 }
                 break;
             case PREMIUM:
@@ -119,4 +128,21 @@ public class TurnoServiceImpl implements TurnoService {
 
         return clasesBuscadas;
     }
+
+
+    private long getCantidadTurnosPorSemana(Clase clase, List<Turno> turnos) {
+        final int diaDeLaSemanaDeLaClase = clase.getDiaClase().getDayOfWeek().getValue();
+
+        final LocalDate finalPrimerDiaDeLaSemana = clase.getDiaClase().toLocalDate().minusDays(diaDeLaSemanaDeLaClase - 1);
+        final LocalDate finalUltimoDiaDeLaSemana = clase.getDiaClase().toLocalDate().plusDays(7 - diaDeLaSemanaDeLaClase);
+
+        return turnos
+            .stream()
+            .filter( turno ->
+                turno.getClase().getDiaClase().toLocalDate().isAfter(finalPrimerDiaDeLaSemana.minusDays(1)) &&
+                    turno.getClase().getDiaClase().toLocalDate().isBefore(finalUltimoDiaDeLaSemana.plusDays(1))
+            )
+            .count();
+    }
+
 }
