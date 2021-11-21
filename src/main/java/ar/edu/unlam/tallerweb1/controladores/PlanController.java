@@ -57,24 +57,24 @@ public class PlanController {
             model.put("contracionExitosa", "El Plan se contrato correctamente");
             return new ModelAndView("redirect:/mostrar-clases", model);
         } catch (PlanNoExisteException e){
-            model.put("noExistePlan", "El plan que quiero contratar no existe");
+            model.put("noExistePlan", "El plan que quiere contratar no existe");
             return  new ModelAndView("/planes", model);
         }
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/contratar-plan/{plan}")
-    public ModelAndView cancelarPlan(@PathVariable("plan") String plan, HttpSession sesion){
+    public ModelAndView cancelarPlan(@PathVariable("plan") String plan, HttpSession sesion) throws PlanNoExisteException {
         Long idUsuario = (Long)sesion.getAttribute("usuarioId");
         ModelMap model = new ModelMap();
 
-//        try{
+        try{
             planService.cancelarPlan(idUsuario, plan);
             model.put("msg", "El Plan se cancelo correctamente");
             return new ModelAndView("redirect:/planes", model);
-//        }catch (null){
-//            model.put("noExistePlan", "El plan que quiero contratar no existe");
-//            return  new ModelAndView("/planes", model);
-//        }
+        }catch (PlanNoExisteException e){
+            model.put("noExistePlan", "El plan que quiere cancelar no existe");
+            return  new ModelAndView("/planes", model);
+        }
 
     }
 }

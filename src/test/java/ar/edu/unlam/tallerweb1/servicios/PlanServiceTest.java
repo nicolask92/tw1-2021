@@ -32,11 +32,17 @@ public class PlanServiceTest {
     }
 
     @Test
-    public void clienteConPlanContratadoPuedeCancelarLaSuscripcion(){
+    public void clienteConPlanContratadoPuedeCancelarLaSuscripcion() throws PlanNoExisteException {
         Cliente cliente = givenClienteLogueadoConPlan();
-        whenClienteCancelaElPlan(cliente);
+        whenClienteCancelaElPlan(cliente, "Basico");
         thenElClienteNoTienePlan(cliente);
 
+    }
+
+    @Test(expected = PlanNoExisteException.class)
+    public void clienteConPlanContratadoNoPuedeCancelarLaSuscripcion() throws PlanNoExisteException {
+        Cliente cliente = givenClienteLogueadoConPlan();
+        whenClienteCancelaElPlan(cliente, "Invalido");
     }
 
     private Cliente givenClienteLogueadoConPlan() {
@@ -56,9 +62,9 @@ public class PlanServiceTest {
         planService.contratarPlan(cliente.getId(), plan );
     }
 
-    private void whenClienteCancelaElPlan(Cliente cliente) {
+    private void whenClienteCancelaElPlan(Cliente cliente, String plan) throws PlanNoExisteException {
         when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
-        planService.cancelarPlan(cliente.getId(), "Basico");
+        planService.cancelarPlan(cliente.getId(), plan);
     }
 
     private void thenElClienteTienePlan(Cliente cliente) {

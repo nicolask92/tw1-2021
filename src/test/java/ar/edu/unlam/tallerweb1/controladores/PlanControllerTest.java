@@ -30,16 +30,30 @@ public class PlanControllerTest {
     }
 
     @Test
-    public void testQueSePuedaContratarPlan() throws PlanNoExisteException {
+    public void queSePuedaContratarPlan() throws PlanNoExisteException {
         Cliente cliente = givenClienteLogueadoYSinPlan();
-        ModelAndView mv = whenContratoPlan(mockSession, cliente);
+        ModelAndView mv = whenContratoPlan(mockSession, cliente, "Basico");
         thenElUsuarioTienePlanYSeLoRedirigeASacarTurnos(mv);
     }
 
     @Test
-    public void sePuedeCancelarLaSuscripcionDeUnPlan(){
+    public void noSePuedeContratarPlan() throws PlanNoExisteException {
+        Cliente cliente = givenClienteLogueadoYSinPlan();
+        ModelAndView mv = whenContratoPlanNoExistente(mockSession, cliente, "Invalido");
+        thenElUsuarioNoPuedoContratarPlan(mv, cliente);
+    }
+
+    @Test
+    public void sePuedeCancelarLaSuscripcionDeUnPlan() throws PlanNoExisteException {
         Cliente cliente = givenClienteLogueadoYConPlan();
-        ModelAndView mv = whenCanceloSuscripcionDelPlanActual(mockSession, cliente);
+        ModelAndView mv = whenCanceloSuscripcionDelPlanActual(mockSession, cliente, "Basico");
+        thenElUsuarioNoTienePlan(mv, cliente);
+    }
+
+    @Test
+    public void noSePuedeCancelarLaSuscripcionDeUnPlan() throws PlanNoExisteException {
+        Cliente cliente = givenClienteLogueadoYConPlan();
+        ModelAndView mv = whenCanceloSuscripcionDelPlanActual(mockSession, cliente, "Invalido");
         thenElUsuarioNoTienePlan(mv, cliente);
     }
 
@@ -59,21 +73,33 @@ public class PlanControllerTest {
         return planController.getPlanes();
     }
 
-    private ModelAndView whenContratoPlan(HttpSession session, Cliente cliente) throws PlanNoExisteException {
+    private ModelAndView whenContratoPlan(HttpSession session, Cliente cliente, String plan) throws PlanNoExisteException {
         when(session.getAttribute("usuarioId")).thenReturn(cliente.getId());
-        when(planService.contratarPlan(cliente.getId(), "Basico" )).thenReturn(Plan.BASICO);
-        return planController.contratarPlan("Basico",session);
+        when(planService.contratarPlan(cliente.getId(), plan )).thenReturn(Plan.BASICO);
+        return planController.contratarPlan(plan, session);
+    }
+    private ModelAndView whenContratoPlanNoExistente(HttpSession session, Cliente cliente, String plan) throws PlanNoExisteException {
+        when(session.getAttribute("usuarioId")).thenReturn(cliente.getId());
+//        when(planService.contratarPlan(cliente.getId(), plan )).thenReturn(Plan.BASICO);
+        doThrow(PlanNoExisteException.class).when(planService).contratarPlan(cliente.getId(), plan);
+        return planController.contratarPlan(plan, session);
     }
 
-    private ModelAndView whenCanceloSuscripcionDelPlanActual(HttpSession session, Cliente cliente) {
+    private ModelAndView whenCanceloSuscripcionDelPlanActual(HttpSession session, Cliente cliente, String plan) throws PlanNoExisteException {
         when(session.getAttribute("usuarioId")).thenReturn(cliente.getId());
         when(planService.cancelarPlan(cliente.getId(), "Basico")).thenReturn(cliente.setPlan(Plan.NINGUNO));
-        return planController.cancelarPlan("Basico", session);
+        return planController.cancelarPlan(plan, session);
     }
 
     private void thenSeMandaLosPlanesALaVista(ModelAndView mv) {
         Assert.assertEquals(mv.getViewName(), "/planes");
         Assert.assertEquals(mv.getModel().get("planes"), List.of(Plan.BASICO, Plan.ESTANDAR, Plan.PREMIUM));
+    }
+
+    private void thenElUsuarioNoPuedoContratarPlan(ModelAndView mv, Cliente cliente) {
+        assertThat(cliente.getPlan()).isEqualTo(Plan.NINGUNO);
+        assertThat(mv.getModel().get("noExistePlan")).isEqualTo("El plan que quiere contratar no existe");
+        assertThat(mv.getViewName()).isEqualTo("/planes");
     }
 
     private void thenElUsuarioTienePlanYSeLoRedirigeASacarTurnos(ModelAndView mv) {

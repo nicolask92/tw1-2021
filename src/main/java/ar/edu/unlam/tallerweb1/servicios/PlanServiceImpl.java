@@ -40,13 +40,13 @@ public class PlanServiceImpl implements PlanService {
     }
 
     @Override
-    public Plan cancelarPlan(Long idCliente, String plan) {
+    public Plan cancelarPlan(Long idCliente, String plan) throws PlanNoExisteException {
         Cliente cliente = clienteRepositorio.getById(idCliente);
         if(plan.equals("Basico") || plan.equals("Estandar") || plan.equals("Premium")){
             cliente.setPlan(Plan.NINGUNO);
             clienteRepositorio.actualizarCliente(cliente);
             return cliente.getPlan();
-        }
-        return null;
+        }else
+            throw new PlanNoExisteException();
     }
 }

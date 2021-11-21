@@ -9,5 +9,5 @@ import org.springframework.stereotype.Service;
 public interface PlanService {
     Plan contratarPlan(Long idCliente, String plan) throws PlanNoExisteException;
 
-    Plan cancelarPlan(Long id, String plan);
+    Plan cancelarPlan(Long id, String plan) throws PlanNoExisteException;
 }
