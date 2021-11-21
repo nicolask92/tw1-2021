@@ -1,3 +1,4 @@
+<%@ page import="ar.edu.unlam.tallerweb1.modelo.Plan" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <jsp:include page="/partial/header.jsp"></jsp:include>
@@ -17,9 +18,23 @@
       <div class="card-body">
         <p class="card-text">${plan.descripcion}</p>
         <p class="card-text">$${plan.precio}</p>
-        <a href="/proyecto_limpio_spring_war_exploded/contratar-plan/${plan.nombre.toString()}" class="btn btn-primary">Contratar</a>
-      </div>
 
+        <c:if test='${sessionScope.plan != "NINGUNO" || sessionScope.plan != ""}'>
+        <c:if test='${sessionScope.plan == "BASICO"}'>
+          <a href="/cancelar-plan/${plan.nombre.toString()}" class="btn btn-primary">Cancelar Suscripcions</a>
+        </c:if>
+
+        <c:if test='${sessionScope.plan == "ESTANDAR"}'>
+          <a href="/cancelar-plan/${plan.nombre.toString()}" class="btn btn-primary">Cancelar Suscripcions</a>
+        </c:if>
+
+        <c:if test='${sessionScope.plan == "PREMIUM"}'>
+          <a href="/cancelar-plan/${plan.nombre.toString()}" class="btn btn-primary">Cancelar Suscripcions</a>
+        </c:if>
+
+            <a href="/proyecto_limpio_spring_war_exploded/contratar-plan/${plan.nombre.toString()}" class="btn btn-primary">Contratar</a>
+        </c:if>
+      </div>
 
     </div>
   </c:forEach>

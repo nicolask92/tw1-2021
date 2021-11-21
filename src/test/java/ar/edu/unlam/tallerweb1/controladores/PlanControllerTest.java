@@ -36,6 +36,19 @@ public class PlanControllerTest {
         thenElUsuarioTienePlanYSeLoRedirigeASacarTurnos(mv);
     }
 
+    @Test
+    public void sePuedeCancelarLaSuscripcionDeUnPlan(){
+        Cliente cliente = givenClienteLogueadoYConPlan();
+        ModelAndView mv = whenCanceloSuscripcionDelPlanActual(mockSession, cliente);
+        thenElUsuarioNoTienePlan(mv, cliente);
+    }
+
+    private Cliente givenClienteLogueadoYConPlan() {
+        Cliente cliente = new Cliente();
+        cliente.setPlan(Plan.ESTANDAR);
+        return cliente;
+    }
+
     private Cliente givenClienteLogueadoYSinPlan() {
         Cliente cliente = new Cliente();
         cliente.setPlan(Plan.NINGUNO);
@@ -48,9 +61,14 @@ public class PlanControllerTest {
 
     private ModelAndView whenContratoPlan(HttpSession session, Cliente cliente) throws PlanNoExisteException {
         when(session.getAttribute("usuarioId")).thenReturn(cliente.getId());
-        when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
         when(planService.contratarPlan(cliente.getId(), "Basico" )).thenReturn(Plan.BASICO);
         return planController.contratarPlan("Basico",session);
+    }
+
+    private ModelAndView whenCanceloSuscripcionDelPlanActual(HttpSession session, Cliente cliente) {
+        when(session.getAttribute("usuarioId")).thenReturn(cliente.getId());
+        when(planService.cancelarPlan(cliente.getId(), "Basico")).thenReturn(cliente.setPlan(Plan.NINGUNO));
+        return planController.cancelarPlan("Basico", session);
     }
 
     private void thenSeMandaLosPlanesALaVista(ModelAndView mv) {
@@ -60,6 +78,11 @@ public class PlanControllerTest {
 
     private void thenElUsuarioTienePlanYSeLoRedirigeASacarTurnos(ModelAndView mv) {
         assertThat(mv.getModel().get("contracionExitosa")).isEqualTo("El Plan se contrato correctamente");
-        assertThat(mv.getViewName()).isEqualTo("forward:/mostrar-clase");
+        assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-clases");
+    }
+
+    private void thenElUsuarioNoTienePlan(ModelAndView mv, Cliente cliente) {
+        assertThat(mv.getModel().get("msg")).isEqualTo("El Plan se cancelo correctamente");
+        assertThat(cliente.getPlan()).isEqualTo(Plan.NINGUNO);
     }
 }

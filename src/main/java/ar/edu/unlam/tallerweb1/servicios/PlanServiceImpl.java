@@ -30,7 +30,6 @@ public class PlanServiceImpl implements PlanService {
     public Plan contratarPlan(Long idCliente, String plan) throws PlanNoExisteException {
 
         Cliente cliente = clienteRepositorio.getById(idCliente);
-
         if (plan.equals("Basico") || plan.equals("Estandar") || plan.equals("Premium")) {
             cliente.setPlan(Plan.valueOf(plan.toUpperCase()));
             clienteRepositorio.actualizarCliente(cliente);
@@ -38,5 +37,16 @@ public class PlanServiceImpl implements PlanService {
         } else
             throw new PlanNoExisteException();
 
+    }
+
+    @Override
+    public Plan cancelarPlan(Long idCliente, String plan) {
+        Cliente cliente = clienteRepositorio.getById(idCliente);
+        if(plan.equals("Basico") || plan.equals("Estandar") || plan.equals("Premium")){
+            cliente.setPlan(Plan.NINGUNO);
+            clienteRepositorio.actualizarCliente(cliente);
+            return cliente.getPlan();
+        }
+        return null;
     }
 }

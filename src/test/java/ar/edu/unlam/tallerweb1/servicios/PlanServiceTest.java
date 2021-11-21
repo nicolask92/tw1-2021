@@ -31,6 +31,20 @@ public class PlanServiceTest {
         whenClienteContrataPlan(cliente, "Invalido");
     }
 
+    @Test
+    public void clienteConPlanContratadoPuedeCancelarLaSuscripcion(){
+        Cliente cliente = givenClienteLogueadoConPlan();
+        whenClienteCancelaElPlan(cliente);
+        thenElClienteNoTienePlan(cliente);
+
+    }
+
+    private Cliente givenClienteLogueadoConPlan() {
+        Cliente cliente = new Cliente();
+        cliente.setPlan(Plan.BASICO);
+        return cliente;
+    }
+
     private Cliente givenClienteLogueadoYSinPlan() {
         Cliente cliente = new Cliente();
         cliente.setPlan(Plan.NINGUNO);
@@ -42,7 +56,16 @@ public class PlanServiceTest {
         planService.contratarPlan(cliente.getId(), plan );
     }
 
+    private void whenClienteCancelaElPlan(Cliente cliente) {
+        when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
+        planService.cancelarPlan(cliente.getId(), "Basico");
+    }
+
     private void thenElClienteTienePlan(Cliente cliente) {
         assertThat(cliente.getPlan()).isEqualTo(Plan.BASICO);
+    }
+
+    private void thenElClienteNoTienePlan(Cliente cliente) {
+        assertThat(cliente.getPlan()).isEqualTo(Plan.NINGUNO);
     }
 }

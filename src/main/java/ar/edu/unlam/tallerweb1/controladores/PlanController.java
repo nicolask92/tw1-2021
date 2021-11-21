@@ -61,4 +61,20 @@ public class PlanController {
             return  new ModelAndView("/planes", model);
         }
     }
+
+    @RequestMapping(method = RequestMethod.POST, path = "/contratar-plan/{plan}")
+    public ModelAndView cancelarPlan(@PathVariable("plan") String plan, HttpSession sesion){
+        Long idUsuario = (Long)sesion.getAttribute("usuarioId");
+        ModelMap model = new ModelMap();
+
+//        try{
+            planService.cancelarPlan(idUsuario, plan);
+            model.put("msg", "El Plan se cancelo correctamente");
+            return new ModelAndView("redirect:/planes", model);
+//        }catch (null){
+//            model.put("noExistePlan", "El plan que quiero contratar no existe");
+//            return  new ModelAndView("/planes", model);
+//        }
+
+    }
 }
