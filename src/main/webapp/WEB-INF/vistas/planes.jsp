@@ -7,20 +7,20 @@
 <div class="container-fluid">
 
   <!-- Page Heading -->
-  <h1 class="h3 mb-4 text-gray-800">Planes</h1>
+  <h1 class="h3 mb-4 text-gray-800 text-center">Planes</h1>
 
   <c:forEach items="${planes}" var="plan" varStatus="loop">
-    <div class="card text-center">
-      <div class="card-header">
+    <div class="card text-center mb-3">
+      <div class="card-header bg-primary">
+        <h5 class="card-title text-white m-0">${plan.nombre}</h5>
       </div>
       <div class="card-body">
-        <h5 class="card-title">${plan.nombre}</h5>
         <p class="card-text">${plan.descripcion}</p>
-        <a href="#" class="btn btn-primary">Contratar</a>
+        <p class="card-text">$${plan.precio}</p>
+        <a href="/contratar-plan/${plan.nombre.toString()}" class="btn btn-primary">Contratar</a>
       </div>
-      <div class="card-footer text-muted">
-        $${plan.precio}
-      </div>
+
+
     </div>
   </c:forEach>
 
