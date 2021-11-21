@@ -31,9 +31,11 @@ public class PlanServiceImpl implements PlanService {
 
         Cliente cliente = clienteRepositorio.getById(idCliente);
 
-        if(plan.equals("Basico") || plan.equals("Estandar") || plan.equals("Premium")){
-            return cliente.setPlan(Plan.valueOf(plan.toUpperCase()));
-        }else
+        if (plan.equals("Basico") || plan.equals("Estandar") || plan.equals("Premium")) {
+            cliente.setPlan(Plan.valueOf(plan.toUpperCase()));
+            clienteRepositorio.actualizarCliente(cliente);
+            return cliente.getPlan();
+        } else
             throw new PlanNoExisteException();
 
     }

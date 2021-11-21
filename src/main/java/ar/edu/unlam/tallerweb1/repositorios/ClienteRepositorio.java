@@ -8,4 +8,5 @@ import ar.edu.unlam.tallerweb1.modelo.Cliente;
 public interface ClienteRepositorio {
 
     Cliente getById(Long idUsuario);
+    void actualizarCliente(Cliente cliente);
 }

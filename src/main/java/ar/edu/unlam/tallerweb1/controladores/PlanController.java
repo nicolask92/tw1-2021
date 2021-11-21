@@ -47,19 +47,18 @@ public class PlanController {
         return new ModelAndView("/planes", modelMap);
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/contratar-plan/{plan}")
+    @RequestMapping(method = RequestMethod.GET, path = "/contratar-plan/{plan}")
     public ModelAndView contratarPlan(@PathVariable("plan") String plan, HttpSession sesion) throws PlanNoExisteException {
         Long idUsuario = (Long)sesion.getAttribute("usuarioId");
         ModelMap model = new ModelMap();
 
-        try{
+        try {
             planService.contratarPlan(idUsuario, plan);
             model.put("contracionExitosa", "El Plan se contrato correctamente");
-            return new ModelAndView("forward:/mostrar-clase", model);
-        }catch (PlanNoExisteException e){
+            return new ModelAndView("redirect:/mostrar-clases", model);
+        } catch (PlanNoExisteException e){
             model.put("noExistePlan", "El plan que quiero contratar no existe");
             return  new ModelAndView("/planes", model);
         }
-
     }
 }

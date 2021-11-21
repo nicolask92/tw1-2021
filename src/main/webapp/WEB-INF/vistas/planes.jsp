@@ -17,7 +17,7 @@
       <div class="card-body">
         <p class="card-text">${plan.descripcion}</p>
         <p class="card-text">$${plan.precio}</p>
-        <a href="/contratar-plan/${plan.nombre.toString()}" class="btn btn-primary">Contratar</a>
+        <a href="/proyecto_limpio_spring_war_exploded/contratar-plan/${plan.nombre.toString()}" class="btn btn-primary">Contratar</a>
       </div>
 
 

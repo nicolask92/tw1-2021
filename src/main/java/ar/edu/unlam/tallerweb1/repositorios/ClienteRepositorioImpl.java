@@ -26,4 +26,10 @@ public class ClienteRepositorioImpl implements ClienteRepositorio {
                 .add(Restrictions.eq("id",idUsuario))
                 .uniqueResult();
     }
+
+    @Override
+    public void actualizarCliente(Cliente cliente) {
+        final Session session = sessionFactory.getCurrentSession();
+        session.update(cliente);
+    }
 }
