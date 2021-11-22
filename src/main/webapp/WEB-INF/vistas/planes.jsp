@@ -1,4 +1,3 @@
-<%@ page import="ar.edu.unlam.tallerweb1.modelo.Plan" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <jsp:include page="/partial/header.jsp"></jsp:include>
@@ -19,21 +18,20 @@
         <p class="card-text">${plan.descripcion}</p>
         <p class="card-text">$${plan.precio}</p>
 
-        <c:if test='${sessionScope.plan != "NINGUNO" || sessionScope.plan != ""}'>
-        <c:if test='${sessionScope.plan == "BASICO"}'>
-          <a href="/cancelar-plan/${plan.nombre.toString()}" class="btn btn-primary">Cancelar Suscripcions</a>
-        </c:if>
+        <c:choose>
+          <c:when test='${(sessionScope.plan.nombre == "Basico" && plan.nombre.toString()== "Basico") ||
+                         (sessionScope.plan.nombre == "Estandar" && plan.nombre.toString()== "Estandar")
+                         || (sessionScope.plan.nombre == "Premium" && plan.nombre.toString()== "Premium")}'>
+            <a href="/proyecto_limpio_spring_war_exploded/cancelar-plan/${plan.nombre.toString()}" class="btn btn-primary">Cancelar Suscripcions</a>
+          </c:when>
 
-        <c:if test='${sessionScope.plan == "ESTANDAR"}'>
-          <a href="/cancelar-plan/${plan.nombre.toString()}" class="btn btn-primary">Cancelar Suscripcions</a>
-        </c:if>
-
-        <c:if test='${sessionScope.plan == "PREMIUM"}'>
-          <a href="/cancelar-plan/${plan.nombre.toString()}" class="btn btn-primary">Cancelar Suscripcions</a>
-        </c:if>
-
+          <c:otherwise>
             <a href="/proyecto_limpio_spring_war_exploded/contratar-plan/${plan.nombre.toString()}" class="btn btn-primary">Contratar</a>
-        </c:if>
+          </c:otherwise>
+        </c:choose>
+
+
+
       </div>
 
     </div>
