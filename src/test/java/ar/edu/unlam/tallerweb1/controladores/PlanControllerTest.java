@@ -1,7 +1,9 @@
 package ar.edu.unlam.tallerweb1.controladores;
 
 import ar.edu.unlam.tallerweb1.exceptiones.PlanNoExisteException;
+import ar.edu.unlam.tallerweb1.exceptiones.YaTienePagoRegistradoParaMismoMes;
 import ar.edu.unlam.tallerweb1.modelo.Cliente;
+import ar.edu.unlam.tallerweb1.modelo.Pago;
 import ar.edu.unlam.tallerweb1.modelo.Plan;
 import ar.edu.unlam.tallerweb1.repositorios.ClienteRepositorio;
 import ar.edu.unlam.tallerweb1.servicios.PlanService;
@@ -11,6 +13,7 @@ import org.junit.Test;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
@@ -30,26 +33,24 @@ public class PlanControllerTest {
     }
 
     @Test
-    public void testQueSePuedaContratarPlan() throws PlanNoExisteException {
+    public void testQueSePuedaContratarPlan() throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenClienteLogueadoYSinPlan();
         ModelAndView mv = whenContratoPlan(mockSession, cliente);
         thenElUsuarioTienePlanYSeLoRedirigeASacarTurnos(mv);
     }
 
     private Cliente givenClienteLogueadoYSinPlan() {
-        Cliente cliente = new Cliente();
-        cliente.setPlan(Plan.NINGUNO);
-        return cliente;
+        return new Cliente();
     }
 
     private ModelAndView whenVeLaVistaDePlanes() {
         return planController.getPlanes();
     }
 
-    private ModelAndView whenContratoPlan(HttpSession session, Cliente cliente) throws PlanNoExisteException {
+    private ModelAndView whenContratoPlan(HttpSession session, Cliente cliente) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         when(session.getAttribute("usuarioId")).thenReturn(cliente.getId());
         when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
-        when(planService.contratarPlan(cliente.getId(), "Basico" )).thenReturn(Plan.BASICO);
+        when(planService.contratarPlan(cliente.getId(), LocalDate.now().getMonth(), LocalDate.now().getYear(), "Basico" )).thenReturn(List.of(new Pago()));
         return planController.contratarPlan("Basico",session);
     }
 
@@ -60,6 +61,6 @@ public class PlanControllerTest {
 
     private void thenElUsuarioTienePlanYSeLoRedirigeASacarTurnos(ModelAndView mv) {
         assertThat(mv.getModel().get("contracionExitosa")).isEqualTo("El Plan se contrato correctamente");
-        assertThat(mv.getViewName()).isEqualTo("forward:/mostrar-clase");
+        assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-clases");
     }
 }

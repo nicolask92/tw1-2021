@@ -58,7 +58,7 @@ public class TurnoControllerTest {
     }
 
     @Test
-    public void testQueNoSePuedaReservarTurno() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException {
+    public void testQueNoSePuedaReservarTurno() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException, YaTienePagoRegistradoParaMismoMes {
         Clase clase = givenQueLaClaseNoTengaLugar();
         Cliente cliente = givenUnClienteActivo(true, Plan.BASICO);
         ModelAndView mv = whenReservoTurnoSinLugar(clase.getId(), mockDeHttpServletSession, cliente.getId());
@@ -67,7 +67,7 @@ public class TurnoControllerTest {
     }
 
     @Test
-    public void TestQueSeBorreReservaDeTurno() throws Exception, ElClienteNoCorrespondeAlTurnoException, TurnoExpiroException {
+    public void TestQueSeBorreReservaDeTurno() throws Exception, ElClienteNoCorrespondeAlTurnoException, TurnoExpiroException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenUnClienteActivo(true, Plan.BASICO);
         Turno turno = givenUnClienteConUnTurno(cliente);
         ModelAndView mv = whenBorroTurnoExistente(turno, cliente, mockDeHttpServletSession);
@@ -75,7 +75,7 @@ public class TurnoControllerTest {
     }
 
     @Test
-    public void queNoSePuedaReservarTurnoDespuesDeLaFechaDeLaClase() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException {
+    public void queNoSePuedaReservarTurnoDespuesDeLaFechaDeLaClase() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente =givenUnClienteActivo(true, Plan.BASICO);
         Clase clase = givenClaseConFechaAnterioAlDiaDeHoy();
         ModelAndView mv = whenReservoTurnoConFechaAnteriorALaActual(clase.getId(), mockDeHttpServletSession, cliente.getId());
@@ -83,7 +83,7 @@ public class TurnoControllerTest {
     }
 
     @Test
-    public void QueNoSePuedaBorrarTurnoConUsuarioDistintoAlUsurioDelTurno() throws ElClienteNoCorrespondeAlTurnoException, Exception, TurnoExpiroException {
+    public void QueNoSePuedaBorrarTurnoConUsuarioDistintoAlUsurioDelTurno() throws ElClienteNoCorrespondeAlTurnoException, Exception, TurnoExpiroException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente =givenUnClienteActivo(true, Plan.BASICO);
         Cliente cliente2 = givenUnClienteActivo(true , Plan.BASICO);
         Turno turno = givenUnClienteConUnTurno(cliente);
@@ -99,7 +99,7 @@ public class TurnoControllerTest {
     }
 
     @Test
-    public void noSePuedeBorrarTurnoAnteriorALaFechaActual() throws ElClienteNoCorrespondeAlTurnoException, TurnoExpiroException {
+    public void noSePuedeBorrarTurnoAnteriorALaFechaActual() throws ElClienteNoCorrespondeAlTurnoException, TurnoExpiroException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenUnClienteActivo(true, Plan.BASICO);
         Turno turno = givenHayUnTurnoDeAyer(cliente);
         ModelAndView mv = whenBorroTurnoDeAyer(turno, cliente, mockDeHttpServletSession);
@@ -107,7 +107,7 @@ public class TurnoControllerTest {
     }
 
     @Test
-    public void noSePuedaSacarTurno2VecesDeLaMismaClase() throws LaClaseEsDeUnaFechaAnterioALaActualException, Exception, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException {
+    public void noSePuedaSacarTurno2VecesDeLaMismaClase() throws LaClaseEsDeUnaFechaAnterioALaActualException, Exception, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenUnClienteActivo(true, Plan.BASICO);
         Turno turno = givenHayUnTurnoParaHoy();
         turno.setCliente(cliente);
@@ -116,7 +116,7 @@ public class TurnoControllerTest {
     }
 
     @Test
-    public void testQueNoSePuedaReservarTurnoSiElTipoNoTienePlan() throws Exception {
+    public void testQueNoSePuedaReservarTurnoSiElTipoNoTienePlan() throws Exception, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenUnClienteActivo(false , Plan.BASICO);
         Clase clase = givenClaseConFechaAnterioAlDiaDeHoy();
         ModelAndView mv = whenReservoTurnoSinPlan(clase.getId(), mockDeHttpServletSession, cliente.getId());
@@ -140,28 +140,28 @@ public class TurnoControllerTest {
     }
 
     @Test
-    public void ConPlanBasicoNoSePuedeSacarMasDe1TurnoPorDia() throws Exception, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, LaClaseEsDeUnaFechaAnterioALaActualException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException {
+    public void ConPlanBasicoNoSePuedeSacarMasDe1TurnoPorDia() throws Exception, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, LaClaseEsDeUnaFechaAnterioALaActualException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException, YaTienePagoRegistradoParaMismoMes {
         Cliente clienteConPlanBasico = givenUnClienteActivo(true, Plan.BASICO);
         ModelAndView mv = whenReservoMasDe1TurnoConPlanBasico(clienteConPlanBasico, mockDeHttpServletSession);
         thenReservoTurnoSaleExpecionDeCantidadMaximaDeTurnosPorDia(mv);
     }
 
     @Test
-    public void ConPlanEstandarNoSePuedeSacarMasDe3TurnoPorDia() throws Exception, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, LaClaseEsDeUnaFechaAnterioALaActualException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException {
+    public void ConPlanEstandarNoSePuedeSacarMasDe3TurnoPorDia() throws Exception, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, LaClaseEsDeUnaFechaAnterioALaActualException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenUnClienteActivo(true, Plan.ESTANDAR);
         ModelAndView mv = whenReservoMasDe1TurnoConPlanBasico(cliente, mockDeHttpServletSession);
         thenReservoTurnoSaleExpecionDeCantidadMaximaDeTurnosPorDia(mv);
     }
 
     @Test
-    public void ConPlanBasicoNoSePuedeSacarMasDe3TurnosPorSemana() throws Exception, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, LaClaseEsDeUnaFechaAnterioALaActualException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException {
+    public void ConPlanBasicoNoSePuedeSacarMasDe3TurnosPorSemana() throws Exception, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, LaClaseEsDeUnaFechaAnterioALaActualException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenUnClienteActivo(true, Plan.ESTANDAR);
         ModelAndView mv = whenIntentoReservarMasDe3TurnosPorSemana(cliente, mockDeHttpServletSession);
         thenReservoTurnoTiraExcepcionDeCantidadMaximaPorSemana(mv);
     }
 
     @Test
-    public void ConPlanEstandarNoSePuedeSacarMasDe6TurnosPorSemana() throws Exception, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, LaClaseEsDeUnaFechaAnterioALaActualException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException {
+    public void ConPlanEstandarNoSePuedeSacarMasDe6TurnosPorSemana() throws Exception, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, LaClaseEsDeUnaFechaAnterioALaActualException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenUnClienteActivo(true, Plan.ESTANDAR);
         ModelAndView mv = whenIntentoReservarMasDe6TurnosPorSemana(cliente, mockDeHttpServletSession);
         thenReservoTurnoTiraExcepcionDeCantidadMaximaPorSemana(mv);
@@ -198,9 +198,12 @@ public class TurnoControllerTest {
         return new Turno();
     }
 
-    private Cliente givenUnClienteActivo(boolean conPlan, Plan tipoPlan) {
+    private Cliente givenUnClienteActivo(boolean conPlan, Plan tipoPlan) throws YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = new Cliente("Arturo" + LocalDateTime.now(), "Frondizi", "arturitoElMasCapo@gmail.com");
-        cliente.setPlan(conPlan ? tipoPlan : Plan.NINGUNO);
+        if (conPlan) {
+            LocalDate hoy = LocalDate.now();
+            cliente.agregarPago(new Pago(cliente, hoy.getMonth(), hoy.getYear(), tipoPlan));
+        }
         return cliente;
     }
 

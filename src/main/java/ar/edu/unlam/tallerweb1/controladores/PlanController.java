@@ -1,6 +1,7 @@
 package ar.edu.unlam.tallerweb1.controladores;
 
 import ar.edu.unlam.tallerweb1.exceptiones.PlanNoExisteException;
+import ar.edu.unlam.tallerweb1.exceptiones.YaTienePagoRegistradoParaMismoMes;
 import ar.edu.unlam.tallerweb1.modelo.Cliente;
 import ar.edu.unlam.tallerweb1.modelo.Plan;
 import ar.edu.unlam.tallerweb1.repositorios.ClienteRepositorio;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,12 +53,12 @@ public class PlanController {
     public ModelAndView contratarPlan(@PathVariable("plan") String plan, HttpSession sesion) throws PlanNoExisteException {
         Long idUsuario = (Long)sesion.getAttribute("usuarioId");
         ModelMap model = new ModelMap();
-
+        LocalDate hoy = LocalDate.now();
         try {
-            planService.contratarPlan(idUsuario, plan);
+            planService.contratarPlan(idUsuario, hoy.getMonth(), hoy.getYear(), plan);
             model.put("contracionExitosa", "El Plan se contrato correctamente");
             return new ModelAndView("redirect:/mostrar-clases", model);
-        } catch (PlanNoExisteException e){
+        } catch (PlanNoExisteException | YaTienePagoRegistradoParaMismoMes e){
             model.put("noExistePlan", "El plan que quiero contratar no existe");
             return  new ModelAndView("/planes", model);
         }

@@ -1,15 +1,17 @@
 package ar.edu.unlam.tallerweb1.servicios;
 
 import ar.edu.unlam.tallerweb1.exceptiones.PlanNoExisteException;
+import ar.edu.unlam.tallerweb1.exceptiones.YaTienePagoRegistradoParaMismoMes;
 import ar.edu.unlam.tallerweb1.modelo.Cliente;
-import ar.edu.unlam.tallerweb1.modelo.Plan;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 import ar.edu.unlam.tallerweb1.repositorios.ClienteRepositorio;
 import ar.edu.unlam.tallerweb1.repositorios.PlanRepositorio;
-import ar.edu.unlam.tallerweb1.repositorios.TurnoRepositorio;
 import org.junit.Test;
+
+import java.time.LocalDate;
+import java.util.Collections;
 
 public class PlanServiceTest {
 
@@ -19,30 +21,28 @@ public class PlanServiceTest {
     private PlanService planService = new PlanServiceImpl(planRepositorio, clienteRepositorio);
 
     @Test
-    public void elClienteContrataPlanBasico() throws PlanNoExisteException {
+    public void elClienteContrataPlanBasico() throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenClienteLogueadoYSinPlan();
         whenClienteContrataPlan(cliente, "Basico");
         thenElClienteTienePlan(cliente);
     }
 
     @Test(expected = PlanNoExisteException.class)
-    public void elClienteContrataPlanConNombreInvalido() throws PlanNoExisteException {
+    public void elClienteContrataPlanConNombreInvalido() throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenClienteLogueadoYSinPlan();
         whenClienteContrataPlan(cliente, "Invalido");
     }
 
     private Cliente givenClienteLogueadoYSinPlan() {
-        Cliente cliente = new Cliente();
-        cliente.setPlan(Plan.NINGUNO);
-        return cliente;
+        return new Cliente();
     }
 
-    private void whenClienteContrataPlan(Cliente cliente, String plan) throws PlanNoExisteException {
+    private void whenClienteContrataPlan(Cliente cliente, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
-        planService.contratarPlan(cliente.getId(), plan );
+        planService.contratarPlan(cliente.getId(), LocalDate.now().getMonth(), LocalDate.now().getYear(), plan );
     }
 
     private void thenElClienteTienePlan(Cliente cliente) {
-        assertThat(cliente.getPlan()).isEqualTo(Plan.BASICO);
+        assertThat(cliente.getContrataciones()).isEqualTo(Collections.emptyList());
     }
 }

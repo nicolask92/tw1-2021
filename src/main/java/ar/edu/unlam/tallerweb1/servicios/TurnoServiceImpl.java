@@ -3,6 +3,7 @@ package ar.edu.unlam.tallerweb1.servicios;
 import ar.edu.unlam.tallerweb1.exceptiones.*;
 import ar.edu.unlam.tallerweb1.modelo.Clase;
 import ar.edu.unlam.tallerweb1.modelo.Cliente;
+import ar.edu.unlam.tallerweb1.modelo.Pago;
 import ar.edu.unlam.tallerweb1.modelo.Turno;
 import ar.edu.unlam.tallerweb1.repositorios.ClaseRepositorio;
 import ar.edu.unlam.tallerweb1.repositorios.ClienteRepositorio;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -39,11 +41,25 @@ public class TurnoServiceImpl implements TurnoService {
 
     @Override
     public void guardarTurno(Long idClase, Long idUsuario) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException {
-        Clase clase = claseRepositorio.getById(idClase);
-        Cliente cliente = clienteRepositorio.getById(idUsuario);
-        List<Turno> turnosDelCliente = turnoRepositorio.getTurnosByIdCliente(cliente);
+        final Clase clase = claseRepositorio.getById(idClase);
+        final Cliente cliente = clienteRepositorio.getById(idUsuario);
+        final List<Turno> turnosDelCliente = turnoRepositorio.getTurnosByIdCliente(cliente);
         if (clase == null)
             throw new Exception();
+
+        final List<Pago> pagos = cliente.getContrataciones();
+
+        Optional<Pago> pagoDeLaClaseElegida = pagos
+            .stream()
+            .filter( pago ->
+                pago.getMes() == clase.getDiaClase().getMonth()
+                    && pago.getAnio() == clase.getDiaClase().getYear()
+            )
+            .findFirst();
+
+        if (pagoDeLaClaseElegida.isEmpty()) {
+            throw new SinPlanException();
+        }
 
         long cantidadDeClasesEnElDia = turnosDelCliente
             .stream()
@@ -54,7 +70,7 @@ public class TurnoServiceImpl implements TurnoService {
 
         long cantidadDeClasesEnLaSemana = getCantidadTurnosPorSemana(clase, turnosDelCliente);
 
-        switch (cliente.getPlan()) {
+        switch (pagoDeLaClaseElegida.get().getPlan()) {
             case NINGUNO:
                 throw new SinPlanException();
             case BASICO:

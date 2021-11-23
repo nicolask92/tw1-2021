@@ -1,5 +1,7 @@
 package ar.edu.unlam.tallerweb1.modelo;
 
+import ar.edu.unlam.tallerweb1.exceptiones.YaTienePagoRegistradoParaMismoMes;
+
 import javax.persistence.*;
 import java.util.Collections;
 import java.util.List;
@@ -7,32 +9,34 @@ import java.util.List;
 @Entity
 public class Cliente extends Usuario {
 
-    @Enumerated(EnumType.STRING)
-    Plan plan;
-
+    //   Esto creo que no deberia ir, ya que el cliente tiene turnos..
     @ManyToMany(mappedBy = "clientes")
     List<Clase> clases;
 
+    @OneToMany(mappedBy = "cliente")
+    List<Pago> contrataciones;
+
     public Cliente(String nombre, String apellido, String email, Plan plan, List<Clase> clases) {
         super(nombre, apellido, email);
-        this.plan = plan;
         this.clases = clases;
     }
 
     public Cliente(String nombre, String apellido, String email) {
-        this.plan = Plan.NINGUNO;
         this.clases = Collections.emptyList();
     }
 
     public Cliente() {
     }
 
-    public Plan setPlan(Plan plan) {
-        this.plan = plan;
-        return this.plan;
+    public List<Pago> agregarPago(Pago pago) throws YaTienePagoRegistradoParaMismoMes {
+        if (contrataciones.contains(pago)) {
+            throw new YaTienePagoRegistradoParaMismoMes();
+        }
+        this.contrataciones.add(pago);
+        return this.contrataciones;
     }
 
-    public Plan getPlan() {
-        return this.plan;
+    public List<Pago> getContrataciones() {
+        return contrataciones;
     }
 }

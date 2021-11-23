@@ -33,7 +33,7 @@ public class TurnoServiceTest {
 
 
     @Test
-    public void testQueSiGuardeTurnoSeAgregue1ClienteALaClase() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException {
+    public void testQueSiGuardeTurnoSeAgregue1ClienteALaClase() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenUnClienteActivo(Plan.BASICO);
         Clase clase = givenClaseConLugar();
         Turno turno = givenTurnoDeOtraClase();
@@ -42,8 +42,7 @@ public class TurnoServiceTest {
     }
 
     @Test(expected = Exception.class)
-    public void testQueLaClaseNoSeEncontro() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException {
-
+    public void testQueLaClaseNoSeEncontro() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenUnClienteActivo(Plan.BASICO);
         givenLaClaseNoExiste();
         whenGuardoTurnoIncorrectamente(cliente);
@@ -51,7 +50,7 @@ public class TurnoServiceTest {
     }
 
     @Test
-    public void QueSePuedeBorrarTurno() throws Exception, ElClienteNoCorrespondeAlTurnoException, TurnoExpiroException {
+    public void QueSePuedeBorrarTurno() throws Exception, ElClienteNoCorrespondeAlTurnoException, TurnoExpiroException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenUnClienteActivo(Plan.BASICO);
         Turno turno = givenTurno(cliente, false);
         whenBorroTurno(turno, cliente);
@@ -60,7 +59,7 @@ public class TurnoServiceTest {
     }
 
     @Test(expected = ElClienteNoCorrespondeAlTurnoException.class)
-    public void QueNoSePuedaBorrarTurnoConUsuarioDistintoAlUsurioDelTurno() throws ElClienteNoCorrespondeAlTurnoException, Exception, TurnoExpiroException {
+    public void QueNoSePuedaBorrarTurnoConUsuarioDistintoAlUsurioDelTurno() throws ElClienteNoCorrespondeAlTurnoException, Exception, TurnoExpiroException, YaTienePagoRegistradoParaMismoMes {
         Turno turno = givenTurnoConCliente();
         Cliente cliente = givenUnClienteActivo(Plan.BASICO);
         whenBorroTurno(turno, cliente);
@@ -68,7 +67,7 @@ public class TurnoServiceTest {
     }
 
     @Test(expected = LaClaseEsDeUnaFechaAnterioALaActualException.class)
-    public void queNoSePuedaReservarTurnoDespuesDeLaFechaDeLaClase() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException {
+    public void queNoSePuedaReservarTurnoDespuesDeLaFechaDeLaClase() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenUnClienteActivo(Plan.BASICO);
         Clase clase = givenClaseConFechaAnterioAlDiaDeHoy();
         whenReservoTurno(cliente, clase);
@@ -76,7 +75,7 @@ public class TurnoServiceTest {
     }
 
     @Test
-    public void testQueSeDevuelvanLosTurnosDelDiaLoHagaCorrectamente() {
+    public void testQueSeDevuelvanLosTurnosDelDiaLoHagaCorrectamente() throws YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenUnClienteActivo(Plan.BASICO);
         List<Turno> turnos = givenTurnos(true);
         List<Turno> turnosDevueltosPorRepo = whenBuscoLosTurnosDelClienteParaElDiaDeHoy(cliente, turnos, true);
@@ -84,7 +83,7 @@ public class TurnoServiceTest {
     }
 
     @Test
-    public void testQueNoHayanTurnosParaHoyNoDevuelveNada() {
+    public void testQueNoHayanTurnosParaHoyNoDevuelveNada() throws YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenUnClienteActivo(Plan.BASICO);
         List<Turno> turnosDeAyer = givenTurnos(false);
         List<Turno> turnosDevueltosPorRepo = whenBuscoLosTurnosDelClienteParaElDiaDeHoy(cliente, turnosDeAyer, false);
@@ -92,21 +91,21 @@ public class TurnoServiceTest {
     }
 
     @Test(expected = TurnoExpiroException.class)
-    public void noSePuedeBorrarTurnoAnteriorALaFechaActual() throws ElClienteNoCorrespondeAlTurnoException, Exception, TurnoExpiroException {
+    public void noSePuedeBorrarTurnoAnteriorALaFechaActual() throws ElClienteNoCorrespondeAlTurnoException, Exception, TurnoExpiroException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenUnClienteActivo(Plan.BASICO);
         Turno turno = givenHayUnTurnoDeAyer(cliente);
         whenBorroTurno(turno, cliente);
     }
 
     @Test(expected = YaHayTurnoDeLaMismaClaseException.class)
-    public void noSePuedaSacarTurno2VecesDeLaMismaClase() throws YaHayTurnoDeLaMismaClaseException, LaClaseEsDeUnaFechaAnterioALaActualException, Exception, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException {
-        Cliente cliente = givenUnClienteActivoYPremium();
+    public void noSePuedaSacarTurno2VecesDeLaMismaClase() throws YaHayTurnoDeLaMismaClaseException, LaClaseEsDeUnaFechaAnterioALaActualException, Exception, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException, YaTienePagoRegistradoParaMismoMes {
+        Cliente cliente = givenUnClienteActivo(Plan.PREMIUM);
         Turno turno = givenTurno(cliente, false);
         whenGuardoTurno(turno.getClase().getId(), cliente.getId(), cliente, turno.getClase(), turno);
     }
 
     @Test(expected = SuPlanNoPermiteMasInscripcionesPorDiaException.class)
-    public void testQueSiTieneElPlanBasicoYTieneUnTurnoSacadoNoDejaSacarOtroTurnoMasEnElMismoDia() throws Exception, YaHayTurnoDeLaMismaClaseException, LaClaseEsDeUnaFechaAnterioALaActualException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException {
+    public void testQueSiTieneElPlanBasicoYTieneUnTurnoSacadoNoDejaSacarOtroTurnoMasEnElMismoDia() throws Exception, YaHayTurnoDeLaMismaClaseException, LaClaseEsDeUnaFechaAnterioALaActualException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenUnClienteActivo(Plan.BASICO);
         Turno turno = givenTurno(cliente, false);
         Turno turno2 = givenTurno(cliente, false);
@@ -114,7 +113,7 @@ public class TurnoServiceTest {
     }
 
     @Test(expected = SuPlanNoPermiteMasInscripcionesPorDiaException.class)
-    public void testQueSiTieneElPlanEstadarYTiene3TurnosSacadosNoDejaSacarOtroTurnoMasEnElMismoDia() throws Exception, YaHayTurnoDeLaMismaClaseException, LaClaseEsDeUnaFechaAnterioALaActualException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException {
+    public void testQueSiTieneElPlanEstadarYTiene3TurnosSacadosNoDejaSacarOtroTurnoMasEnElMismoDia() throws Exception, YaHayTurnoDeLaMismaClaseException, LaClaseEsDeUnaFechaAnterioALaActualException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenUnClienteActivo(Plan.ESTANDAR);
         Turno turno = givenTurno(cliente, false);
         Turno turno2 = givenTurno(cliente, false);
@@ -125,7 +124,7 @@ public class TurnoServiceTest {
     }
 
     @Test
-    public void testQueSiTieneElPlanEPremiumPuedaSacarMasDe3TurnosPorDia() throws Exception, YaHayTurnoDeLaMismaClaseException, LaClaseEsDeUnaFechaAnterioALaActualException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException {
+    public void testQueSiTieneElPlanEPremiumPuedaSacarMasDe3TurnosPorDia() throws Exception, YaHayTurnoDeLaMismaClaseException, LaClaseEsDeUnaFechaAnterioALaActualException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenUnClienteActivo(Plan.PREMIUM);
         Turno turno = givenTurno(cliente, false);
         Turno turno2 = givenTurno(cliente, false);
@@ -152,7 +151,7 @@ public class TurnoServiceTest {
     }
 
     @Test(expected = SuPlanNoPermiteMasInscripcionesPorSemanaException.class)
-    public void testSiTienePlanBasicoNoPuedeSacarMasDeTresTurnosPorSemana() throws Exception, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, LaClaseEsDeUnaFechaAnterioALaActualException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException {
+    public void testSiTienePlanBasicoNoPuedeSacarMasDeTresTurnosPorSemana() throws Exception, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, LaClaseEsDeUnaFechaAnterioALaActualException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenUnClienteActivo(Plan.BASICO);
         Clase clase = givenClaseConLugar();
         List<Turno> turnosYaSacados = givenTurnosSacadosParaEstaSemana(cliente, 3);
@@ -160,7 +159,7 @@ public class TurnoServiceTest {
     }
 
     @Test(expected = SuPlanNoPermiteMasInscripcionesPorSemanaException.class)
-    public void testSiTienePlanEstandarNoPuedeSacarMasDeSeisTurnosPorSemana() throws Exception, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, LaClaseEsDeUnaFechaAnterioALaActualException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException {
+    public void testSiTienePlanEstandarNoPuedeSacarMasDeSeisTurnosPorSemana() throws Exception, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, LaClaseEsDeUnaFechaAnterioALaActualException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenUnClienteActivo(Plan.ESTANDAR);
         Clase clase = givenClaseConLugar();
         List<Turno> turnosYaSacados = givenTurnosSacadosParaEstaSemana(cliente, 6);
@@ -239,19 +238,13 @@ public class TurnoServiceTest {
         when(claseRepositorio.getById(IDCLASE)).thenReturn(null);
     }
 
-    private Cliente givenUnClienteActivo(Plan tipoPlan) {
+    private Cliente givenUnClienteActivo(Plan tipoPlan) throws YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = new Cliente( "Arturo" + LocalDateTime.now(), "Frondizi", "arturitoElMasCapo@gmail.com");
         cliente.setId(1L);
-        cliente.setPlan(tipoPlan);
+        LocalDate hoy = LocalDate.now();
+        cliente.agregarPago(new Pago(cliente, hoy.getMonth(), hoy.getYear(), tipoPlan));
         return cliente;
     }
-
-    private Cliente givenUnClienteActivoYPremium() {
-        Cliente cliente = new Cliente( "Arturo" + LocalDateTime.now(), "Frondizi", "arturitoElMasCapo@gmail.com");
-        cliente.setId(1L);
-        cliente.setPlan(Plan.PREMIUM);
-        return cliente;
-}
 
     private Clase givenClaseConLugar() throws Exception {
         Actividad actividad = givenUnaActividadConPeriodoYHorarioValido();
@@ -329,7 +322,6 @@ public class TurnoServiceTest {
         verify(claseRepositorio,times(1)).getById(clase.getId());
     }
     private void thenNoSeGuarda() {
-        //verify(clase ,never()).agregarCliente(cliente);
         verify(turnoRepositorio, never()).guardarTurno(any(), any());
     }
     private void thenNoSeBorraElTurno(Turno turno) {
