@@ -1,7 +1,9 @@
 package ar.edu.unlam.tallerweb1.modelo;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.Month;
+import java.util.Calendar;
 import java.util.Objects;
 
 @Entity
@@ -16,8 +18,11 @@ public class Pago {
     Cliente cliente;
 
     Month mes;
-
     Integer anio;
+
+    boolean activo;
+    LocalDate fechaCancelacion;
+    LocalDate fechaDeFinalizacion;
 
     @Enumerated(EnumType.STRING)
     Plan plan;
@@ -27,6 +32,10 @@ public class Pago {
         this.mes = mes;
         this.anio = anio;
         this.plan = plan;
+        activo = true;
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(anio, mes.getValue() - 1, 1);
+        this.fechaDeFinalizacion = LocalDate.of(anio, mes.getValue(), calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
     }
 
     public Pago() {
@@ -54,6 +63,16 @@ public class Pago {
 
     public Plan getPlan() {
         return plan;
+    }
+
+    public boolean esActivo() {
+        return activo;
+    }
+
+    public Pago cancelarPlan() {
+        this.fechaCancelacion = LocalDate.now();
+        this.activo = false;
+        return this;
     }
 
     @Override

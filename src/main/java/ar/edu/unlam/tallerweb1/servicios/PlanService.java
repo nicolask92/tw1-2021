@@ -13,4 +13,6 @@ import java.util.List;
 @Service
 public interface PlanService {
     List<Pago> contratarPlan(Long idCliente, Month mes, Integer anio, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes;
+
+    Plan cancelarPlan(Long id, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes;
 }

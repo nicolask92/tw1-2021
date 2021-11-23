@@ -17,9 +17,22 @@
       <div class="card-body">
         <p class="card-text">${plan.descripcion}</p>
         <p class="card-text">$${plan.precio}</p>
-        <a href="/proyecto_limpio_spring_war_exploded/contratar-plan/${plan.nombre.toString()}" class="btn btn-primary">Contratar</a>
-      </div>
 
+        <c:choose>
+          <c:when test='${(sessionScope.plan.nombre == "Basico" && plan.nombre.toString()== "Basico") ||
+                         (sessionScope.plan.nombre == "Estandar" && plan.nombre.toString()== "Estandar")
+                         || (sessionScope.plan.nombre == "Premium" && plan.nombre.toString()== "Premium")}'>
+            <a href="/proyecto_limpio_spring_war_exploded/cancelar-plan/${plan.nombre.toString()}" class="btn btn-primary">Cancelar Suscripcions</a>
+          </c:when>
+
+          <c:otherwise>
+            <a href="/proyecto_limpio_spring_war_exploded/contratar-plan/${plan.nombre.toString()}" class="btn btn-primary">Contratar</a>
+          </c:otherwise>
+        </c:choose>
+
+
+
+      </div>
 
     </div>
   </c:forEach>
