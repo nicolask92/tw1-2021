@@ -58,7 +58,7 @@ public class PlanController {
             return new ModelAndView("redirect:/mostrar-clases", model);
 
         } catch (PlanNoExisteException | YaTienePagoRegistradoParaMismoMes e){
-            model.put("noExistePlan", "El plan que quiero contratar no existe");
+            model.put("noExistePlan", "El plan que quiere contratar no existe");
             return  new ModelAndView("/planes", model);
         }
     }

@@ -43,12 +43,12 @@ public class PlanServiceImpl implements PlanService {
 
     // TODO cambiar lo que devuelve el metodo
     @Override
-    public Plan cancelarPlan(Long idCliente, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
+    public Pago cancelarPlan(Long idCliente, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = clienteRepositorio.getById(idCliente);
         if (plan.equals("Basico") || plan.equals("Estandar") || plan.equals("Premium")) {
-            cliente.getUltimoPagoRealizado().cancelarPlan();
+            Pago pago = cliente.getUltimoPagoRealizado().cancelarPlan();
             clienteRepositorio.actualizarCliente(cliente);
-            return Plan.NINGUNO;
+            return pago;
         }else
             throw new PlanNoExisteException();
     }

@@ -92,8 +92,9 @@ public class PlanControllerTest {
 
     // TODO arreglar
     private ModelAndView whenCanceloSuscripcionDelPlanActual(HttpSession session, Cliente cliente, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
+        Pago pago = cliente.getContrataciones().get(0);
         when(session.getAttribute("usuarioId")).thenReturn(cliente.getId());
-        when(planService.cancelarPlan(cliente.getId(), "Basico")).thenReturn(Plan.NINGUNO);
+        when(planService.cancelarPlan(cliente.getId(), "Basico")).thenReturn(pago);
         return planController.cancelarPlan(plan, session);
     }
 
@@ -103,7 +104,7 @@ public class PlanControllerTest {
     }
 
     private void thenElUsuarioNoPuedoContratarPlan(ModelAndView mv, Cliente cliente) {
-        assertThat(cliente.getUltimoPlanContrado()).isEqualTo(Plan.NINGUNO);
+//       assertThat(cliente.getUltimoPlanContrado()).isEqualTo(Plan.NINGUNO);
         assertThat(mv.getModel().get("noExistePlan")).isEqualTo("El plan que quiere contratar no existe");
         assertThat(mv.getViewName()).isEqualTo("/planes");
     }
@@ -114,7 +115,8 @@ public class PlanControllerTest {
     }
 
     private void thenElUsuarioNoTienePlan(ModelAndView mv, Cliente cliente) {
+//        assertThat(cliente.getUltimoPlanContrado()).isEqualTo(Plan.NINGUNO);
         assertThat(mv.getModel().get("msg")).isEqualTo("El Plan se cancelo correctamente");
-        assertThat(cliente.getUltimoPlanContrado()).isEqualTo(Plan.NINGUNO);
+        assertThat(mv.getViewName()).isEqualTo("redirect:/planes");
     }
 }
