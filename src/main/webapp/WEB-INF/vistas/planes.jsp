@@ -9,6 +9,18 @@
   <!-- Page Heading -->
   <h1 class="h3 mb-4 text-gray-800 text-center">Planes</h1>
 
+  <c:if test="${not empty param['msg']}">
+    <div class="alert alert-success" role="alert">
+        ${param['msg']}
+    </div>
+  </c:if>
+
+  <c:if test="${not empty param['noExistePlan']}">
+    <div class="alert alert-danger" role="alert">
+        ${param['noExistePlan']}
+    </div>
+  </c:if>
+
   <c:forEach items="${planes}" var="plan" varStatus="loop">
     <div class="card text-center mb-3">
       <div class="card-header bg-primary">

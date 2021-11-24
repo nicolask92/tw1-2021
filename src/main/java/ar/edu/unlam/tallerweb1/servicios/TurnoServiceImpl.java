@@ -52,6 +52,7 @@ public class TurnoServiceImpl implements TurnoService {
         Optional<Pago> pagoDeLaClaseElegida = pagos
             .stream()
             .filter( pago ->
+                pago.esActivo() &&
                 pago.getMes() == clase.getDiaClase().getMonth()
                     && pago.getAnio() == clase.getDiaClase().getYear()
             )
@@ -59,49 +60,49 @@ public class TurnoServiceImpl implements TurnoService {
 
         if (pagoDeLaClaseElegida.isEmpty()) {
             throw new SinPlanException();
+        } else {
+            long cantidadDeClasesEnElDia = turnosDelCliente
+                    .stream()
+                    .filter( turno ->
+                            turno.getClase().getDiaClase().toLocalDate().equals(clase.getDiaClase().toLocalDate())
+                    )
+                    .count();
+
+            long cantidadDeClasesEnLaSemana = getCantidadTurnosPorSemana(clase, turnosDelCliente);
+
+            switch (pagoDeLaClaseElegida.get().getPlan()) {
+                case NINGUNO:
+                    throw new SinPlanException();
+                case BASICO:
+                    if (cantidadDeClasesEnElDia >= 1) {
+                        throw new SuPlanNoPermiteMasInscripcionesPorDiaException();
+                    }
+                    if (cantidadDeClasesEnLaSemana >= 3) {
+                        throw new SuPlanNoPermiteMasInscripcionesPorSemanaException();
+                    }
+                    break;
+                case ESTANDAR:
+                    if (cantidadDeClasesEnElDia >= 3) {
+                        throw new SuPlanNoPermiteMasInscripcionesPorDiaException();
+                    }
+                    if (cantidadDeClasesEnLaSemana >= 6) {
+                        throw new SuPlanNoPermiteMasInscripcionesPorSemanaException();
+                    }
+                    break;
+                case PREMIUM:
+            }
+
+            if (clase.getDiaClase().isBefore(LocalDateTime.now()))
+                throw new LaClaseEsDeUnaFechaAnterioALaActualException();
+
+            for (Turno t : turnosDelCliente) {
+                if(t.getClase().getId().equals(clase.getId()))
+                    throw new YaHayTurnoDeLaMismaClaseException();
+            }
         }
 
-        long cantidadDeClasesEnElDia = turnosDelCliente
-            .stream()
-            .filter( turno ->
-                turno.getClase().getDiaClase().toLocalDate().equals(clase.getDiaClase().toLocalDate())
-            )
-            .count();
-
-        long cantidadDeClasesEnLaSemana = getCantidadTurnosPorSemana(clase, turnosDelCliente);
-
-        switch (pagoDeLaClaseElegida.get().getPlan()) {
-            case NINGUNO:
-                throw new SinPlanException();
-            case BASICO:
-                if (cantidadDeClasesEnElDia >= 1) {
-                    throw new SuPlanNoPermiteMasInscripcionesPorDiaException();
-                }
-                if (cantidadDeClasesEnLaSemana >= 3) {
-                    throw new SuPlanNoPermiteMasInscripcionesPorSemanaException();
-                }
-                break;
-            case ESTANDAR:
-                if (cantidadDeClasesEnElDia >= 3) {
-                    throw new SuPlanNoPermiteMasInscripcionesPorDiaException();
-                }
-                if (cantidadDeClasesEnLaSemana >= 6) {
-                    throw new SuPlanNoPermiteMasInscripcionesPorSemanaException();
-                }
-                break;
-            case PREMIUM:
-        }
-
-        if (clase.getDiaClase().isBefore(LocalDateTime.now()))
-            throw new LaClaseEsDeUnaFechaAnterioALaActualException();
-
-        for (Turno t : turnosDelCliente) {
-            if(t.getClase().getId().equals(clase.getId()))
-                throw new YaHayTurnoDeLaMismaClaseException();
-        }
         clase.agregarCliente(cliente); //exepcion de si tiene cupo disponible
         turnoRepositorio.guardarTurno(cliente, clase);
-
     }
 
     @Override
@@ -160,5 +161,4 @@ public class TurnoServiceImpl implements TurnoService {
             )
             .count();
     }
-
 }

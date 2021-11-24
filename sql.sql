@@ -74,6 +74,13 @@ values(20        , "2021-11-29T13:15:30", "PRESENCIAL", 1, 4);
 insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
 values(20        , "2021-11-30T10:15:30", "PRESENCIAL", 1, 4);
 
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2021-11-26T10:15:30", "PRESENCIAL", 1, 4);
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2021-11-24T10:15:30", "PRESENCIAL", 1, 4);
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2021-11-25T10:15:30", "PRESENCIAL", 1, 4);
+
 /*----------------------------------------------------------------------------------*/
 
 insert into diayhorario (id, dia, horario_id)
@@ -81,8 +88,6 @@ values (1, "Lunes", 1);
 
 insert into actividad_diayhorario (Actividad_id, diaYHorario_id)
 values (1, 1);
-
-INSERT INTO turno(id, asisitio, fecha_y_hora_de_reserva, clase_id, cliente_id) VALUES (1, 'false', '2021-10-03 10:15:30.000000', 4, 1);
 
 /*-------USUARIOS-----------*/
 
@@ -104,7 +109,7 @@ values ("Cliente", true, "clientePlanEstandar", "clienteestandar@gmail.com", "Pe
 insert into usuario(DTYPE, activo, apellido, email, nombre, password, rol)
 values ("Cliente", true, "clientePlanPremium", "clientepremium@gmail.com", "Roberto", "cliente123", "Rol de cliente");
 
-
-
---query pagos---
---INSERT INTO `pagos`(`id`, `activo`, `anio`,`fechaDeFinalizacion`, `mes`, `plan`, `cliente_id`) VALUES (5, 1,'2021','2021-11-30',10,'ESTANDAR',4)--
+INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id) VALUES (5, 1,'2021','2021-11-30',10,'NINGUNO',1);
+INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id) VALUES (5, 1,'2021','2021-11-30',10,'NINGUNO',4);
+INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id) VALUES (5, 1,'2021','2021-11-30',10,'NINGUNO',5);
+INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id) VALUES (5, 1,'2021','2021-11-30',10,'NINGUNO',6);

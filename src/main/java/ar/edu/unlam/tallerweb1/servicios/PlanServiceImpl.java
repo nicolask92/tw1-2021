@@ -35,14 +35,14 @@ public class PlanServiceImpl implements PlanService {
         Cliente cliente = clienteRepositorio.getById(idCliente);
         if (plan.equals("Basico") || plan.equals("Estandar") || plan.equals("Premium")) {
             cliente.getUltimoPagoRealizado().cancelarPlan();
-            cliente.agregarPago(new Pago(cliente, mes, anio, Plan.valueOf(plan.toUpperCase())));
+            Pago nuevoPago = new Pago(cliente, mes, anio, Plan.valueOf(plan.toUpperCase()));
+            cliente.agregarPago(nuevoPago);
             clienteRepositorio.actualizarCliente(cliente);
-            return cliente.getUltimoPlanContrado();
+            return nuevoPago.getPlan();
         } else
             throw new PlanNoExisteException();
     }
 
-    // TODO cambiar lo que devuelve el metodo
     @Override
     public Pago cancelarPlan(Long idCliente, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = clienteRepositorio.getById(idCliente);

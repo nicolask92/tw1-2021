@@ -56,29 +56,28 @@ public class PlanController {
         try {
             Plan ultimoPlan = planService.contratarPlan(idUsuario, hoy.getMonth(), hoy.getYear(), plan);
             model.put("contracionExitosa", "El Plan se contrato correctamente");
-//            sesion.setAttribute("plan", null);
+            sesion.setAttribute("plan", null);
             sesion.setAttribute("plan", ultimoPlan);
             return new ModelAndView("redirect:/mostrar-clases", model);
 
         } catch (PlanNoExisteException | YaTienePagoRegistradoParaMismoMes e){
             model.put("noExistePlan", "El plan que quiere contratar no existe");
-            return  new ModelAndView("/planes", model);
+            return  new ModelAndView("redirect:/planes", model);
         }
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/contratar-plan/{plan}")
+    @RequestMapping(method = RequestMethod.GET, path = "/cancelar-plan/{plan}")
     public ModelAndView cancelarPlan(@PathVariable("plan") String plan, HttpSession sesion) throws PlanNoExisteException {
         Long idUsuario = (Long)sesion.getAttribute("usuarioId");
         ModelMap model = new ModelMap();
 
-        try{
+        try {
             planService.cancelarPlan(idUsuario, plan);
             model.put("msg", "El Plan se cancelo correctamente");
             return new ModelAndView("redirect:/planes", model);
-        }catch (PlanNoExisteException | YaTienePagoRegistradoParaMismoMes e){
+        } catch (PlanNoExisteException | YaTienePagoRegistradoParaMismoMes e){
             model.put("noExistePlan", "El plan que quiere cancelar no existe");
-            return  new ModelAndView("/planes", model);
+            return  new ModelAndView("redirect:/planes", model);
         }
-
     }
 }

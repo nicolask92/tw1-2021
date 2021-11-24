@@ -1,10 +1,8 @@
 package ar.edu.unlam.tallerweb1.repositorios;
 
-import ar.edu.unlam.tallerweb1.common.Tipo;
 import ar.edu.unlam.tallerweb1.modelo.Clase;
 import ar.edu.unlam.tallerweb1.modelo.Cliente;
 import ar.edu.unlam.tallerweb1.modelo.Turno;
-import ar.edu.unlam.tallerweb1.modelo.Usuario;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -29,8 +27,8 @@ public class TurnoRepositorioImpl implements TurnoRepositorio {
     @Override
     public List<Turno> getTurnosByIdCliente(Cliente cliente) {
         final Session session = sessionFactory.getCurrentSession();
-        return session.createCriteria(Turno.class)
-                .add(Restrictions.eq("cliente", cliente))
+        return session.createQuery("select distinct t from Turno t where cliente =:cliente")
+                .setParameter("cliente", cliente)
                 .list();
     }
 
@@ -64,10 +62,10 @@ public class TurnoRepositorioImpl implements TurnoRepositorio {
         final LocalDate hoy = LocalDate.now();
         final LocalDateTime diaYHoraInicial = LocalDateTime.of(hoy, LocalTime.of(0,0));
         final LocalDateTime diaYHoraFinal = LocalDateTime.of(hoy, LocalTime.of(23, 59, 59));
-        return session.createCriteria(Turno.class)
-                .createAlias("clase", "c")
-                .add(Restrictions.eq("cliente", cliente))
-                .add(Restrictions.between("c.diaClase", diaYHoraInicial, diaYHoraFinal))
+        return session.createQuery("select distinct t from Turno t where cliente =:cliente and clase.diaClase between :diaYHoraInicial and :diaYHoraFinal")
+                .setParameter("cliente", cliente)
+                .setParameter("diaYHoraInicial", diaYHoraInicial)
+                .setParameter("diaYHoraFinal", diaYHoraFinal)
                 .list();
     }
 
