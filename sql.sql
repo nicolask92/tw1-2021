@@ -86,8 +86,8 @@ INSERT INTO turno(id, asisitio, fecha_y_hora_de_reserva, clase_id, cliente_id) V
 
 /*-------USUARIOS-----------*/
 
-insert into usuario (DTYPE, activo, apellido, email, nombre, password, rol, plan)
-values ("Cliente", true, "Cliente", "cliente@gmail.com", "Jorge", "cliente123", "Rol de cliente", "BASICO");
+insert into usuario (DTYPE, activo, apellido, email, nombre, password, rol)
+values ("Cliente", true, "Cliente", "cliente@gmail.com", "Jorge", "cliente123", "Rol de cliente");
 
 insert into usuario  (id, DTYPE, activo, apellido, email, nombre, password, rol)
 values (2, "Entrenador", true, "Entrenador 1", "entranador@gmail.com", "Lopez", "entrenador123", "Rol de entrenador");
@@ -95,14 +95,14 @@ values (2, "Entrenador", true, "Entrenador 1", "entranador@gmail.com", "Lopez", 
 insert into usuario  (id, DTYPE, activo, apellido, email, nombre, password, rol)
 values (3, "Entrenador", true, "Entrenador 2", "entranador2@gmail.com", "Luis", "entrenador123", "Rol de entrenador");
 
-insert into usuario(DTYPE, activo, apellido, email, nombre, password, rol, plan)
-values ("Cliente", true, "clienteSinPlan", "cliente2@gmail.com", "Manuel", "cliente123", "Rol de cliente", "NINGUNO");
+insert into usuario(DTYPE, activo, apellido, email, nombre, password, rol)
+values ("Cliente", true, "clienteSinPlan", "cliente2@gmail.com", "Manuel", "cliente123", "Rol de cliente");
 
-insert into usuario(DTYPE, activo, apellido, email, nombre, password, rol, plan)
-values ("Cliente", true, "clientePlanEstandar", "clienteestandar@gmail.com", "Pedro", "cliente123", "Rol de cliente", "ESTANDAR");
+insert into usuario(DTYPE, activo, apellido, email, nombre, password, rol)
+values ("Cliente", true, "clientePlanEstandar", "clienteestandar@gmail.com", "Pedro", "cliente123", "Rol de cliente");
 
-insert into usuario(DTYPE, activo, apellido, email, nombre, password, rol, plan)
-values ("Cliente", true, "clientePlanPremium", "clientepremium@gmail.com", "Roberto", "cliente123", "Rol de cliente", "PREMIUM");
+insert into usuario(DTYPE, activo, apellido, email, nombre, password, rol)
+values ("Cliente", true, "clientePlanPremium", "clientepremium@gmail.com", "Roberto", "cliente123", "Rol de cliente");
 
 
 
