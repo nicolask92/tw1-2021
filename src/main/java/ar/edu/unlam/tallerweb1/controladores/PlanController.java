@@ -54,8 +54,10 @@ public class PlanController {
         LocalDate hoy = LocalDate.now();
 
         try {
-            planService.contratarPlan(idUsuario, hoy.getMonth(), hoy.getYear(), plan);
+            Plan ultimoPlan = planService.contratarPlan(idUsuario, hoy.getMonth(), hoy.getYear(), plan);
             model.put("contracionExitosa", "El Plan se contrato correctamente");
+//            sesion.setAttribute("plan", null);
+            sesion.setAttribute("plan", ultimoPlan);
             return new ModelAndView("redirect:/mostrar-clases", model);
 
         } catch (PlanNoExisteException | YaTienePagoRegistradoParaMismoMes e){

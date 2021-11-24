@@ -30,13 +30,14 @@ public class PlanServiceImpl implements PlanService {
 
 
     @Override
-    public List<Pago> contratarPlan(Long idCliente, Month mes, Integer anio, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
+    public Plan contratarPlan(Long idCliente, Month mes, Integer anio, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
 
         Cliente cliente = clienteRepositorio.getById(idCliente);
         if (plan.equals("Basico") || plan.equals("Estandar") || plan.equals("Premium")) {
+            cliente.getUltimoPagoRealizado().cancelarPlan();
             cliente.agregarPago(new Pago(cliente, mes, anio, Plan.valueOf(plan.toUpperCase())));
             clienteRepositorio.actualizarCliente(cliente);
-            return cliente.getContrataciones();
+            return cliente.getUltimoPlanContrado();
         } else
             throw new PlanNoExisteException();
     }

@@ -23,14 +23,14 @@ public class PlanServiceTest {
 
     @Test
     public void elClienteContrataPlanBasico() throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
-        Cliente cliente = givenClienteLogueadoYSinPlan();
+        Cliente cliente = givenClienteLogueadoConPlanNinguno();
         whenClienteContrataPlan(cliente, "Basico");
         thenElClienteTienePlan(cliente);
     }
 
     @Test(expected = PlanNoExisteException.class)
     public void elClienteContrataPlanConNombreInvalido() throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
-        Cliente cliente = givenClienteLogueadoYSinPlan();
+        Cliente cliente = givenClienteLogueadoConPlanNinguno();
         whenClienteContrataPlan(cliente, "Invalido");
     }
 
@@ -54,8 +54,11 @@ public class PlanServiceTest {
         return cliente;
     }
 
-    private Cliente givenClienteLogueadoYSinPlan() {
-        return new Cliente();
+    private Cliente givenClienteLogueadoConPlanNinguno() throws YaTienePagoRegistradoParaMismoMes {
+        Cliente cliente = new Cliente();
+        LocalDate hoy = LocalDate.now();
+        cliente.agregarPago(new Pago(cliente, hoy.getMonth(), hoy.getYear(), Plan.NINGUNO));
+        return cliente;
     }
 
     private void whenClienteContrataPlan(Cliente cliente, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {

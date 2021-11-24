@@ -79,7 +79,7 @@ public class PlanControllerTest {
     private ModelAndView whenContratoPlan(HttpSession session, Cliente cliente, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         when(session.getAttribute("usuarioId")).thenReturn(cliente.getId());
         when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
-        when(planService.contratarPlan(cliente.getId(), LocalDate.now().getMonth(), LocalDate.now().getYear(), plan)).thenReturn(List.of(new Pago()));
+        when(planService.contratarPlan(cliente.getId(), LocalDate.now().getMonth(), LocalDate.now().getYear(), plan)).thenReturn(Plan.BASICO);
         return planController.contratarPlan("Basico", session);
     }
 

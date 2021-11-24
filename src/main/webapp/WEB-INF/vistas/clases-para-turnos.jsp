@@ -20,6 +20,13 @@
         </div>
     </c:if>
 
+
+    <c:if test="${not empty param['contracionExitosa']}">
+        <div class="alert alert-success" role="alert">
+                ${param['contracionExitosa']}
+        </div>
+    </c:if>
+
     <table class="table">
         <thead>
             <tr>
