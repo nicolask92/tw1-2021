@@ -52,6 +52,7 @@ public class PlanController {
         Long idUsuario = (Long)sesion.getAttribute("usuarioId");
         ModelMap model = new ModelMap();
         LocalDate hoy = LocalDate.now();
+
         try {
             planService.contratarPlan(idUsuario, hoy.getMonth(), hoy.getYear(), plan);
             model.put("contracionExitosa", "El Plan se contrato correctamente");

@@ -16,8 +16,8 @@ public class Cliente extends Usuario {
     @ManyToMany(mappedBy = "clientes")
     List<Clase> clases;
 
-    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
-    List<Pago> contrataciones = new ArrayList<>();
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    List<Pago> contrataciones= new ArrayList<>();
 
     public Cliente(String nombre, String apellido, String email, Plan plan, List<Clase> clases) {
         super(nombre, apellido, email);

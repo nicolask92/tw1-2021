@@ -22,7 +22,7 @@ public class LoginServiceInterceptor implements HandlerInterceptor {
             // User not logged in, redirect to login page
             response.sendRedirect("/proyecto_limpio_spring_war_exploded/login");
             return false;
-        } else if ((esCliente != null) && (!esCliente || planUsuario == Plan.NINGUNO)) {
+        } else if ((esCliente != null) && (!esCliente || (planUsuario == null || planUsuario.getNombre().equals("Ninguno")))) {
             if (!uri.endsWith(("planes"))) {
                 response.sendRedirect("/proyecto_limpio_spring_war_exploded/planes");
                 return false;

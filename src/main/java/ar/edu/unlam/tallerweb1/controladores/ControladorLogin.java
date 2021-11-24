@@ -58,7 +58,7 @@ public class ControladorLogin {
 
 			if (usuarioBuscado instanceof Cliente) {
 				request.getSession(true).setAttribute("cliente", true);
-				request.getSession(true).setAttribute("plan", ((Cliente)usuarioBuscado).getContrataciones());
+				request.getSession(true).setAttribute("plan", ((Cliente)usuarioBuscado).getUltimoPlanContrado());
 			}
 
 			//session.setAttribute("usuarioId", usuarioBuscado.getId());

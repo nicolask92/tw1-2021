@@ -24,6 +24,7 @@ public class Pago {
     LocalDate fechaCancelacion;
     LocalDate fechaDeFinalizacion;
 
+    @Column()
     @Enumerated(EnumType.STRING)
     Plan plan;
 
