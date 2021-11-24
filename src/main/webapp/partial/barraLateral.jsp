@@ -39,13 +39,15 @@
                     <span>Mis turno</span></a>
             </li>
 
-            <hr class="sidebar-divider d-none d-md-block">
-
             <li class="nav-item">
                 <a class="nav-link" href="/proyecto_limpio_spring_war_exploded/historial-pagos">
                     <i class="far fa-credit-card"></i>
                     <span>Historial Pagos</span></a>
             </li>
+
+            <hr class="sidebar-divider d-none d-md-block">
+
+
         </c:if>
 
         <li class="nav-item">

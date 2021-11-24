@@ -13,7 +13,7 @@
     <!-- /.container-fluid -->
 
     <table class="table table-striped table-bordered">
-        <thead class="thead-dark">
+        <thead class="bg-primary text-white">
         <tr>
             <th scope="col">#</th>
             <th scope="col">Fecha contratacion</th>

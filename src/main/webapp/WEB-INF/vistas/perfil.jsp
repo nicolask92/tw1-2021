@@ -17,7 +17,7 @@
 
         <div class="col-sm-4 mb-3 mb-sm-0">
 
-            <img  class="img-fluid" src="proyecto_limpio_spring_war_exploded/img/perfil.png">
+            <img  class="img-fluid" src="img/perfil.png">
 
         </div>
 
