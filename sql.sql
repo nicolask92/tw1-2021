@@ -103,3 +103,8 @@ values ("Cliente", true, "clientePlanEstandar", "clienteestandar@gmail.com", "Pe
 
 insert into usuario(DTYPE, activo, apellido, email, nombre, password, rol, plan)
 values ("Cliente", true, "clientePlanPremium", "clientepremium@gmail.com", "Roberto", "cliente123", "Rol de cliente", "PREMIUM");
+
+
+
+--query pagos---
+--INSERT INTO `pagos`(`id`, `activo`, `anio`,`fechaDeFinalizacion`, `mes`, `plan`, `cliente_id`) VALUES (5, 1,'2021','2021-11-30',10,'ESTANDAR',4)--
