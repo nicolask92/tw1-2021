@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class ClienteServiceImpl implements ClienteService {
@@ -26,5 +28,12 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     public Pago getPlanActivo(Cliente cliente) {
         return clienteRepositorio.getPlanActivo(cliente);
+    }
+
+    @Override
+    public List<Pago> getPagos(Long idUsuario) {
+
+        Cliente cliente = clienteRepositorio.getById(idUsuario);
+        return clienteRepositorio.getPagos(cliente);
     }
 }

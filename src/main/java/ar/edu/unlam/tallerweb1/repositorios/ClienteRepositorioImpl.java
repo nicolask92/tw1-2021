@@ -43,4 +43,12 @@ public class ClienteRepositorioImpl implements ClienteRepositorio {
                 .setParameter("cliente", cliente)
                 .uniqueResult();
     }
+
+    @Override
+    public List<Pago> getPagos(Cliente cliente) {
+        final Session session = sessionFactory.getCurrentSession();
+        return  session.createQuery("select p from Pago p where p.cliente =:cliente AND p.plan != 'NINGUNO'")
+                .setParameter("cliente", cliente)
+                .list();
+    }
 }

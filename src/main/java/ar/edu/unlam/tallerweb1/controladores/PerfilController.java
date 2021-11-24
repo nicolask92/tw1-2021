@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 public class PerfilController {
@@ -32,6 +33,16 @@ public class PerfilController {
         model.put("clienteDatos", cliente);
         model.put("ultimoPago", pago);
         return new ModelAndView("perfil", model);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/historial-pagos")
+    public ModelAndView getHistorialPagos(HttpSession sesion){
+        Long idUsuario = (Long)sesion.getAttribute("usuarioId");
+        ModelMap model = new ModelMap();
+
+        List<Pago> pagos = clienteService.getPagos(idUsuario);
+        model.put("pagos", pagos);
+        return new ModelAndView("historial-pagos", model);
     }
 
 }
