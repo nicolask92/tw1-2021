@@ -57,6 +57,7 @@ public class ControladorLogin {
 			request.getSession(true).setAttribute("usuarioId", usuarioBuscado.getId());
 
 			if (usuarioBuscado instanceof Cliente) {
+				request.getSession(true).setAttribute("nombreCliente", ((Cliente)usuarioBuscado).getNombreCompleto());
 				request.getSession(true).setAttribute("cliente", true);
 				request.getSession(true).setAttribute("plan", ((Cliente)usuarioBuscado).getUltimoPlanContrado());
 			}
@@ -85,6 +86,7 @@ public class ControladorLogin {
 		httpSession.setAttribute("usuarioId", null);
 		httpSession.setAttribute("plan", null);
 		httpSession.setAttribute("cliente", null);
+		httpSession.setAttribute("nombreCliente", null);
 
 		return new ModelAndView("redirect:/login");
 	}

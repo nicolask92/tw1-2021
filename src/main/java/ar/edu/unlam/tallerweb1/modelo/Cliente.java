@@ -33,6 +33,10 @@ public class Cliente extends Usuario {
     public Cliente() {
     }
 
+    public String getNombreCompleto (){
+        return this.nombre + " " + this.apellido;
+    }
+
     public List<Pago> agregarPago(Pago pago) throws YaTienePagoRegistradoParaMismoMes {
         if (contrataciones.contains(pago)) {
             throw new YaTienePagoRegistradoParaMismoMes();
