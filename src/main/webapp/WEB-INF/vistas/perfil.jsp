@@ -61,9 +61,15 @@
     <h1 class="h3 mb-4 text-gray-800 text-center">Plan</h1>
 
     <div>
-        <label>Plan</label>
+        <label>Plan Acutual</label>
         <input type="text" class="form-control" id="plan"
                name="email" readonly value=${ultimoPago.plan.nombre}>
+    </div>
+
+    <div>
+        <label>Vencimiento</label>
+        <input type="text" class="form-control" id="vencimiento"
+               name="email" readonly value=${ultimoPago.fechaDeFinalizacion}>
     </div>
 
 <!-- /.container-fluid -->

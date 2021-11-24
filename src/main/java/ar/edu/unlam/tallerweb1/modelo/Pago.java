@@ -66,6 +66,14 @@ public class Pago {
         return plan;
     }
 
+    public String getFechaCancelacion() {
+        return fechaCancelacion.toString();
+    }
+
+    public String getFechaDeFinalizacion() {
+        return fechaDeFinalizacion.toString();
+    }
+
     public boolean esActivo() {
         return activo;
     }

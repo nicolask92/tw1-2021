@@ -35,4 +35,12 @@ public class ClienteRepositorioImpl implements ClienteRepositorio {
         final Session session = sessionFactory.getCurrentSession();
         session.update(cliente);
     }
+
+    @Override
+    public Pago getPlanActivo(Cliente cliente) {
+        final Session session = sessionFactory.getCurrentSession();
+        return (Pago) session.createQuery("select p from Pago p where p.activo= true and p.cliente=:cliente")
+                .setParameter("cliente", cliente)
+                .uniqueResult();
+    }
 }

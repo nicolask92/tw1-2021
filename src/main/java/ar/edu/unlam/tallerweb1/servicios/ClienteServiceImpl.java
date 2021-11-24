@@ -1,6 +1,7 @@
 package ar.edu.unlam.tallerweb1.servicios;
 
 import ar.edu.unlam.tallerweb1.modelo.Cliente;
+import ar.edu.unlam.tallerweb1.modelo.Pago;
 import ar.edu.unlam.tallerweb1.repositorios.ClienteRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,5 +21,10 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     public Cliente getCliente(Long idUsuario) {
         return clienteRepositorio.getById(idUsuario);
+    }
+
+    @Override
+    public Pago getPlanActivo(Cliente cliente) {
+        return clienteRepositorio.getPlanActivo(cliente);
     }
 }
