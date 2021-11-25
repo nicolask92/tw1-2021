@@ -17,11 +17,11 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDate;
 
 
-public class PerfilControllerTest {
+public class ClienteControllerTest {
 
     HttpSession mockSession = mock(HttpSession.class);
     ClienteService clienteService = mock(ClienteService.class);
-    PerfilController perfilController = new PerfilController(clienteService);
+    ClienteController clienteController = new ClienteController(clienteService);
 
     @Test
     public void seMuestraElPerfilDelCliente() throws YaTienePagoRegistradoParaMismoMes {
@@ -46,12 +46,12 @@ public class PerfilControllerTest {
 
     private ModelAndView whenElClienteConsultaElPerfil(Cliente cliente) {
         when(clienteService.getCliente(cliente.getId())).thenReturn(cliente);
-        return perfilController.getPerfil(mockSession);
+        return clienteController.getPerfil(mockSession);
     }
 
     private ModelAndView whenElClienteConsultaHistorialDePagos(Cliente cliente) {
         when(clienteService.getCliente(cliente.getId())).thenReturn(cliente);
-        return perfilController.getHistorialPagos(mockSession);
+        return clienteController.getHistorialPagos(mockSession);
     }
 
     private void thenSeMuestraElPerfilDelCliente(ModelAndView mv) {

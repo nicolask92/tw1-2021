@@ -94,6 +94,7 @@ public class PlanServiceTest {
     private void whenClienteContrataPlan(Cliente cliente, String plan, Plan planADevolver) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         LocalDate hoy = LocalDate.now();
         when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
+        cliente.getUltimoPagoRealizado().cancelarPlan();
         Pago pagoNuevo = new Pago(cliente, hoy.getMonth(), hoy.getYear(), planADevolver);
         when(clienteRepositorio.getPagoActivo(cliente)).thenReturn(pagoNuevo);
         planService.contratarPlan(cliente.getId(), LocalDate.now().getMonth(), LocalDate.now().getYear(), plan);
@@ -102,6 +103,7 @@ public class PlanServiceTest {
     private void whenClienteCancelaElPlan(Cliente cliente, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
         LocalDate hoy = LocalDate.now();
+        cliente.getUltimoPagoRealizado().cancelarPlan();
         when(clienteRepositorio.getPagoActivo(cliente)).thenReturn(new Pago(cliente, hoy.getMonth(), hoy.getYear(), Plan.BASICO));
         when(clienteRepositorio.getPlanNinguno(cliente)).thenReturn(new Pago(cliente, hoy.getMonth(), hoy.getYear(), Plan.NINGUNO));
         planService.cancelarPlan(cliente.getId(), plan);

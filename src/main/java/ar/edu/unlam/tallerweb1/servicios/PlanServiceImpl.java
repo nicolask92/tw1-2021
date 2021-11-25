@@ -51,8 +51,8 @@ public class PlanServiceImpl implements PlanService {
         Cliente cliente = clienteRepositorio.getById(idCliente);
         if (plan.equals("Basico") || plan.equals("Estandar") || plan.equals("Premium")) {
             Pago pago = clienteRepositorio.getPagoActivo(cliente);
-            Pago pagoNinguno = clienteRepositorio.getPlanNinguno(cliente);
             pago.cancelarPlan();
+            Pago pagoNinguno = clienteRepositorio.getPlanNinguno(cliente);
             pagoNinguno.activarPlan();
             pagoRepositorio.actualizar(pago);
             pagoRepositorio.actualizar(pagoNinguno);

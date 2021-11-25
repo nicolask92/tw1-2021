@@ -14,12 +14,12 @@ import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
-public class PerfilController {
+public class ClienteController {
 
     private final ClienteService clienteService;
 
     @Autowired
-    public PerfilController(ClienteService clienteService){
+    public ClienteController(ClienteService clienteService){
         this.clienteService = clienteService;
     }
 
