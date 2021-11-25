@@ -42,16 +42,6 @@ public class ClienteServiceTest {
 
     }
 
-    private void thenEncuentroPagosRealizados(Cliente cliente) {
-        verify(clienteRepositorio, times(1)).getPagos(cliente);
-    }
-
-    private void whenBuscoPagosRealiazdosDelCLiente(Cliente cliente) {
-        when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
-        when(clienteRepositorio.getPagos(cliente)).thenReturn(List.of(cliente.getUltimoPagoRealizado()));
-        clienteService.getPagos(cliente.getId());
-    }
-
     private Pago givenPago(Cliente cliente){
         LocalDate hoy = LocalDate.now();
         return new Pago(cliente, hoy.getMonth(), hoy.getYear(), Plan.BASICO);
@@ -75,12 +65,22 @@ public class ClienteServiceTest {
         clienteService.getPagoActivo(cliente);
     }
 
+    private void whenBuscoPagosRealiazdosDelCLiente(Cliente cliente) {
+        when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
+        when(clienteRepositorio.getPagos(cliente)).thenReturn(List.of(cliente.getUltimoPagoRealizado()));
+        clienteService.getPagos(cliente.getId());
+    }
+
     private void thenEncuntraCliente(Cliente cliente) {
         verify(clienteRepositorio, times(1)).getById(cliente.getId());
     }
 
     private void thenSeObtieneElPlanActivoDelCliente(Cliente cliente) {
         verify(clienteRepositorio, times(1)).getPagoActivo(cliente);
+    }
+
+    private void thenEncuentroPagosRealizados(Cliente cliente) {
+        verify(clienteRepositorio, times(1)).getPagos(cliente);
     }
 
 }

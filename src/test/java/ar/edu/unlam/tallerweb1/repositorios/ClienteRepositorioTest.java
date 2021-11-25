@@ -29,6 +29,22 @@ public class ClienteRepositorioTest extends SpringTest {
         thenSeEncuentraElPagoActivoDelCliente(pagoActivo, cliente);
     }
 
+    @Test
+    @Rollback @Transactional
+    public void seObtieneClientePorId() throws YaTienePagoRegistradoParaMismoMes {
+        Cliente cliente = givenClienteConPlanActivo();
+        Cliente clienteBuscado = whenBuscoElCliente(cliente);
+        thenEncuntroElClienteBuscado(cliente, clienteBuscado);
+    }
+
+    @Test
+    @Rollback @Transactional
+    public void seObtieneElPlanNingunoDelCliente() throws YaTienePagoRegistradoParaMismoMes {
+        Cliente cliente = givenClienteConPlanActivo();
+        Pago pago = whenBuscoElPlanNingunoDelCliente(cliente);
+        thenEncuentroElPlanNinguno(pago, cliente);
+    }
+
     private Pago givenPago(Cliente cliente){
         LocalDate hoy = LocalDate.now();
         return new Pago(cliente, hoy.getMonth(), hoy.getYear(), Plan.BASICO);
@@ -48,7 +64,23 @@ public class ClienteRepositorioTest extends SpringTest {
         return clienteRepositorio.getPagoActivo(cliente);
     }
 
+    private Cliente whenBuscoElCliente(Cliente cliente) {
+        return clienteRepositorio.getById(cliente.getId());
+    }
+
+    private Pago whenBuscoElPlanNingunoDelCliente(Cliente cliente) {
+        return clienteRepositorio.getPlanNinguno(cliente);
+    }
+
     private void thenSeEncuentraElPagoActivoDelCliente(Pago pagoActivo, Cliente cliente) {
         assertThat(pagoActivo.getCliente().getId()).isEqualTo(cliente.getId());
+    }
+
+    private void thenEncuntroElClienteBuscado(Cliente cliente, Cliente clienteBuscado) {
+        assertThat(cliente).isEqualTo(clienteBuscado);
+    }
+
+    private void thenEncuentroElPlanNinguno(Pago pago, Cliente cliente) {
+        assertThat(cliente.getId()).isEqualTo(pago.getCliente().getId());
     }
 }
