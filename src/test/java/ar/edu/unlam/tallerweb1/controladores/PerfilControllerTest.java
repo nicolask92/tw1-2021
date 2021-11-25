@@ -31,8 +31,10 @@ public class PerfilControllerTest {
     }
 
     @Test
-    public void historialPagosSeMuestraCorrectamente() {
-
+    public void historialPagosSeMuestraCorrectamente() throws YaTienePagoRegistradoParaMismoMes {
+        Cliente cliente = givenClienteLogueadoYConPlan();
+        ModelAndView mv = whenElClienteConsultaHistorialDePagos(cliente);
+        thenSeMuestraElHistorialDePagos(mv);
     }
 
     private Cliente givenClienteLogueadoYConPlan() throws YaTienePagoRegistradoParaMismoMes {
@@ -47,7 +49,16 @@ public class PerfilControllerTest {
         return perfilController.getPerfil(mockSession);
     }
 
+    private ModelAndView whenElClienteConsultaHistorialDePagos(Cliente cliente) {
+        when(clienteService.getCliente(cliente.getId())).thenReturn(cliente);
+        return perfilController.getHistorialPagos(mockSession);
+    }
+
     private void thenSeMuestraElPerfilDelCliente(ModelAndView mv) {
         assertThat(mv.getViewName()).isEqualTo("perfil");
+    }
+
+    private void thenSeMuestraElHistorialDePagos(ModelAndView mv) {
+        assertThat(mv.getViewName()).isEqualTo("historial-pagos");
     }
 }
