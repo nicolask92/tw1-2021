@@ -9,8 +9,10 @@ import java.util.List;
 public interface ClienteRepositorio {
 
     Cliente getById(Long idUsuario);
+
     void actualizarCliente(Cliente cliente);
-    Pago getPlanActivo(Cliente cliente);
+
+    Pago getPagoActivo(Cliente cliente);
 
     List<Pago> getPagos(Cliente cliente);
 

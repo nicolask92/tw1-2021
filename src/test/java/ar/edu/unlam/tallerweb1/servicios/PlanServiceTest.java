@@ -95,14 +95,14 @@ public class PlanServiceTest {
         LocalDate hoy = LocalDate.now();
         when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
         Pago pagoNuevo = new Pago(cliente, hoy.getMonth(), hoy.getYear(), planADevolver);
-        when(clienteRepositorio.getPlanActivo(cliente)).thenReturn(pagoNuevo);
+        when(clienteRepositorio.getPagoActivo(cliente)).thenReturn(pagoNuevo);
         planService.contratarPlan(cliente.getId(), LocalDate.now().getMonth(), LocalDate.now().getYear(), plan);
     }
 
     private void whenClienteCancelaElPlan(Cliente cliente, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
         LocalDate hoy = LocalDate.now();
-        when(clienteRepositorio.getPlanActivo(cliente)).thenReturn(new Pago(cliente, hoy.getMonth(), hoy.getYear(), Plan.BASICO));
+        when(clienteRepositorio.getPagoActivo(cliente)).thenReturn(new Pago(cliente, hoy.getMonth(), hoy.getYear(), Plan.BASICO));
         when(clienteRepositorio.getPlanNinguno(cliente)).thenReturn(new Pago(cliente, hoy.getMonth(), hoy.getYear(), Plan.NINGUNO));
         planService.cancelarPlan(cliente.getId(), plan);
     }

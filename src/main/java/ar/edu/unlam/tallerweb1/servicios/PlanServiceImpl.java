@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.Month;
 
 @Service
@@ -33,7 +32,7 @@ public class PlanServiceImpl implements PlanService {
         Cliente cliente = clienteRepositorio.getById(idCliente);
 
         if (plan.equals("Basico") || plan.equals("Estandar") || plan.equals("Premium")) {
-            Pago pago = clienteRepositorio.getPlanActivo(cliente);
+            Pago pago = clienteRepositorio.getPagoActivo(cliente);
             if (pago != null) {
                 pago.cancelarPlan();
                 pagoRepositorio.actualizar(pago);
@@ -51,7 +50,7 @@ public class PlanServiceImpl implements PlanService {
     public Pago cancelarPlan(Long idCliente, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = clienteRepositorio.getById(idCliente);
         if (plan.equals("Basico") || plan.equals("Estandar") || plan.equals("Premium")) {
-            Pago pago = clienteRepositorio.getPlanActivo(cliente);
+            Pago pago = clienteRepositorio.getPagoActivo(cliente);
             Pago pagoNinguno = clienteRepositorio.getPlanNinguno(cliente);
             pago.cancelarPlan();
             pagoNinguno.activarPlan();
