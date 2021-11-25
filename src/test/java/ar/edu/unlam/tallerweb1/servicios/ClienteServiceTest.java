@@ -10,6 +10,7 @@ import org.junit.Test;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -31,6 +32,24 @@ public class ClienteServiceTest {
         Cliente cliente = givenClienteConPlanActivo();
         whenBuscoPlanActivoDelCliente(cliente);
         thenSeObtieneElPlanActivoDelCliente(cliente);
+    }
+
+    @Test
+    public void seObtieneListaDePagosRealiazadosDelCliente() throws YaTienePagoRegistradoParaMismoMes {
+        Cliente cliente = givenClienteConPlanActivo();
+        whenBuscoPagosRealiazdosDelCLiente(cliente);
+        thenEncuentroPagosRealizados(cliente);
+
+    }
+
+    private void thenEncuentroPagosRealizados(Cliente cliente) {
+        verify(clienteRepositorio, times(1)).getPagos(cliente);
+    }
+
+    private void whenBuscoPagosRealiazdosDelCLiente(Cliente cliente) {
+        when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
+        when(clienteRepositorio.getPagos(cliente)).thenReturn(List.of(cliente.getUltimoPagoRealizado()));
+        clienteService.getPagos(cliente.getId());
     }
 
     private Pago givenPago(Cliente cliente){
