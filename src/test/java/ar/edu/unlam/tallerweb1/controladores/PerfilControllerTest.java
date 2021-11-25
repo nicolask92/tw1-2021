@@ -30,6 +30,11 @@ public class PerfilControllerTest {
         thenSeMuestraElPerfilDelCliente(mv);
     }
 
+    @Test
+    public void historialPagosSeMuestraCorrectamente() {
+
+    }
+
     private Cliente givenClienteLogueadoYConPlan() throws YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = new Cliente();
         LocalDate hoy = LocalDate.now();

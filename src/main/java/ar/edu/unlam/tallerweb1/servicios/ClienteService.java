@@ -9,7 +9,7 @@ import java.util.List;
 public interface ClienteService {
     Cliente getCliente(Long idUsuario);
 
-    Pago getPlanActivo(Cliente cliente);
+    Pago getPagoActivo(Cliente cliente);
 
     List<Pago> getPagos(Long idUsuario);
 }

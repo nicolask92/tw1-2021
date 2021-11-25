@@ -1,7 +1,5 @@
 package ar.edu.unlam.tallerweb1.repositorios;
 
-import ar.edu.unlam.tallerweb1.common.Mes;
-import ar.edu.unlam.tallerweb1.modelo.Clase;
 import ar.edu.unlam.tallerweb1.modelo.Cliente;
 import ar.edu.unlam.tallerweb1.modelo.Pago;
 
@@ -15,4 +13,6 @@ public interface ClienteRepositorio {
     Pago getPlanActivo(Cliente cliente);
 
     List<Pago> getPagos(Cliente cliente);
+
+    Pago getPlanNinguno(Cliente cliente);
 }

@@ -14,6 +14,7 @@ import org.junit.Test;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -239,7 +240,7 @@ public class TurnoServiceTest {
     }
 
     private Cliente givenUnClienteActivo(Plan tipoPlan) throws YaTienePagoRegistradoParaMismoMes {
-        Cliente cliente = new Cliente( "Arturo" + LocalDateTime.now(), "Frondizi", "arturitoElMasCapo@gmail.com");
+        Cliente cliente = new Cliente( "Arturo" + LocalDateTime.now(), "Frondizi", "arturitoElMasCapo@gmail.com", Collections.EMPTY_LIST);
         cliente.setId(1L);
         LocalDate hoy = LocalDate.now();
         cliente.agregarPago(new Pago(cliente, hoy.getMonth(), hoy.getYear(), tipoPlan));

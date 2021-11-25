@@ -1,10 +1,7 @@
 package ar.edu.unlam.tallerweb1.servicios;
 
 import ar.edu.unlam.tallerweb1.exceptiones.*;
-import ar.edu.unlam.tallerweb1.modelo.Clase;
-import ar.edu.unlam.tallerweb1.modelo.Cliente;
-import ar.edu.unlam.tallerweb1.modelo.Pago;
-import ar.edu.unlam.tallerweb1.modelo.Turno;
+import ar.edu.unlam.tallerweb1.modelo.*;
 import ar.edu.unlam.tallerweb1.repositorios.ClaseRepositorio;
 import ar.edu.unlam.tallerweb1.repositorios.ClienteRepositorio;
 import ar.edu.unlam.tallerweb1.repositorios.TurnoRepositorio;
@@ -55,6 +52,7 @@ public class TurnoServiceImpl implements TurnoService {
                 pago.esActivo() &&
                 pago.getMes() == clase.getDiaClase().getMonth()
                     && pago.getAnio() == clase.getDiaClase().getYear()
+                    && pago.getPlan() != Plan.NINGUNO
             )
             .findFirst();
 

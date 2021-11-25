@@ -9,6 +9,7 @@ import org.springframework.util.Assert;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -82,7 +83,7 @@ public class ClaseTest {
     private List<Cliente> givenUnaCantidadDeClientesComunesYCorrientes(int cantidadClientes) {
         List<Cliente> clientes = new ArrayList<>();
         for (int i = 0; i < cantidadClientes; i++) {
-            clientes.add(new Cliente("Arturo" + LocalDateTime.now().toString(), "Frondizi", "arturitoElMasCapo@gmail.com"));
+            clientes.add(new Cliente("Arturo" + LocalDateTime.now().toString(), "Frondizi", "arturitoElMasCapo@gmail.com", Collections.EMPTY_LIST));
         }
         return clientes;
     }

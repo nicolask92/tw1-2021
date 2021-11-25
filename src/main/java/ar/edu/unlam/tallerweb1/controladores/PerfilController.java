@@ -29,7 +29,7 @@ public class PerfilController {
         ModelMap model = new ModelMap();
 
         Cliente cliente = clienteService.getCliente(idUsuario);
-        Pago pago = clienteService.getPlanActivo(cliente);
+        Pago pago = clienteService.getPagoActivo(cliente);
         model.put("clienteDatos", cliente);
         model.put("ultimoPago", pago);
         return new ModelAndView("perfil", model);

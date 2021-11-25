@@ -19,6 +19,7 @@ public class Cliente extends Usuario {
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     List<Pago> contrataciones= new ArrayList<>();
 
+    // TODO cambiar constructor. Sacar plan
     public Cliente(String nombre, String apellido, String email, Plan plan, List<Clase> clases) {
         super(nombre, apellido, email);
         this.clases = clases;
@@ -26,8 +27,11 @@ public class Cliente extends Usuario {
         contrataciones.add(new Pago(this, hoy.getMonth(), hoy.getYear(), Plan.NINGUNO));
     }
 
-    public Cliente(String nombre, String apellido, String email) {
-        this.clases = Collections.emptyList();
+    public Cliente(String nombre, String apellido, String email, List<Clase> clases) {
+        super(nombre, apellido, email);
+        this.clases = clases;
+        LocalDate hoy = LocalDate.now();
+        contrataciones.add(new Pago(this, hoy.getMonth(), hoy.getYear(), Plan.NINGUNO));
     }
 
     public Cliente() {
@@ -53,6 +57,7 @@ public class Cliente extends Usuario {
             .get();
     }
 
+    // TODO arreglar esto por favor te lo pido
     public Plan getUltimoPlanContrado() {
         return contrataciones.stream()
             .filter( pago -> pago.activo )

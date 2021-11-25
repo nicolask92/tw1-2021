@@ -40,7 +40,7 @@ public class PlanControllerTest {
     }
 
     @Test
-    public void noSePuedeContratarPlan() throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
+    public void noSePuedeContratarPlanAlMandarPlanInvalido() throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenClienteLogueadoYSinPlan();
         ModelAndView mv = whenContratoPlanNoExistente(mockSession, cliente, "Invalido");
         thenElUsuarioNoPuedoContratarPlan(mv, cliente);
@@ -58,6 +58,24 @@ public class PlanControllerTest {
         Cliente cliente = givenClienteLogueadoYConPlan();
         ModelAndView mv = whenCanceloSuscripcionDelPlanActual(mockSession, cliente, "Invalido");
         thenElUsuarioNoTienePlan(mv, cliente);
+    }
+
+    @Test
+    public void siYaTieneContratadoUnPlanNoDejaContratarElMismo() throws YaTienePagoRegistradoParaMismoMes, PlanNoExisteException {
+        Cliente cliente = givenClienteLogueadoYConPlan();
+        ModelAndView mv = whenContratoPlanQueYaTengoContrado(cliente, "Estandar");
+        thenElClienteEsRedirigidoYLeAvisaQueYaLoTieneContrado(mv);
+    }
+
+    private void thenElClienteEsRedirigidoYLeAvisaQueYaLoTieneContrado(ModelAndView mv) {
+        assertThat(mv.getModel().get("msgError")).isEqualTo("Ya tiene este plan contrado.");
+        assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-clases");
+    }
+
+    private ModelAndView whenContratoPlanQueYaTengoContrado(Cliente cliente, String plan) throws YaTienePagoRegistradoParaMismoMes, PlanNoExisteException {
+        when(mockSession.getAttribute("usuarioId")).thenReturn(cliente.getId());
+        doThrow(YaTienePagoRegistradoParaMismoMes.class).when(planService).contratarPlan(cliente.getId(), LocalDate.now().getMonth(), LocalDate.now().getYear(), plan);
+        return planController.contratarPlan(plan, mockSession);
     }
 
     private Cliente givenClienteLogueadoYConPlan() throws YaTienePagoRegistradoParaMismoMes {
@@ -106,7 +124,7 @@ public class PlanControllerTest {
     private void thenElUsuarioNoPuedoContratarPlan(ModelAndView mv, Cliente cliente) {
 //       assertThat(cliente.getUltimoPlanContrado()).isEqualTo(Plan.NINGUNO);
         assertThat(mv.getModel().get("noExistePlan")).isEqualTo("El plan que quiere contratar no existe");
-        assertThat(mv.getViewName()).isEqualTo("/planes");
+        assertThat(mv.getViewName()).isEqualTo("redirect:/planes");
     }
 
     private void thenElUsuarioTienePlanYSeLoRedirigeASacarTurnos(ModelAndView mv) {

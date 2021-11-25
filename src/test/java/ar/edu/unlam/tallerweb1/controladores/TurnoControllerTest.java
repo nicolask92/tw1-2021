@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -199,7 +200,7 @@ public class TurnoControllerTest {
     }
 
     private Cliente givenUnClienteActivo(boolean conPlan, Plan tipoPlan) throws YaTienePagoRegistradoParaMismoMes {
-        Cliente cliente = new Cliente("Arturo" + LocalDateTime.now(), "Frondizi", "arturitoElMasCapo@gmail.com");
+        Cliente cliente = new Cliente("Arturo" + LocalDateTime.now(), "Frondizi", "arturitoElMasCapo@gmail.com", Collections.EMPTY_LIST);
         if (conPlan) {
             LocalDate hoy = LocalDate.now();
             cliente.agregarPago(new Pago(cliente, hoy.getMonth(), hoy.getYear(), tipoPlan));

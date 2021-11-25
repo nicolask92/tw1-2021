@@ -3,6 +3,7 @@ package ar.edu.unlam.tallerweb1.modelo;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 // Clase que modela el concepto de Usuario, la anotacion @Entity le avisa a hibernate que esta clase es persistible
 // el paquete ar.edu.unlam.tallerweb1.modelo esta indicado en el archivo hibernateCOntext.xml para que hibernate
@@ -91,5 +92,18 @@ public class Usuario {
 
 	public void setApellido(String apellido) {
 		this.apellido = apellido;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Usuario usuario = (Usuario) o;
+		return email.equals(usuario.email) && rol.equals(usuario.rol) && nombre.equals(usuario.nombre) && apellido.equals(usuario.apellido);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(email, rol, nombre, apellido);
 	}
 }

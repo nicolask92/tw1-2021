@@ -20,6 +20,12 @@
         </div>
     </c:if>
 
+    <c:if test="${not empty param['msgError']}">
+        <div class="alert alert-danger" role="alert">
+                ${param['msgError']}
+        </div>
+    </c:if>
+
 
     <c:if test="${not empty param['contracionExitosa']}">
         <div class="alert alert-success" role="alert">

@@ -20,7 +20,7 @@ public class Pago {
     Month mes;
     Integer anio;
 
-    boolean activo;
+    Boolean activo;
     LocalDate fechaCancelacion;
     LocalDate fechaDeFinalizacion;
 
@@ -74,13 +74,22 @@ public class Pago {
         return fechaDeFinalizacion.toString();
     }
 
-    public boolean esActivo() {
+    public LocalDate getFechaDeFinalizacionEnLocalDate() {
+        return fechaDeFinalizacion;
+    }
+
+    public Boolean esActivo() {
         return activo;
     }
 
     public Pago cancelarPlan() {
         this.fechaCancelacion = LocalDate.now();
         this.activo = false;
+        return this;
+    }
+
+    public Pago activarPlan() {
+        this.activo = true;
         return this;
     }
 

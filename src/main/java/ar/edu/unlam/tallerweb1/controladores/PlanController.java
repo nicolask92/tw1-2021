@@ -59,10 +59,12 @@ public class PlanController {
             sesion.setAttribute("plan", null);
             sesion.setAttribute("plan", ultimoPlan);
             return new ModelAndView("redirect:/mostrar-clases", model);
-
-        } catch (PlanNoExisteException | YaTienePagoRegistradoParaMismoMes e){
+        } catch (PlanNoExisteException e){
             model.put("noExistePlan", "El plan que quiere contratar no existe");
             return  new ModelAndView("redirect:/planes", model);
+        } catch (YaTienePagoRegistradoParaMismoMes e) {
+            model.put("msgError", "Ya tiene este plan contrado.");
+            return  new ModelAndView("redirect:/mostrar-clases", model);
         }
     }
 

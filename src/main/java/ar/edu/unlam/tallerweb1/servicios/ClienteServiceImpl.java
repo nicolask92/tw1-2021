@@ -26,7 +26,7 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
-    public Pago getPlanActivo(Cliente cliente) {
+    public Pago getPagoActivo(Cliente cliente) {
         return clienteRepositorio.getPlanActivo(cliente);
     }
 

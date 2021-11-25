@@ -9,29 +9,30 @@ import static org.mockito.Mockito.*;
 import ar.edu.unlam.tallerweb1.modelo.Pago;
 import ar.edu.unlam.tallerweb1.modelo.Plan;
 import ar.edu.unlam.tallerweb1.repositorios.ClienteRepositorio;
-import ar.edu.unlam.tallerweb1.repositorios.PlanRepositorio;
+import ar.edu.unlam.tallerweb1.repositorios.PagoRepositorio;
 import org.junit.Test;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class PlanServiceTest {
 
-    PlanRepositorio planRepositorio = mock(PlanRepositorio.class);
+    PagoRepositorio pagoRepositorio = mock(PagoRepositorio.class);
     ClienteRepositorio clienteRepositorio = mock(ClienteRepositorio.class);
 
-    private PlanService planService = new PlanServiceImpl(planRepositorio, clienteRepositorio);
+    private PlanService planService = new PlanServiceImpl(pagoRepositorio, clienteRepositorio);
 
     @Test
     public void elClienteContrataPlanBasico() throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenClienteLogueadoConPlanNinguno();
-        whenClienteContrataPlan(cliente, "Basico");
+        whenClienteContrataPlan(cliente, "Basico", Plan.NINGUNO);
         thenElClienteTienePlan(cliente);
     }
 
     @Test(expected = PlanNoExisteException.class)
     public void elClienteContrataPlanConNombreInvalido() throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenClienteLogueadoConPlanNinguno();
-        whenClienteContrataPlan(cliente, "Invalido");
+        whenClienteContrataPlan(cliente, "Invalido", Plan.NINGUNO);
     }
 
     @Test
@@ -45,6 +46,35 @@ public class PlanServiceTest {
     public void clienteConPlanContratadoNoPuedeCancelarLaSuscripcion() throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenClienteLogueadoConPlan();
         whenClienteCancelaElPlan(cliente, "Invalido");
+    }
+
+    @Test(expected = YaTienePagoRegistradoParaMismoMes.class)
+    public void siYaTieneContratadoUnPlanNoDejaContratarElMismo() throws YaTienePagoRegistradoParaMismoMes, PlanNoExisteException {
+        Cliente cliente = givenClienteLogueadoConPlan();
+        whenClienteContrataPlan(cliente, "Basico", Plan.BASICO);
+    }
+
+    @Test
+    public void contratarPlanDejaElPagoAnteriorCancelado() throws YaTienePagoRegistradoParaMismoMes, PlanNoExisteException {
+        Cliente cliente = givenClienteLogueadoConPlan();
+        whenClienteContrataPlan(cliente, "Estandar", Plan.NINGUNO);
+        thenElClienteTieneDosPagosSiendoElContradoActivoYElAnteriorCancelado(cliente);
+    }
+
+    private void thenElClienteTieneDosPagosSiendoElContradoActivoYElAnteriorCancelado(Cliente cliente) {
+        List<Pago> listaDePagosDelCliente = cliente.getContrataciones();
+        Pago pagoBasico = listaDePagosDelCliente.stream().filter( pago ->
+                pago.getPlan() == Plan.BASICO
+        ).findFirst().get();
+
+        Pago pagoEstandar = listaDePagosDelCliente.stream().filter( pago ->
+                pago.getPlan() == Plan.ESTANDAR
+        ).findFirst().get();
+
+        assertThat(listaDePagosDelCliente.size()).isEqualTo(2);
+
+        assertThat(false).isEqualTo(pagoBasico.esActivo());
+        assertThat(true).isEqualTo(pagoEstandar.esActivo());
     }
 
     private Cliente givenClienteLogueadoConPlan() throws YaTienePagoRegistradoParaMismoMes {
@@ -61,19 +91,28 @@ public class PlanServiceTest {
         return cliente;
     }
 
-    private void whenClienteContrataPlan(Cliente cliente, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
+    private void whenClienteContrataPlan(Cliente cliente, String plan, Plan planADevolver) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
+        LocalDate hoy = LocalDate.now();
         when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
+        Pago pagoNuevo = new Pago(cliente, hoy.getMonth(), hoy.getYear(), planADevolver);
+        when(clienteRepositorio.getPlanActivo(cliente)).thenReturn(pagoNuevo);
         planService.contratarPlan(cliente.getId(), LocalDate.now().getMonth(), LocalDate.now().getYear(), plan);
     }
 
     private void whenClienteCancelaElPlan(Cliente cliente, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
-        doNothing().when(clienteRepositorio).actualizarCliente(any());
+        LocalDate hoy = LocalDate.now();
+        when(clienteRepositorio.getPlanActivo(cliente)).thenReturn(new Pago(cliente, hoy.getMonth(), hoy.getYear(), Plan.BASICO));
+        when(clienteRepositorio.getPlanNinguno(cliente)).thenReturn(new Pago(cliente, hoy.getMonth(), hoy.getYear(), Plan.NINGUNO));
         planService.cancelarPlan(cliente.getId(), plan);
     }
 
     private void thenElClienteTienePlan(Cliente cliente) {
-        assertThat(cliente.getUltimoPlanContrado()).isEqualTo(Plan.BASICO);
+        Pago ultimoPago = cliente.getContrataciones().stream().filter( pago ->
+                pago.getPlan() == Plan.BASICO
+        ).findFirst().get();
+
+        assertThat(ultimoPago.getPlan()).isEqualTo(Plan.BASICO);
     }
 
     private void thenElClienteNoTienePlan(Cliente cliente) {
