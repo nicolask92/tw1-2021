@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
@@ -44,6 +45,15 @@ public class ClienteRepositorioTest extends SpringTest {
         Pago pago = whenBuscoElPlanNingunoDelCliente(cliente);
         thenEncuentroElPlanNinguno(pago, cliente);
     }
+    
+    @Test
+    @Rollback @Transactional
+    public void seObtieneListaDePagoRealizadosPorElClienteQueNoSeanDeTipoNinguno() throws YaTienePagoRegistradoParaMismoMes {
+        Cliente cliente = givenClienteConPlanActivo();
+        List<Pago> pagos = whenBuscoListaDePagos(cliente);
+        thenEncuentroLaListaDePagos(pagos);
+        
+    }
 
     private Pago givenPago(Cliente cliente){
         LocalDate hoy = LocalDate.now();
@@ -72,6 +82,10 @@ public class ClienteRepositorioTest extends SpringTest {
         return clienteRepositorio.getPlanNinguno(cliente);
     }
 
+    private List<Pago> whenBuscoListaDePagos(Cliente cliente) {
+        return clienteRepositorio.getPagos(cliente);
+    }
+
     private void thenSeEncuentraElPagoActivoDelCliente(Pago pagoActivo, Cliente cliente) {
         assertThat(pagoActivo.getCliente().getId()).isEqualTo(cliente.getId());
     }
@@ -82,5 +96,10 @@ public class ClienteRepositorioTest extends SpringTest {
 
     private void thenEncuentroElPlanNinguno(Pago pago, Cliente cliente) {
         assertThat(cliente.getId()).isEqualTo(pago.getCliente().getId());
+    }
+
+    private void thenEncuentroLaListaDePagos(List<Pago> pagos) {
+        assertThat(pagos.size()).isEqualTo(1);
+        assertThat(pagos.get(0).getPlan()).isEqualTo(Plan.BASICO);
     }
 }
