@@ -67,6 +67,7 @@ public class PlanControllerTest {
         thenElClienteEsRedirigidoYLeAvisaQueYaLoTieneContrado(mv);
     }
 
+
     private void thenElClienteEsRedirigidoYLeAvisaQueYaLoTieneContrado(ModelAndView mv) {
         assertThat(mv.getModel().get("msgError")).isEqualTo("Ya tiene este plan contrado.");
         assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-clases");

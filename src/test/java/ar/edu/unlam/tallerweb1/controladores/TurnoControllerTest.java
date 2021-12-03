@@ -1,5 +1,6 @@
 package ar.edu.unlam.tallerweb1.controladores;
 
+import ar.edu.unlam.tallerweb1.common.Mes;
 import ar.edu.unlam.tallerweb1.exceptiones.*;
 import ar.edu.unlam.tallerweb1.common.Frecuencia;
 import ar.edu.unlam.tallerweb1.common.Modalidad;
@@ -168,6 +169,20 @@ public class TurnoControllerTest {
         thenReservoTurnoTiraExcepcionDeCantidadMaximaPorSemana(mv);
     }
 
+    @Test
+    public void siEntraAVerUnMesQueNoTienePlanFallar() throws YaTienePagoRegistradoParaMismoMes, Exception, NoTienePlanParaVerLasClasesException {
+        Cliente cliente = givenUnClienteActivoEnUnMesYNoEnElSiguiente();
+        ModelAndView mv = whenIntentaVerMesDondeNoTieneUnPlanAsociado(cliente);
+        thenNoMuestraLosMesesYAvisaQueNecesitaContratarUnPlanParaPoderVer(mv);
+    }
+
+    private Cliente givenUnClienteActivoEnUnMesYNoEnElSiguiente() throws YaTienePagoRegistradoParaMismoMes {
+        Cliente cliente = new Cliente("Arturo" + LocalDateTime.now(), "Frondizi", "arturitoElMasCapo@gmail.com", Collections.EMPTY_LIST);
+        LocalDate mesMarzo = LocalDate.of(2021, 3, 1);
+        cliente.agregarPago(new Pago(cliente, mesMarzo.getMonth(), mesMarzo.getYear(), Plan.BASICO));
+        return cliente;
+    }
+
     private String givenClaseABuscar(String claseABuscar) {
         return claseABuscar;
     }
@@ -176,7 +191,6 @@ public class TurnoControllerTest {
         Clase clase = new Clase();
         clase.setDiaClase(LocalDateTime.now().minusDays(1));
         return new Turno(cliente, clase , LocalDate.now().minusDays(5));
-
     }
 
     private Turno givenHayUnTurnoParaHoy() {
@@ -288,7 +302,6 @@ public class TurnoControllerTest {
         return turnoController.borrarTurno(turno.getId(), session);
     }
 
-
     private ModelAndView whenMuestroLosTurnos(Turno turno) throws Exception {
         when(clasesViewModelBuilder.getCalendarioCompleto(anyList(), any())).thenReturn(new CalendarioDeActividades());
         when(turnoService.getTurnosParaHoy(anyLong())).thenReturn(List.of(turno));
@@ -348,7 +361,12 @@ public class TurnoControllerTest {
         return turnoController.reservarTurno(1L, session);
     }
 
-
+    private ModelAndView whenIntentaVerMesDondeNoTieneUnPlanAsociado(Cliente cliente) throws Exception, NoTienePlanParaVerLasClasesException {
+        when(mockDeHttpServletSession.getSession()).thenReturn(mockSession);
+        when(mockDeHttpServletSession.getSession().getAttribute("usuarioId")).thenReturn(cliente.getId());
+        doThrow(NoTienePlanParaVerLasClasesException.class).when(claseService).getClases(Optional.of(Mes.ABRIL), cliente.getId());
+        return turnoController.mostrarClasesParaSacarTurnos(Optional.of(Mes.ABRIL), mockSession);
+    }
 
     private void thenReservoElTurnoCorrectamente(ModelAndView mv) {
         assertThat(mv.getModel().get("msgGuardado")).isEqualTo("Se guardo turno correctamente");
@@ -423,5 +441,10 @@ public class TurnoControllerTest {
     private void thenReservoTurnoTiraExcepcionDeCantidadMaximaPorSemana(ModelAndView mv) {
         assertThat(mv.getModel().get("msg")).isEqualTo("Su plan no permite sacar mas clases por semana");
         assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-clases");
+    }
+
+    private void thenNoMuestraLosMesesYAvisaQueNecesitaContratarUnPlanParaPoderVer(ModelAndView mv) {
+        assertThat(mv.getModel().get("msgError")).isEqualTo("Para poder ver las clases de este mes debe contratar un plan.");
+        assertThat(mv.getModel().get("calendario")).isEqualTo(null);
     }
 }

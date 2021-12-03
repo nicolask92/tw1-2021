@@ -21,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,15 +44,21 @@ public class TurnoController {
 
         Long idUsuario = (Long) httpSession.getAttribute("usuarioId");
         LocalDate hoy = LocalDate.now();
+        ModelMap model = new ModelMap();
+        model.put("mes", mes.isPresent() ? mes.get() : hoy.getMonth().toString());
+        List<Clase> clases;
 
-        List<Clase> clases = claseService.getClases(mes);
+        try {
+            clases = claseService.getClases(mes, idUsuario);
+        } catch (NoTienePlanParaVerLasClasesException e) {
+            model.put("msgError", "Para poder ver las clases de este mes debe contratar un plan.");
+            return new ModelAndView("Turnos", model);
+        }
         List<Turno> turnosDelDia = turnoService.getTurnosParaHoy(idUsuario);
 
         CalendarioDeActividades calendarioYActividades = clasesViewModelBuilder.getCalendarioCompleto(clases, mes);
 
-        ModelMap model = new ModelMap();
         model.put("turnosDelDia", turnosDelDia);
-        model.put("mes", mes.isPresent() ? mes.get() : hoy.getMonth().toString());
         model.put("anio", hoy.getYear());
         model.put("calendario", calendarioYActividades);
 

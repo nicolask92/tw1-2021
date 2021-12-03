@@ -8,7 +8,6 @@ import java.util.List;
 
 
 public interface TurnoService {
-    List<Turno> getTurnosDeEsteMes();
 
     void guardarTurno(Long idClase, Long idUsuario) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException;
 

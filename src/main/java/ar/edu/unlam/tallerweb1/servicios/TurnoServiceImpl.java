@@ -32,11 +32,6 @@ public class TurnoServiceImpl implements TurnoService {
     }
 
     @Override
-    public List<Turno> getTurnosDeEsteMes() {
-        return null;
-    }
-
-    @Override
     public void guardarTurno(Long idClase, Long idUsuario) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException {
         final Clase clase = claseRepositorio.getById(idClase);
         final Cliente cliente = clienteRepositorio.getById(idUsuario);
