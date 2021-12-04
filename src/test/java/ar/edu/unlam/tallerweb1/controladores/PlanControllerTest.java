@@ -35,14 +35,14 @@ public class PlanControllerTest {
     @Test
     public void testQueSePuedaContratarPlan() throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenClienteLogueadoYSinPlan();
-        ModelAndView mv = whenContratoPlan(mockSession, cliente, "Basico");
+        ModelAndView mv = whenContratoPlan(mockSession, cliente, "Basico", false);
         thenElUsuarioTienePlanYSeLoRedirigeASacarTurnos(mv);
     }
 
     @Test
     public void noSePuedeContratarPlanAlMandarPlanInvalido() throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenClienteLogueadoYSinPlan();
-        ModelAndView mv = whenContratoPlanNoExistente(mockSession, cliente, "Invalido");
+        ModelAndView mv = whenContratoPlanNoExistente(mockSession, cliente, "Invalido", false);
         thenElUsuarioNoPuedoContratarPlan(mv, cliente);
     }
 
@@ -63,7 +63,7 @@ public class PlanControllerTest {
     @Test
     public void siYaTieneContratadoUnPlanNoDejaContratarElMismo() throws YaTienePagoRegistradoParaMismoMes, PlanNoExisteException {
         Cliente cliente = givenClienteLogueadoYConPlan();
-        ModelAndView mv = whenContratoPlanQueYaTengoContrado(cliente, "Estandar");
+        ModelAndView mv = whenContratoPlanQueYaTengoContrado(cliente, "Estandar", false);
         thenElClienteEsRedirigidoYLeAvisaQueYaLoTieneContrado(mv);
     }
 
@@ -90,11 +90,12 @@ public class PlanControllerTest {
         return planController.getPlanes(mockSession);
     }
 
-    private ModelAndView whenContratoPlanQueYaTengoContrado(Cliente cliente, String plan) throws YaTienePagoRegistradoParaMismoMes, PlanNoExisteException {
-        when(mockSession.getAttribute("usuarioId")).thenReturn(cliente.getId());
-        doThrow(YaTienePagoRegistradoParaMismoMes.class).when(planService).contratarPlan(cliente.getId(), LocalDate.now().getMonth(), LocalDate.now().getYear(), plan);
+    private ModelAndView whenContratoPlanQueYaTengoContrado(Cliente cliente, String plan, Boolean conDebito) throws YaTienePagoRegistradoParaMismoMes, PlanNoExisteException {
         DatosPlan datosPlan = new DatosPlan();
         datosPlan.setNombre(plan);
+        datosPlan.setConDebito(conDebito);
+        when(mockSession.getAttribute("usuarioId")).thenReturn(cliente.getId());
+        doThrow(YaTienePagoRegistradoParaMismoMes.class).when(planService).contratarPlan(cliente.getId(), LocalDate.now().getMonth(), LocalDate.now().getYear(), datosPlan);
         return planController.contratarPlan(datosPlan, mockSession);
     }
 
@@ -116,21 +117,23 @@ public class PlanControllerTest {
     }
 
 
-    private ModelAndView whenContratoPlan(HttpSession session, Cliente cliente, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
-        when(session.getAttribute("usuarioId")).thenReturn(cliente.getId());
-        when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
-        when(planService.contratarPlan(cliente.getId(), LocalDate.now().getMonth(), LocalDate.now().getYear(), plan)).thenReturn(Plan.BASICO);
+    private ModelAndView whenContratoPlan(HttpSession session, Cliente cliente, String plan, Boolean conDebito) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         DatosPlan datosPlan = new DatosPlan();
         datosPlan.setNombre(plan);
+        datosPlan.setConDebito(conDebito);
+        when(session.getAttribute("usuarioId")).thenReturn(cliente.getId());
+        when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
+        when(planService.contratarPlan(cliente.getId(), LocalDate.now().getMonth(), LocalDate.now().getYear(), datosPlan)).thenReturn(Plan.BASICO);
+
         return planController.contratarPlan(datosPlan, session);
     }
 
-    private ModelAndView whenContratoPlanNoExistente(HttpSession session, Cliente cliente, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
-        when(session.getAttribute("usuarioId")).thenReturn(cliente.getId());
-//        when(planService.contratarPlan(cliente.getId(), plan )).thenReturn(Plan.BASICO);
-        doThrow(PlanNoExisteException.class).when(planService).contratarPlan(cliente.getId(), LocalDate.now().getMonth(), LocalDate.now().getYear(), plan);
+    private ModelAndView whenContratoPlanNoExistente(HttpSession session, Cliente cliente, String plan, Boolean conDebito) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         DatosPlan datosPlan = new DatosPlan();
         datosPlan.setNombre(plan);
+        datosPlan.setConDebito(conDebito);
+        when(session.getAttribute("usuarioId")).thenReturn(cliente.getId());
+        doThrow(PlanNoExisteException.class).when(planService).contratarPlan(cliente.getId(), LocalDate.now().getMonth(), LocalDate.now().getYear(), datosPlan);
         return planController.contratarPlan(datosPlan, session);
     }
 

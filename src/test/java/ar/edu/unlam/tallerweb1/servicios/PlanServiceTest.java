@@ -1,5 +1,6 @@
 package ar.edu.unlam.tallerweb1.servicios;
 
+import ar.edu.unlam.tallerweb1.controladores.DatosPlan;
 import ar.edu.unlam.tallerweb1.exceptiones.PlanNoExisteException;
 import ar.edu.unlam.tallerweb1.exceptiones.YaTienePagoRegistradoParaMismoMes;
 import ar.edu.unlam.tallerweb1.modelo.Cliente;
@@ -25,14 +26,14 @@ public class PlanServiceTest {
     @Test
     public void elClienteContrataPlanBasico() throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenClienteLogueadoConPlanNinguno();
-        whenClienteContrataPlan(cliente, "Basico", Plan.NINGUNO);
+        whenClienteContrataPlan(cliente, "Basico", Plan.NINGUNO, false);
         thenElClienteTienePlan(cliente);
     }
 
     @Test(expected = PlanNoExisteException.class)
     public void elClienteContrataPlanConNombreInvalido() throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenClienteLogueadoConPlanNinguno();
-        whenClienteContrataPlan(cliente, "Invalido", Plan.NINGUNO);
+        whenClienteContrataPlan(cliente, "Invalido", Plan.NINGUNO, false);
     }
 
     @Test
@@ -51,13 +52,13 @@ public class PlanServiceTest {
     @Test(expected = YaTienePagoRegistradoParaMismoMes.class)
     public void siYaTieneContratadoUnPlanNoDejaContratarElMismo() throws YaTienePagoRegistradoParaMismoMes, PlanNoExisteException {
         Cliente cliente = givenClienteLogueadoConPlan();
-        whenClienteContrataPlan(cliente, "Basico", Plan.BASICO);
+        whenClienteContrataPlan(cliente, "Basico", Plan.BASICO, false);
     }
 
     @Test
     public void contratarPlanDejaElPagoAnteriorCancelado() throws YaTienePagoRegistradoParaMismoMes, PlanNoExisteException {
         Cliente cliente = givenClienteLogueadoConPlan();
-        whenClienteContrataPlan(cliente, "Estandar", Plan.NINGUNO);
+        whenClienteContrataPlan(cliente, "Estandar", Plan.ESTANDAR, false);
         thenElClienteTieneDosPagosSiendoElContradoActivoYElAnteriorCancelado(cliente);
     }
 
@@ -66,6 +67,13 @@ public class PlanServiceTest {
         Cliente cliente = givenClienteLogueadoConPlan();
         Pago pago = whenBuscoUltimoPago(cliente);
         thenDevuelveUltimoPago(pago);
+    }
+
+    @Test
+    public void contratarPlanConDebitoAutomaticoDejaElPagoConDebitoAutomatico() throws YaTienePagoRegistradoParaMismoMes, PlanNoExisteException {
+        Cliente cliente = givenClienteLogueadoConPlanNinguno();
+        whenClienteContrataPlan(cliente, "Estandar", Plan.ESTANDAR, false);
+
     }
 
     private Pago whenBuscoUltimoPago(Cliente cliente) {
@@ -103,13 +111,16 @@ public class PlanServiceTest {
         return cliente;
     }
 
-    private void whenClienteContrataPlan(Cliente cliente, String plan, Plan planADevolver) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
+    private void whenClienteContrataPlan(Cliente cliente, String plan, Plan planADevolver, Boolean conDebito) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         LocalDate hoy = LocalDate.now();
         when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
         cliente.getUltimoPagoRealizado().cancelarPlan();
         Pago pagoNuevo = new Pago(cliente, hoy.getMonth(), hoy.getYear(), planADevolver);
         when(clienteRepositorio.getPagoActivo(cliente)).thenReturn(pagoNuevo);
-        planService.contratarPlan(cliente.getId(), LocalDate.now().getMonth(), LocalDate.now().getYear(), plan);
+        DatosPlan datosPlan = new DatosPlan();
+        datosPlan.setNombre(plan);
+        datosPlan.setConDebito(conDebito);
+        planService.contratarPlan(cliente.getId(), LocalDate.now().getMonth(), LocalDate.now().getYear(), datosPlan);
     }
 
     private void whenClienteCancelaElPlan(Cliente cliente, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {

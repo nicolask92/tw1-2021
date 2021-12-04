@@ -58,7 +58,7 @@ public class PlanController {
         LocalDate hoy = LocalDate.now();
 
         try {
-            Plan ultimoPlan = planService.contratarPlan(idUsuario, hoy.getMonth(), hoy.getYear(), datosPlan.getNombre());
+            Plan ultimoPlan = planService.contratarPlan(idUsuario, hoy.getMonth(), hoy.getYear(), datosPlan);
             model.put("contracionExitosa", "El Plan se contrato correctamente");
             sesion.setAttribute("plan", null);
             sesion.setAttribute("plan", ultimoPlan);
