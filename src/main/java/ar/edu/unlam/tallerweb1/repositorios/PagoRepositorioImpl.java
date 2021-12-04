@@ -6,6 +6,8 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+
 @Repository("pagoRepositorio")
 public class PagoRepositorioImpl implements PagoRepositorio {
 
@@ -25,5 +27,17 @@ public class PagoRepositorioImpl implements PagoRepositorio {
     @Override
     public void actualizar(Pago pago) {
         sessionFactory.getCurrentSession().update(pago);
+    }
+
+    @Override
+    public Pago getUltimoPagoContratadoParaEsteMesYActivo(Cliente cliente) {
+        LocalDate hoy = LocalDate.now();
+        return (Pago) sessionFactory.getCurrentSession()
+            .createQuery("select distinct p from Pago p where mes =: mes and anio =: anio and activo =: activo and cliente =: cliente")
+            .setParameter("mes", hoy.getMonth())
+            .setParameter("anio", hoy.getYear())
+            .setParameter("activo", true)
+            .setParameter("cliente", cliente)
+            .uniqueResult();
     }
 }

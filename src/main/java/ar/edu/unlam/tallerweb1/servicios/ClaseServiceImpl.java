@@ -39,7 +39,7 @@ public class ClaseServiceImpl implements ClaseService {
         boolean tienePlanParaElMesAConsultar = cliente.getContrataciones()
             .stream()
             .anyMatch( plan ->
-                plan.getMes().ordinal() + 1 == (mes.isPresent() ? mes.get().getNumeroDelMes() : LocalDate.now().getMonth().getValue()) &&
+                plan.getMes().ordinal() + 1 == (mes.isPresent() ? mes.get().getNumeroDelMes() : LocalDate.now().getMonth().getValue())
             );
 
         if (!tienePlanParaElMesAConsultar)

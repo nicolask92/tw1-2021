@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,22 +38,22 @@ public class ClaseRepositorioTest extends SpringTest {
         thenLaCantidadDeClasesConseguidasEsCorrecta(clasesEncontradas, 1);
     }
 
-    private Clase givenUnaClaseConLugarDisponible(String nombreActividad, boolean mesActual) throws Exception {
-        Actividad actividad = givenUnaActividadConPeriodoValidoYHorarioValido(nombreActividad, mesActual);
-        return new Clase(mesActual ? LocalDateTime.now() : LocalDateTime.now().plusMonths(1), actividad, Modalidad.PRESENCIAL);
+    private Clase givenUnaClaseConLugarDisponible(String nombreActividad, int mes) throws Exception {
+        Actividad actividad = givenUnaActividadConPeriodoValidoYHorarioValido(nombreActividad, mes);
+        return new Clase(LocalDateTime.of(2021, mes, 1, 20, 0), actividad, Modalidad.PRESENCIAL);
     }
 
-    private Actividad givenUnaActividadConPeriodoValidoYHorarioValido(String nombreActividad, boolean mesActual) throws Exception {
-        LocalDateTime antesDeAyer = LocalDateTime.now().minusDays(2);
-        LocalDateTime pasadoManiana = mesActual ? LocalDateTime.now().plusDays(2) : LocalDateTime.now().plusMonths(1);
-        Periodo periodo = new Periodo(antesDeAyer, pasadoManiana);
+    private Actividad givenUnaActividadConPeriodoValidoYHorarioValido(String nombreActividad, int mes) throws Exception {
+        LocalDateTime principioAnio = LocalDateTime.of(2021, 1, 15, 20, 0).minusDays(2);
+        LocalDateTime finDeAnio = LocalDateTime.of(2021, 12, 20, 20, 0);
+        Periodo periodo = new Periodo(principioAnio, finDeAnio);
 
         return new Actividad(nombreActividad, Tipo.CROSSFIT, 4000f, Frecuencia.CON_INICIO_Y_FIN, periodo);
     }
 
     private List<Clase> givenTresClasesParaElMesActualYUnaElSiguiente() throws Exception {
-        List<Clase> clasesEnEsteMes = crearClasesPorCriterios(3, true);
-        Clase claseDelMesSiguiente = crearClasesPorCriterios(1, false).get(0);
+        List<Clase> clasesEnEsteMes = crearClasesPorCriterios(3, 11);
+        Clase claseDelMesSiguiente = crearClasesPorCriterios(1, 12).get(0);
 
         assert clasesEnEsteMes.size() == 3;
 
@@ -64,10 +63,10 @@ public class ClaseRepositorioTest extends SpringTest {
         return clasesTotales;
     }
 
-    private List<Clase> crearClasesPorCriterios(int cantitdadClases, boolean mesActual) throws Exception {
+    private List<Clase> crearClasesPorCriterios(int cantitdadClases, int mes) throws Exception {
         List<Clase> clases = new ArrayList<>();
         for (int i = 0; i < cantitdadClases; i++) {
-            Clase clase = givenUnaClaseConLugarDisponible("clase"+i, mesActual);
+            Clase clase = givenUnaClaseConLugarDisponible("clase"+i, mes);
             session().save(clase);
             clases.add(clase);
         }
@@ -75,13 +74,12 @@ public class ClaseRepositorioTest extends SpringTest {
     }
 
     private List<Clase> whenBuscoLaDemesSiguiente() {
-        Optional<Mes> mesSiguiente = Optional.ofNullable(Mes.values[LocalDate.now().getMonth().getValue()]);
-        assert mesSiguiente.get().getNumeroDelMes() == LocalDate.now().plusMonths(1).getMonth().getValue();
+        Optional<Mes> mesSiguiente = Optional.ofNullable(Mes.values[11]);
         return claseRepositorio.getClases(mesSiguiente);
     }
 
     private List<Clase> whenBuscoLaDemesActual() {
-        return claseRepositorio.getClases(java.util.Optional.empty());
+        return claseRepositorio.getClases(Optional.of(Mes.NOVIEMBRE));
     }
 
     private void thenLaCantidadDeClasesConseguidasEsCorrecta(List<Clase> clases, int cantClasesQueDeberianSer) {

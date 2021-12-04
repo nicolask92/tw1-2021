@@ -61,6 +61,18 @@ public class PlanServiceTest {
         thenElClienteTieneDosPagosSiendoElContradoActivoYElAnteriorCancelado(cliente);
     }
 
+    @Test
+    public void getUltimoPagoLoHaceCorrectamente() throws YaTienePagoRegistradoParaMismoMes {
+        Cliente cliente = givenClienteLogueadoConPlan();
+        Pago pago = whenBuscoUltimoPago(cliente);
+        thenDevuelveUltimoPago(pago);
+    }
+
+    private Pago whenBuscoUltimoPago(Cliente cliente) {
+        when(pagoRepositorio.getUltimoPagoContratadoParaEsteMesYActivo(cliente)).thenReturn(cliente.getUltimoPagoRealizado());
+        return planService.getUltimoPagoContratadoParaEsteMesYActivo(cliente.getId());
+    }
+
     private void thenElClienteTieneDosPagosSiendoElContradoActivoYElAnteriorCancelado(Cliente cliente) {
         List<Pago> listaDePagosDelCliente = cliente.getContrataciones();
         Pago pagoBasico = listaDePagosDelCliente.stream().filter( pago ->
@@ -120,5 +132,11 @@ public class PlanServiceTest {
     private void thenElClienteNoTienePlan(Cliente cliente) {
         Pago pago = cliente.getContrataciones().get(0);
         assertThat(pago.esActivo()).isEqualTo(false);
+    }
+
+    private void thenDevuelveUltimoPago(Pago pago) {
+        assertThat(pago).isNotNull();
+        assertThat(pago.esActivo()).isTrue();
+        assertThat(pago.getPlan()).isEqualTo(Plan.BASICO);
     }
 }

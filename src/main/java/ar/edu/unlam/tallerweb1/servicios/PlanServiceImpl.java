@@ -60,4 +60,10 @@ public class PlanServiceImpl implements PlanService {
         }else
             throw new PlanNoExisteException();
     }
+
+    @Override
+    public Pago getUltimoPagoContratadoParaEsteMesYActivo(Long idCliente) {
+        Cliente cliente = clienteRepositorio.getById(idCliente);
+        return pagoRepositorio.getUltimoPagoContratadoParaEsteMesYActivo(cliente);
+    }
 }

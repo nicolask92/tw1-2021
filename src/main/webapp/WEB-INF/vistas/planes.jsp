@@ -24,21 +24,19 @@
   <c:forEach items="${planes}" var="plan" varStatus="loop">
     <div class="card text-center mb-3">
       <div class="card-header bg-primary">
-        <h5 class="card-title text-white m-0">${plan.nombre}</h5>
+        <h5 class="card-title text-white m-0">${plan.key.nombre}</h5>
       </div>
       <div class="card-body">
-        <p class="card-text">${plan.descripcion}</p>
-        <p class="card-text">$${plan.precio}</p>
+        <p class="card-text">${plan.key.descripcion}</p>
+        <p class="card-text">$${plan.key.precio}</p>
 
         <c:choose>
-          <c:when test='${(sessionScope.plan.nombre == "Basico" && plan.nombre.toString()== "Basico") ||
-                         (sessionScope.plan.nombre == "Estandar" && plan.nombre.toString()== "Estandar")
-                         || (sessionScope.plan.nombre == "Premium" && plan.nombre.toString()== "Premium")}'>
-            <a href="/proyecto_limpio_spring_war_exploded/cancelar-plan/${plan.nombre.toString()}" class="btn btn-primary">Cancelar Suscripcions</a>
+          <c:when test='${plan.value}'>
+            <a href="/proyecto_limpio_spring_war_exploded/cancelar-plan/${plan.key.nombre.toString()}" class="btn btn-primary">Cancelar Suscripcions</a>
           </c:when>
 
           <c:otherwise>
-            <a href="/proyecto_limpio_spring_war_exploded/contratar-plan/${plan.nombre.toString()}" class="btn btn-primary">Contratar</a>
+            <a href="/proyecto_limpio_spring_war_exploded/contratar-plan/${plan.key.nombre.toString()}" class="btn btn-primary">Contratar</a>
           </c:otherwise>
         </c:choose>
 

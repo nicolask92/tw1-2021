@@ -2,6 +2,7 @@ package ar.edu.unlam.tallerweb1.controladores;
 
 import ar.edu.unlam.tallerweb1.exceptiones.PlanNoExisteException;
 import ar.edu.unlam.tallerweb1.exceptiones.YaTienePagoRegistradoParaMismoMes;
+import ar.edu.unlam.tallerweb1.modelo.Pago;
 import ar.edu.unlam.tallerweb1.modelo.Plan;
 import ar.edu.unlam.tallerweb1.repositorios.ClienteRepositorio;
 import ar.edu.unlam.tallerweb1.servicios.PlanService;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -33,12 +35,16 @@ public class PlanController {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/planes")
-    public ModelAndView getPlanes() {
+    public ModelAndView getPlanes(HttpSession sesion) {
 
-        List<Plan> planesDisponibles = Arrays
-                .stream(Plan.values())
-                .filter( plan -> plan != Plan.NINGUNO )
-                .collect(Collectors.toList());
+        Long idUsuario = (Long)sesion.getAttribute("usuarioId");
+        final Pago ultimoPagoEsteMes = planService.getUltimoPagoContratadoParaEsteMesYActivo(idUsuario);
+
+        Map<Plan, Boolean> planesDisponibles = Arrays.stream(Plan.values())
+            .filter( plan -> plan != Plan.NINGUNO )
+            .collect(
+                    Collectors.toMap( plan -> plan, plan -> ultimoPagoEsteMes != null && plan == ultimoPagoEsteMes.getPlan())
+            );
 
         ModelMap modelMap = new ModelMap();
 
@@ -49,6 +55,7 @@ public class PlanController {
 
     @RequestMapping(method = RequestMethod.GET, path = "/contratar-plan/{plan}")
     public ModelAndView contratarPlan(@PathVariable("plan") String plan, HttpSession sesion) throws PlanNoExisteException {
+
         Long idUsuario = (Long)sesion.getAttribute("usuarioId");
         ModelMap model = new ModelMap();
         LocalDate hoy = LocalDate.now();

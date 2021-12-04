@@ -14,7 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Mockito.*;
 
@@ -27,8 +27,8 @@ public class PlanControllerTest {
 
     @Test
     public void irALaPaginaDePlanesMeMuestraLosPlanesDisponibles() {
-        givenClienteLogueadoYSinPlan();
-        ModelAndView mv = whenVeLaVistaDePlanes();
+        Cliente cliente = givenClienteLogueadoYSinPlan();
+        ModelAndView mv = whenVeLaVistaDePlanes(cliente);
         thenSeMandaLosPlanesALaVista(mv);
     }
 
@@ -67,10 +67,27 @@ public class PlanControllerTest {
         thenElClienteEsRedirigidoYLeAvisaQueYaLoTieneContrado(mv);
     }
 
+    @Test
+    public void seMuestraLaVigenciaDelPlanQueTieneContrado() throws YaTienePagoRegistradoParaMismoMes {
+        Cliente cliente = givenUnCliente();
+        Pago pago = givenUnPagoDeEsteMes(cliente);
+        ModelAndView mv = whenVeoLosPlanesQueTengoContratado(cliente, pago);
+        thenMeMuestraLaVigenciaDelPlanQueTengoContratadoSobreEseMes(mv);
+    }
 
-    private void thenElClienteEsRedirigidoYLeAvisaQueYaLoTieneContrado(ModelAndView mv) {
-        assertThat(mv.getModel().get("msgError")).isEqualTo("Ya tiene este plan contrado.");
-        assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-clases");
+    private Cliente givenUnCliente() {
+        return new Cliente();
+    }
+
+    private Pago givenUnPagoDeEsteMes(Cliente cliente) {
+        return new Pago(cliente, LocalDate.now().getMonth(), LocalDate.now().getYear(), Plan.ESTANDAR);
+    }
+
+    private ModelAndView whenVeoLosPlanesQueTengoContratado(Cliente cliente, Pago pago) {
+        when(mockSession.getAttribute("usuarioId")).thenReturn(cliente.getId());
+        when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
+        when(planService.getUltimoPagoContratadoParaEsteMesYActivo(cliente.getId())).thenReturn(pago);
+        return planController.getPlanes(mockSession);
     }
 
     private ModelAndView whenContratoPlanQueYaTengoContrado(Cliente cliente, String plan) throws YaTienePagoRegistradoParaMismoMes, PlanNoExisteException {
@@ -90,8 +107,10 @@ public class PlanControllerTest {
         return new Cliente();
     }
 
-    private ModelAndView whenVeLaVistaDePlanes() {
-        return planController.getPlanes();
+    private ModelAndView whenVeLaVistaDePlanes(Cliente cliente) {
+        when(mockSession.getAttribute("usuarioId")).thenReturn(cliente.getId());
+        when(planService.getUltimoPagoContratadoParaEsteMesYActivo(cliente.getId())).thenReturn(null);
+        return planController.getPlanes(mockSession);
     }
 
 
@@ -109,7 +128,6 @@ public class PlanControllerTest {
         return planController.contratarPlan(plan, session);
     }
 
-    // TODO arreglar
     private ModelAndView whenCanceloSuscripcionDelPlanActual(HttpSession session, Cliente cliente, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         Pago pago = cliente.getContrataciones().get(0);
         when(session.getAttribute("usuarioId")).thenReturn(cliente.getId());
@@ -119,7 +137,11 @@ public class PlanControllerTest {
 
     private void thenSeMandaLosPlanesALaVista(ModelAndView mv) {
         Assert.assertEquals(mv.getViewName(), "/planes");
-        Assert.assertEquals(mv.getModel().get("planes"), List.of(Plan.BASICO, Plan.ESTANDAR, Plan.PREMIUM));
+        Assert.assertEquals(mv.getModel().get("planes"), Map.of(
+                Plan.BASICO, false,
+                Plan.ESTANDAR, false,
+                Plan.PREMIUM, false
+        ));
     }
 
     private void thenElUsuarioNoPuedoContratarPlan(ModelAndView mv, Cliente cliente) {
@@ -137,5 +159,18 @@ public class PlanControllerTest {
 //        assertThat(cliente.getUltimoPlanContrado()).isEqualTo(Plan.NINGUNO);
         assertThat(mv.getModel().get("msg")).isEqualTo("El Plan se cancelo correctamente");
         assertThat(mv.getViewName()).isEqualTo("redirect:/planes");
+    }
+
+    private void thenElClienteEsRedirigidoYLeAvisaQueYaLoTieneContrado(ModelAndView mv) {
+        assertThat(mv.getModel().get("msgError")).isEqualTo("Ya tiene este plan contrado.");
+        assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-clases");
+    }
+
+    private void thenMeMuestraLaVigenciaDelPlanQueTengoContratadoSobreEseMes(ModelAndView mv) {
+        assert mv.getModelMap().get("planes").equals(Map.of(
+                Plan.BASICO, false,
+                Plan.ESTANDAR, true,
+                Plan.PREMIUM, false
+        ));
     }
 }
