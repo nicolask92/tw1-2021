@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Month;
 
 @Service
-@Transactional
 public class PlanServiceImpl implements PlanService {
 
     private PagoRepositorio pagoRepositorio;
@@ -28,18 +27,19 @@ public class PlanServiceImpl implements PlanService {
 
 
     @Override
+    @Transactional
     public Plan contratarPlan(Long idCliente, Month mes, Integer anio, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = clienteRepositorio.getById(idCliente);
 
         if (plan.equals("Basico") || plan.equals("Estandar") || plan.equals("Premium")) {
             Pago pago = clienteRepositorio.getPagoActivo(cliente);
+            Pago nuevoPago = new Pago(cliente, mes, anio, Plan.valueOf(plan.toUpperCase()));
+            cliente.agregarPago(nuevoPago);
             if (pago != null) {
                 pago.cancelarPlan();
                 pagoRepositorio.actualizar(pago);
             }
-            Pago nuevoPago = new Pago(cliente, mes, anio, Plan.valueOf(plan.toUpperCase()));
             pagoRepositorio.guardar(nuevoPago);
-            cliente.agregarPago(nuevoPago);
             clienteRepositorio.actualizarCliente(cliente);
             return nuevoPago.getPlan();
         } else
@@ -47,6 +47,7 @@ public class PlanServiceImpl implements PlanService {
     }
 
     @Override
+    @Transactional
     public Pago cancelarPlan(Long idCliente, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = clienteRepositorio.getById(idCliente);
         if (plan.equals("Basico") || plan.equals("Estandar") || plan.equals("Premium")) {

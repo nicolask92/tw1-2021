@@ -46,23 +46,28 @@ public class TurnoController {
         LocalDate hoy = LocalDate.now();
         ModelMap model = new ModelMap();
         model.put("mes", mes.isPresent() ? mes.get() : hoy.getMonth().toString());
+        model.put("anio", hoy.getYear());
         List<Clase> clases;
 
         try {
             clases = claseService.getClases(mes, idUsuario);
+            List<Turno> turnosDelDia = turnoService.getTurnosParaHoy(idUsuario);
+
+            CalendarioDeActividades calendarioYActividades = clasesViewModelBuilder.getCalendarioCompleto(clases, mes);
+
+            model.put("turnosDelDia", turnosDelDia);
+            model.put("calendario", calendarioYActividades);
+
+            return new ModelAndView("clases-para-turnos", model);
         } catch (NoTienePlanParaVerLasClasesException e) {
+            model.put("turnosDelDia", List.of());
+            CalendarioDeActividades calendarioYActividades = clasesViewModelBuilder.getCalendarioCompleto(List.of(), mes);
+
+            model.put("calendario", calendarioYActividades);
+
             model.put("msgError", "Para poder ver las clases de este mes debe contratar un plan.");
-            return new ModelAndView("Turnos", model);
+            return new ModelAndView("clases-para-turnos", model);
         }
-        List<Turno> turnosDelDia = turnoService.getTurnosParaHoy(idUsuario);
-
-        CalendarioDeActividades calendarioYActividades = clasesViewModelBuilder.getCalendarioCompleto(clases, mes);
-
-        model.put("turnosDelDia", turnosDelDia);
-        model.put("anio", hoy.getYear());
-        model.put("calendario", calendarioYActividades);
-
-        return new ModelAndView("clases-para-turnos", model);
     }
 
     @RequestMapping("/mostrar-clase/{id}")

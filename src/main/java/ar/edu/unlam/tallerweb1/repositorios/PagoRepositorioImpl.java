@@ -5,10 +5,12 @@ import ar.edu.unlam.tallerweb1.modelo.Pago;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
 @Repository("pagoRepositorio")
+@Transactional
 public class PagoRepositorioImpl implements PagoRepositorio {
 
     private final SessionFactory sessionFactory;

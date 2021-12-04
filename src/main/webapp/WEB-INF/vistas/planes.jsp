@@ -36,7 +36,16 @@
           </c:when>
 
           <c:otherwise>
-            <a href="/proyecto_limpio_spring_war_exploded/contratar-plan/${plan.key.nombre.toString()}" class="btn btn-primary">Contratar</a>
+            <form:form action="contratar-plan" method="POST" modelAttribute="datosPlan">
+              <div class="form-check">
+                <form:input path="nombre" id="nombre" type="hidden" value="${plan.key.nombre.toString()}" />
+                <form:checkbox path="conDebito" id="conDebito" class="form-check-input"/>
+                <label class="form-check-label" for="conDebito">
+                  Debito automatico
+                </label>
+              </div>
+              <button type="submit" class="btn btn-primary">Contratar</button>
+            </form:form>
           </c:otherwise>
         </c:choose>
 

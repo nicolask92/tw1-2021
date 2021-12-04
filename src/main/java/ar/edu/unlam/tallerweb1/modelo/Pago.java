@@ -20,6 +20,8 @@ public class Pago {
     Month mes;
     Integer anio;
 
+    Boolean debitoAutomatico;
+
     Boolean activo;
     LocalDate fechaCancelacion;
     LocalDate fechaDeFinalizacion;
@@ -40,6 +42,14 @@ public class Pago {
     }
 
     public Pago() {
+    }
+
+    public Boolean getDebitoAutomatico() {
+        return debitoAutomatico;
+    }
+
+    public void setDebitoAutomatico(Boolean debitoAutomatico) {
+        this.debitoAutomatico = debitoAutomatico;
     }
 
     public Integer getAnio() {

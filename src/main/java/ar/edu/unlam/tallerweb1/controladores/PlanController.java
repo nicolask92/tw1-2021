@@ -9,15 +9,12 @@ import ar.edu.unlam.tallerweb1.servicios.PlanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -43,25 +40,25 @@ public class PlanController {
         Map<Plan, Boolean> planesDisponibles = Arrays.stream(Plan.values())
             .filter( plan -> plan != Plan.NINGUNO )
             .collect(
-                    Collectors.toMap( plan -> plan, plan -> ultimoPagoEsteMes != null && plan == ultimoPagoEsteMes.getPlan())
+                Collectors.toMap( plan -> plan, plan -> ultimoPagoEsteMes != null && plan == ultimoPagoEsteMes.getPlan())
             );
 
         ModelMap modelMap = new ModelMap();
-
+        modelMap.put("datosPlan", new DatosPlan());
         modelMap.put("planes", planesDisponibles);
 
         return new ModelAndView("/planes", modelMap);
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/contratar-plan/{plan}")
-    public ModelAndView contratarPlan(@PathVariable("plan") String plan, HttpSession sesion) throws PlanNoExisteException {
+    @RequestMapping(method = RequestMethod.POST, path = "/contratar-plan")
+    public ModelAndView contratarPlan(@ModelAttribute("datosPlan") DatosPlan datosPlan, HttpSession sesion) throws PlanNoExisteException {
 
         Long idUsuario = (Long)sesion.getAttribute("usuarioId");
         ModelMap model = new ModelMap();
         LocalDate hoy = LocalDate.now();
 
         try {
-            Plan ultimoPlan = planService.contratarPlan(idUsuario, hoy.getMonth(), hoy.getYear(), plan);
+            Plan ultimoPlan = planService.contratarPlan(idUsuario, hoy.getMonth(), hoy.getYear(), datosPlan.getNombre());
             model.put("contracionExitosa", "El Plan se contrato correctamente");
             sesion.setAttribute("plan", null);
             sesion.setAttribute("plan", ultimoPlan);

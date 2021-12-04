@@ -7,11 +7,12 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-
 @Repository("clienteRepositorio")
+@Transactional
 public class ClienteRepositorioImpl implements ClienteRepositorio {
 
     private final SessionFactory sessionFactory;
@@ -20,7 +21,6 @@ public class ClienteRepositorioImpl implements ClienteRepositorio {
     public ClienteRepositorioImpl(SessionFactory sessionFactory){
         this.sessionFactory = sessionFactory;
     }
-
 
     @Override
     public Cliente getById(Long idUsuario) {

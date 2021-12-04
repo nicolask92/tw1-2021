@@ -93,7 +93,9 @@ public class PlanControllerTest {
     private ModelAndView whenContratoPlanQueYaTengoContrado(Cliente cliente, String plan) throws YaTienePagoRegistradoParaMismoMes, PlanNoExisteException {
         when(mockSession.getAttribute("usuarioId")).thenReturn(cliente.getId());
         doThrow(YaTienePagoRegistradoParaMismoMes.class).when(planService).contratarPlan(cliente.getId(), LocalDate.now().getMonth(), LocalDate.now().getYear(), plan);
-        return planController.contratarPlan(plan, mockSession);
+        DatosPlan datosPlan = new DatosPlan();
+        datosPlan.setNombre(plan);
+        return planController.contratarPlan(datosPlan, mockSession);
     }
 
     private Cliente givenClienteLogueadoYConPlan() throws YaTienePagoRegistradoParaMismoMes {
@@ -118,14 +120,18 @@ public class PlanControllerTest {
         when(session.getAttribute("usuarioId")).thenReturn(cliente.getId());
         when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
         when(planService.contratarPlan(cliente.getId(), LocalDate.now().getMonth(), LocalDate.now().getYear(), plan)).thenReturn(Plan.BASICO);
-        return planController.contratarPlan("Basico", session);
+        DatosPlan datosPlan = new DatosPlan();
+        datosPlan.setNombre(plan);
+        return planController.contratarPlan(datosPlan, session);
     }
 
     private ModelAndView whenContratoPlanNoExistente(HttpSession session, Cliente cliente, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         when(session.getAttribute("usuarioId")).thenReturn(cliente.getId());
 //        when(planService.contratarPlan(cliente.getId(), plan )).thenReturn(Plan.BASICO);
         doThrow(PlanNoExisteException.class).when(planService).contratarPlan(cliente.getId(), LocalDate.now().getMonth(), LocalDate.now().getYear(), plan);
-        return planController.contratarPlan(plan, session);
+        DatosPlan datosPlan = new DatosPlan();
+        datosPlan.setNombre(plan);
+        return planController.contratarPlan(datosPlan, session);
     }
 
     private ModelAndView whenCanceloSuscripcionDelPlanActual(HttpSession session, Cliente cliente, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
