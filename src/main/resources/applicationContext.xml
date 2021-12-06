@@ -37,7 +37,7 @@
 			<mvc:exclude-mapping path="/fullcalendar/**"/>
 			<mvc:exclude-mapping path="/vendor/**"/>
 			<mvc:exclude-mapping path="/cerrar-sesion"/>
-			<mvc:exclude-mapping path="/contratar-plan/**"/>
+			<mvc:exclude-mapping path="/contratar-plan"/>
 			<bean id="loginServiceInterceptor" class="ar.edu.unlam.tallerweb1.intercepters.LoginServiceInterceptor"/>
 		</mvc:interceptor>
 	</mvc:interceptors>

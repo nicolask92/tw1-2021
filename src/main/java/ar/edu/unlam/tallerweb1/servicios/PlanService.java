@@ -16,4 +16,6 @@ public interface PlanService {
     Pago cancelarPlan(Long id, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes;
 
     Pago getUltimoPagoContratadoParaEsteMesYActivo(Long idUsuario);
+
+    void cancelarSuscripcion(Long idUsuario, String plan) throws PlanNoExisteException;
 }

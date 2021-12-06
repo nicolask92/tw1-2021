@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public class PlanServiceTest {
 
@@ -37,34 +38,52 @@ public class PlanServiceTest {
     }
 
     @Test
-    public void clienteConPlanContratadoPuedeCancelarLaSuscripcion() throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
-        Cliente cliente = givenClienteLogueadoConPlan();
+    public void clienteConPlanContratadoPuedeCancelarPlan() throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
+        Cliente cliente = givenClienteLogueadoConPlan(false);
         whenClienteCancelaElPlan(cliente, "Basico");
         thenElClienteNoTienePlan(cliente);
     }
 
     @Test(expected = PlanNoExisteException.class)
-    public void clienteConPlanContratadoNoPuedeCancelarLaSuscripcion() throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
-        Cliente cliente = givenClienteLogueadoConPlan();
+    public void clienteConPlanContratadoNoPuedeCancelarPlan() throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
+        Cliente cliente = givenClienteLogueadoConPlan(false);
         whenClienteCancelaElPlan(cliente, "Invalido");
+    }
+
+    @Test
+    public void clienteConPlanContratadoDesuscribirse() throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
+        Cliente cliente = givenClienteLogueadoConPlan(false);
+        whenClienteSeDesuscribeDelPlan(cliente, "Basico");
+        thenElClienteYaNoTieneSuscripcionAutomatica(cliente);
+    }
+
+    private void thenElClienteYaNoTieneSuscripcionAutomatica(Cliente cliente) {
+        assertThat(cliente.getUltimoPagoRealizado().getDebitoAutomatico()).isEqualTo(false);
+    }
+
+    private void whenClienteSeDesuscribeDelPlan(Cliente cliente, String plan) throws YaTienePagoRegistradoParaMismoMes, PlanNoExisteException {
+        when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
+        cliente.getUltimoPagoRealizado().cancelarPlan();
+        when(clienteRepositorio.getPagoActivo(cliente)).thenReturn(cliente.getUltimoPagoRealizado());
+        planService.cancelarSuscripcion(cliente.getId(), plan);
     }
 
     @Test(expected = YaTienePagoRegistradoParaMismoMes.class)
     public void siYaTieneContratadoUnPlanNoDejaContratarElMismo() throws YaTienePagoRegistradoParaMismoMes, PlanNoExisteException {
-        Cliente cliente = givenClienteLogueadoConPlan();
+        Cliente cliente = givenClienteLogueadoConPlan(false);
         whenClienteContrataPlan(cliente, "Basico", Plan.BASICO, false);
     }
 
     @Test
     public void contratarPlanDejaElPagoAnteriorCancelado() throws YaTienePagoRegistradoParaMismoMes, PlanNoExisteException {
-        Cliente cliente = givenClienteLogueadoConPlan();
+        Cliente cliente = givenClienteLogueadoConPlan(false);
         whenClienteContrataPlan(cliente, "Estandar", Plan.ESTANDAR, false);
         thenElClienteTieneDosPagosSiendoElContradoActivoYElAnteriorCancelado(cliente);
     }
 
     @Test
     public void getUltimoPagoLoHaceCorrectamente() throws YaTienePagoRegistradoParaMismoMes {
-        Cliente cliente = givenClienteLogueadoConPlan();
+        Cliente cliente = givenClienteLogueadoConPlan(false);
         Pago pago = whenBuscoUltimoPago(cliente);
         thenDevuelveUltimoPago(pago);
     }
@@ -72,11 +91,29 @@ public class PlanServiceTest {
     @Test
     public void contratarPlanConDebitoAutomaticoDejaElPagoConDebitoAutomatico() throws YaTienePagoRegistradoParaMismoMes, PlanNoExisteException {
         Cliente cliente = givenClienteLogueadoConPlanNinguno();
-        whenClienteContrataPlan(cliente, "Estandar", Plan.ESTANDAR, false);
+        whenClienteContrataPlan(cliente, "Estandar", Plan.ESTANDAR, true);
+        thenElPagoQuedoConDebitoAutomatico(cliente);
+    }
 
+    @Test
+    public void contratarPlanSinDebitoAutomaticoDejaElPagoConDebitoAutomatico() throws YaTienePagoRegistradoParaMismoMes, PlanNoExisteException {
+        Cliente cliente = givenClienteLogueadoConPlanNinguno();
+        whenClienteContrataPlan(cliente, "Estandar", Plan.ESTANDAR, false);
+        thenElPagoQuedoSinDebitoAutomatico(cliente);
+    }
+
+    private void thenElPagoQuedoSinDebitoAutomatico(Cliente cliente) {
+        Optional<Pago> planActivo = cliente.getContrataciones().stream().filter(pago -> pago.esActivo() ).findFirst();
+        assertThat(planActivo.get().getDebitoAutomatico()).isEqualTo(false);
+    }
+
+    private void thenElPagoQuedoConDebitoAutomatico(Cliente cliente) {
+        Optional<Pago> planActivo = cliente.getContrataciones().stream().filter(pago -> pago.esActivo() ).findFirst();
+        assertThat(planActivo.get().getDebitoAutomatico()).isEqualTo(true);
     }
 
     private Pago whenBuscoUltimoPago(Cliente cliente) {
+        when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
         when(pagoRepositorio.getUltimoPagoContratadoParaEsteMesYActivo(cliente)).thenReturn(cliente.getUltimoPagoRealizado());
         return planService.getUltimoPagoContratadoParaEsteMesYActivo(cliente.getId());
     }
@@ -97,10 +134,12 @@ public class PlanServiceTest {
         assertThat(true).isEqualTo(pagoEstandar.esActivo());
     }
 
-    private Cliente givenClienteLogueadoConPlan() throws YaTienePagoRegistradoParaMismoMes {
+    private Cliente givenClienteLogueadoConPlan(Boolean conDebitoAutomatico) throws YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = new Cliente();
         LocalDate hoy = LocalDate.now();
-        cliente.agregarPago(new Pago(cliente, hoy.getMonth(), hoy.getYear(), Plan.BASICO));
+        Pago pago = new Pago(cliente, hoy.getMonth(), hoy.getYear(), Plan.BASICO);
+        pago.setDebitoAutomatico(conDebitoAutomatico);
+        cliente.agregarPago(pago);
         return cliente;
     }
 
@@ -112,11 +151,8 @@ public class PlanServiceTest {
     }
 
     private void whenClienteContrataPlan(Cliente cliente, String plan, Plan planADevolver, Boolean conDebito) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
-        LocalDate hoy = LocalDate.now();
         when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
-        cliente.getUltimoPagoRealizado().cancelarPlan();
-        Pago pagoNuevo = new Pago(cliente, hoy.getMonth(), hoy.getYear(), planADevolver);
-        when(clienteRepositorio.getPagoActivo(cliente)).thenReturn(pagoNuevo);
+        when(clienteRepositorio.getPagoActivo(cliente)).thenReturn(cliente.getUltimoPagoRealizado());
         DatosPlan datosPlan = new DatosPlan();
         datosPlan.setNombre(plan);
         datosPlan.setConDebito(conDebito);

@@ -18,7 +18,8 @@
             <th scope="col">#</th>
             <th scope="col">Fecha contratacion</th>
             <th scope="col">Plan</th>
-            <th scope="col">Costo</th>
+            <th scope="col">Costo del Plan</th>
+            <th scope="col">Importe Pagado</th>
             <th scope="col">Fecha de Vencimiento</th>
         </tr>
         </thead>
@@ -30,6 +31,7 @@
             <td>${pago.mes.toString()}/${pago.anio.toString()}</td>
             <td>${pago.plan.nombre.toString()}</td>
             <td>$ ${pago.plan.precio.toString()}</td>
+            <td>$ ${pago.importePagado.toString()}</td>
             <td>${pago.fechaDeFinalizacion}</td>
         </tr>
         </c:forEach>

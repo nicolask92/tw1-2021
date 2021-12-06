@@ -4,10 +4,7 @@ import ar.edu.unlam.tallerweb1.exceptiones.YaTienePagoRegistradoParaMismoMes;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Entity
 public class Cliente extends Usuario {
@@ -54,17 +51,18 @@ public class Cliente extends Usuario {
             .max(Comparator.comparing(Pago::getMes))
             .stream()
             .max(Comparator.comparing(Pago::getAnio))
+            .stream()
+            .max(Comparator.comparing(Pago::getId))
             .get();
     }
 
-    // TODO arreglar esto por favor te lo pido
     public Plan getUltimoPlanContrado() {
-        return contrataciones.stream()
+        Optional<Pago> pagoObtenido = contrataciones.stream()
             .filter( pago -> pago.activo )
             .max(Comparator.comparing(Pago::getMes))
             .stream()
-                .max(Comparator.comparing(Pago::getAnio))
-            .get().plan;
+                .max(Comparator.comparing(Pago::getAnio));
+        return pagoObtenido.isEmpty() ? null : pagoObtenido.get().getPlan();
     }
 
     public List<Pago> getContrataciones() {

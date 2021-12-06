@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -25,7 +26,6 @@ import static org.mockito.Mockito.never;
 
 public class TurnoServiceTest {
 
-
     private static final Long IDCLASE = 20L ;
     TurnoRepositorio turnoRepositorio = mock(TurnoRepositorio.class);
     ClaseRepositorio claseRepositorio = mock(ClaseRepositorio.class);
@@ -36,7 +36,7 @@ public class TurnoServiceTest {
     @Test
     public void testQueSiGuardeTurnoSeAgregue1ClienteALaClase() throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenUnClienteActivo(Plan.BASICO);
-        Clase clase = givenClaseConLugar();
+        Clase clase = givenClaseConLugar(LocalDateTime.now());
         Turno turno = givenTurnoDeOtraClase();
         whenGuardoTurno(clase.getId(), cliente.getId(), cliente, clase, turno);
         thenSeIncrementaEn1LaCantidadDeClientesEnLaClase(clase);
@@ -94,7 +94,7 @@ public class TurnoServiceTest {
     @Test(expected = TurnoExpiroException.class)
     public void noSePuedeBorrarTurnoAnteriorALaFechaActual() throws ElClienteNoCorrespondeAlTurnoException, Exception, TurnoExpiroException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenUnClienteActivo(Plan.BASICO);
-        Turno turno = givenHayUnTurnoDeAyer(cliente);
+        Turno turno = givenHayUnTurnoDeAyer(cliente, LocalDate.now());
         whenBorroTurno(turno, cliente);
     }
 
@@ -139,7 +139,7 @@ public class TurnoServiceTest {
     @Test
     public void testBuscarClasesYQueSeEncuentren() throws Exception, NoSeEncontroClaseConEseNombreException {
         String claseBuscada = givenClaseABuscada("CROSSFIT");
-        Clase clase = givenClaseConLugar();
+        Clase clase = givenClaseConLugar(LocalDateTime.now());
         List<Clase> clasesEncontradas = whenBuscoClases(claseBuscada, clase);
         thenEncuntroLasClases(clasesEncontradas);
     }
@@ -147,30 +147,30 @@ public class TurnoServiceTest {
     @Test(expected = NoSeEncontroClaseConEseNombreException.class)
     public void testBuscarClaseYQueNoSeEncuentre() throws NoSeEncontroClaseConEseNombreException, Exception {
         String claseBuscada = givenClaseABuscada("asd");
-        Clase clase = givenClaseConLugar();
+        Clase clase = givenClaseConLugar(LocalDateTime.now());
         List<Clase> clases = whenBuscoClasesNoLaEncuentra(claseBuscada, clase);
     }
 
     @Test(expected = SuPlanNoPermiteMasInscripcionesPorSemanaException.class)
     public void testSiTienePlanBasicoNoPuedeSacarMasDeTresTurnosPorSemana() throws Exception, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, LaClaseEsDeUnaFechaAnterioALaActualException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenUnClienteActivo(Plan.BASICO);
-        Clase clase = givenClaseConLugar();
-        List<Turno> turnosYaSacados = givenTurnosSacadosParaEstaSemana(cliente, 3);
+        Clase clase = givenClaseConLugar(LocalDateTime.of(2021,12,15, 14, 2));
+        List<Turno> turnosYaSacados = givenTurnosSacadosParaEstaSemana(cliente, 3, LocalDateTime.of(2021,12,14, 14, 2));
         whenIntentoReservarTurnoEnLaSemanaFalla(cliente, clase, turnosYaSacados);
     }
 
     @Test(expected = SuPlanNoPermiteMasInscripcionesPorSemanaException.class)
     public void testSiTienePlanEstandarNoPuedeSacarMasDeSeisTurnosPorSemana() throws Exception, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, LaClaseEsDeUnaFechaAnterioALaActualException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenUnClienteActivo(Plan.ESTANDAR);
-        Clase clase = givenClaseConLugar();
-        List<Turno> turnosYaSacados = givenTurnosSacadosParaEstaSemana(cliente, 6);
+        Clase clase = givenClaseConLugar(LocalDateTime.of(2021,12,15, 14, 2));
+        List<Turno> turnosYaSacados = givenTurnosSacadosParaEstaSemana(cliente, 6, LocalDateTime.of(2021,12,14, 14, 2));
         whenIntentoReservarTurnoEnLaSemanaFalla(cliente, clase, turnosYaSacados);
     }
 
-    private List<Turno> givenTurnosSacadosParaEstaSemana(Cliente cliente, int cantidadTurnos) throws Exception {
+    private List<Turno> givenTurnosSacadosParaEstaSemana(Cliente cliente, int cantidadTurnos, LocalDateTime fechaYHora) throws Exception {
         List<Turno> turnos = new ArrayList<>();
         for (int i = 0; i < cantidadTurnos; i++) {
-            turnos.add(givenHayUnTurnoDeAyer(cliente));
+            turnos.add(givenHayUnTurnoDeAyer(cliente, fechaYHora.toLocalDate()));
         }
         return turnos;
     }
@@ -186,11 +186,11 @@ public class TurnoServiceTest {
         return turno;
     }
 
-    private Turno givenHayUnTurnoDeAyer(Cliente cliente) {
+    private Turno givenHayUnTurnoDeAyer(Cliente cliente, LocalDate fecha) {
         Clase clase = new Clase();
         clase.setId(1L);
-        clase.setDiaClase(LocalDateTime.now().minusDays(1));
-        return new Turno(cliente, clase , LocalDate.now().minusDays(5));
+        clase.setDiaClase(LocalDateTime.of(fecha, LocalTime.of(10,0)).minusDays(1));
+        return new Turno(cliente, clase ,fecha.minusDays(5));
     }
 
     private List<Turno> givenTurnos(boolean paraHoy) {
@@ -247,14 +247,14 @@ public class TurnoServiceTest {
         return cliente;
     }
 
-    private Clase givenClaseConLugar() throws Exception {
-        Actividad actividad = givenUnaActividadConPeriodoYHorarioValido();
-        return new Clase(LocalDateTime.now().plusHours(4), actividad, Modalidad.PRESENCIAL);
+    private Clase givenClaseConLugar(LocalDateTime fechaYHora) throws Exception {
+        Actividad actividad = givenUnaActividadConPeriodoYHorarioValido(fechaYHora);
+        return new Clase(fechaYHora.plusHours(4), actividad, Modalidad.PRESENCIAL);
     }
 
-    private Actividad givenUnaActividadConPeriodoYHorarioValido() throws Exception {
-        LocalDateTime antesDeAyer = LocalDateTime.now().minusDays(2);
-        LocalDateTime pasadoManiana = LocalDateTime.now().plusDays(2);
+    private Actividad givenUnaActividadConPeriodoYHorarioValido(LocalDateTime fechaYHora) throws Exception {
+        LocalDateTime antesDeAyer = fechaYHora.minusDays(2);
+        LocalDateTime pasadoManiana = fechaYHora.plusDays(2);
         Periodo periodo = new Periodo(antesDeAyer, pasadoManiana);
 
         return new Actividad("Actividad de alto impacto", Tipo.CROSSFIT, 4000f, Frecuencia.CON_INICIO_Y_FIN, periodo);

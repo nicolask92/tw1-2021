@@ -22,7 +22,7 @@
         <hr class="sidebar-divider">
 
 
-        <c:if test="${(sessionScope.cliente == true) && ((empty sessionScope.plan) || sessionScope.plan.nombre != 'Ninguno' )}">
+        <c:if test="${(sessionScope.cliente == true) && (sessionScope.plan != null) && ((empty sessionScope.plan) || sessionScope.plan.nombre != 'Ninguno' )}">
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="/proyecto_limpio_spring_war_exploded/mostrar-clases">

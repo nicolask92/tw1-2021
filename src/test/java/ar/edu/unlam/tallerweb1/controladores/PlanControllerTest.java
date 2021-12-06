@@ -7,6 +7,7 @@ import ar.edu.unlam.tallerweb1.modelo.Pago;
 import ar.edu.unlam.tallerweb1.modelo.Plan;
 import ar.edu.unlam.tallerweb1.repositorios.ClienteRepositorio;
 import ar.edu.unlam.tallerweb1.servicios.PlanService;
+import ar.edu.unlam.tallerweb1.viewBuilders.PlanesViewModel;
 import org.junit.Assert;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
@@ -14,7 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
-import java.util.Map;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 
@@ -47,17 +48,24 @@ public class PlanControllerTest {
     }
 
     @Test
-    public void sePuedeCancelarLaSuscripcionDeUnPlan() throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
+    public void sePuedeCancelarUnPlan() throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenClienteLogueadoYConPlan();
-        ModelAndView mv = whenCanceloSuscripcionDelPlanActual(mockSession, cliente, "Basico");
+        ModelAndView mv = whenCanceloPlanActual(mockSession, cliente, "Basico");
         thenElUsuarioNoTienePlan(mv, cliente);
     }
 
     @Test
-    public void noSePuedeCancelarLaSuscripcionDeUnPlan() throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
+    public void noSePuedeCancelarUnPlan() throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = givenClienteLogueadoYConPlan();
-        ModelAndView mv = whenCanceloSuscripcionDelPlanActual(mockSession, cliente, "Invalido");
+        ModelAndView mv = whenCanceloPlanActual(mockSession, cliente, "Invalido");
         thenElUsuarioNoTienePlan(mv, cliente);
+    }
+
+    @Test
+    public void testSePuedeDesuscribirDeUnPlan() throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
+        Cliente cliente = givenClienteLogueadoYConPlan();
+        ModelAndView mv = whenCanceloSuscripcionPlanActual(cliente, "Invalido");
+        thenSeDesuscribeAlPlan(mv, cliente);
     }
 
     @Test
@@ -68,19 +76,28 @@ public class PlanControllerTest {
     }
 
     @Test
-    public void seMuestraLaVigenciaDelPlanQueTieneContrado() throws YaTienePagoRegistradoParaMismoMes {
-        Cliente cliente = givenUnCliente();
+    public void seMuestraLaVigenciaDelPlanQueTieneContrado() {
+        Cliente cliente = givenClienteLogueadoYSinPlan();
         Pago pago = givenUnPagoDeEsteMes(cliente);
         ModelAndView mv = whenVeoLosPlanesQueTengoContratado(cliente, pago);
         thenMeMuestraLaVigenciaDelPlanQueTengoContratadoSobreEseMes(mv);
     }
 
-    private Cliente givenUnCliente() {
+    private Pago givenUnPagoDeEsteMes(Cliente cliente) {
+        Pago pago = new Pago(cliente, LocalDate.now().getMonth(), LocalDate.now().getYear(), Plan.ESTANDAR);
+        pago.setDebitoAutomatico(true);
+        return pago;
+    }
+
+    private Cliente givenClienteLogueadoYSinPlan() {
         return new Cliente();
     }
 
-    private Pago givenUnPagoDeEsteMes(Cliente cliente) {
-        return new Pago(cliente, LocalDate.now().getMonth(), LocalDate.now().getYear(), Plan.ESTANDAR);
+    private Cliente givenClienteLogueadoYConPlan() throws YaTienePagoRegistradoParaMismoMes {
+        Cliente cliente = new Cliente();
+        LocalDate hoy = LocalDate.now();
+        cliente.agregarPago(new Pago(cliente, hoy.getMonth(), hoy.getYear(), Plan.ESTANDAR));
+        return cliente;
     }
 
     private ModelAndView whenVeoLosPlanesQueTengoContratado(Cliente cliente, Pago pago) {
@@ -88,6 +105,12 @@ public class PlanControllerTest {
         when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
         when(planService.getUltimoPagoContratadoParaEsteMesYActivo(cliente.getId())).thenReturn(pago);
         return planController.getPlanes(mockSession);
+    }
+
+    private ModelAndView whenCanceloSuscripcionPlanActual(Cliente cliente, String plan) throws PlanNoExisteException {
+        when(mockSession.getAttribute("usuarioId")).thenReturn(cliente.getId());
+        doNothing().when(planService).cancelarSuscripcion(cliente.getId(), "Basico");
+        return planController.cancelarSuscripcion(plan, mockSession);
     }
 
     private ModelAndView whenContratoPlanQueYaTengoContrado(Cliente cliente, String plan, Boolean conDebito) throws YaTienePagoRegistradoParaMismoMes, PlanNoExisteException {
@@ -99,23 +122,11 @@ public class PlanControllerTest {
         return planController.contratarPlan(datosPlan, mockSession);
     }
 
-    private Cliente givenClienteLogueadoYConPlan() throws YaTienePagoRegistradoParaMismoMes {
-        Cliente cliente = new Cliente();
-        LocalDate hoy = LocalDate.now();
-        cliente.agregarPago(new Pago(cliente, hoy.getMonth(), hoy.getYear(), Plan.ESTANDAR));
-        return cliente;
-    }
-
-    private Cliente givenClienteLogueadoYSinPlan() {
-        return new Cliente();
-    }
-
     private ModelAndView whenVeLaVistaDePlanes(Cliente cliente) {
         when(mockSession.getAttribute("usuarioId")).thenReturn(cliente.getId());
         when(planService.getUltimoPagoContratadoParaEsteMesYActivo(cliente.getId())).thenReturn(null);
         return planController.getPlanes(mockSession);
     }
-
 
     private ModelAndView whenContratoPlan(HttpSession session, Cliente cliente, String plan, Boolean conDebito) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         DatosPlan datosPlan = new DatosPlan();
@@ -137,7 +148,7 @@ public class PlanControllerTest {
         return planController.contratarPlan(datosPlan, session);
     }
 
-    private ModelAndView whenCanceloSuscripcionDelPlanActual(HttpSession session, Cliente cliente, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
+    private ModelAndView whenCanceloPlanActual(HttpSession session, Cliente cliente, String plan) throws PlanNoExisteException, YaTienePagoRegistradoParaMismoMes {
         Pago pago = cliente.getContrataciones().get(0);
         when(session.getAttribute("usuarioId")).thenReturn(cliente.getId());
         when(planService.cancelarPlan(cliente.getId(), "Basico")).thenReturn(pago);
@@ -145,16 +156,27 @@ public class PlanControllerTest {
     }
 
     private void thenSeMandaLosPlanesALaVista(ModelAndView mv) {
+        List<PlanesViewModel> listaDePlanes = (List<PlanesViewModel>) mv.getModel().get("planes");
+        PlanesViewModel primerPlan = listaDePlanes.get(0);
+        PlanesViewModel segundoPlan = listaDePlanes.get(1);
+        PlanesViewModel tercerPlan = listaDePlanes.get(2);
+
         Assert.assertEquals(mv.getViewName(), "/planes");
-        Assert.assertEquals(mv.getModel().get("planes"), Map.of(
-                Plan.BASICO, false,
-                Plan.ESTANDAR, false,
-                Plan.PREMIUM, false
-        ));
+        Assert.assertEquals(listaDePlanes.size(), 3);
+        Assert.assertEquals(primerPlan.getPlan(), Plan.BASICO);
+        Assert.assertEquals(segundoPlan.getPlan(), Plan.ESTANDAR);
+        Assert.assertEquals(tercerPlan.getPlan(), Plan.PREMIUM);
+
+        Assert.assertEquals(primerPlan.getActivo(), false);
+        Assert.assertEquals(segundoPlan.getActivo(), false);
+        Assert.assertEquals(tercerPlan.getActivo(), false);
+
+        Assert.assertFalse(primerPlan.getConDebitoActivado().isPresent());
+        Assert.assertFalse(segundoPlan.getConDebitoActivado().isPresent());
+        Assert.assertFalse(tercerPlan.getConDebitoActivado().isPresent());
     }
 
     private void thenElUsuarioNoPuedoContratarPlan(ModelAndView mv, Cliente cliente) {
-//       assertThat(cliente.getUltimoPlanContrado()).isEqualTo(Plan.NINGUNO);
         assertThat(mv.getModel().get("noExistePlan")).isEqualTo("El plan que quiere contratar no existe");
         assertThat(mv.getViewName()).isEqualTo("redirect:/planes");
     }
@@ -165,21 +187,38 @@ public class PlanControllerTest {
     }
 
     private void thenElUsuarioNoTienePlan(ModelAndView mv, Cliente cliente) {
-//        assertThat(cliente.getUltimoPlanContrado()).isEqualTo(Plan.NINGUNO);
         assertThat(mv.getModel().get("msg")).isEqualTo("El Plan se cancelo correctamente");
         assertThat(mv.getViewName()).isEqualTo("redirect:/planes");
     }
 
     private void thenElClienteEsRedirigidoYLeAvisaQueYaLoTieneContrado(ModelAndView mv) {
-        assertThat(mv.getModel().get("msgError")).isEqualTo("Ya tiene este plan contrado.");
-        assertThat(mv.getViewName()).isEqualTo("redirect:/mostrar-clases");
+        assertThat(mv.getModel().get("yaTuvoPlan")).isEqualTo("Ya tiene registrado este plan para este mes.");
+        assertThat(mv.getViewName()).isEqualTo("/planes");
     }
 
     private void thenMeMuestraLaVigenciaDelPlanQueTengoContratadoSobreEseMes(ModelAndView mv) {
-        assert mv.getModelMap().get("planes").equals(Map.of(
-                Plan.BASICO, false,
-                Plan.ESTANDAR, true,
-                Plan.PREMIUM, false
-        ));
+        List<PlanesViewModel> listaDePlanes = (List<PlanesViewModel>) mv.getModel().get("planes");
+        PlanesViewModel primerPlan = listaDePlanes.get(0);
+        PlanesViewModel segundoPlan = listaDePlanes.get(1);
+        PlanesViewModel tercerPlan = listaDePlanes.get(2);
+
+        Assert.assertEquals(mv.getViewName(), "/planes");
+        Assert.assertEquals(listaDePlanes.size(), 3);
+        Assert.assertEquals(primerPlan.getPlan(), Plan.BASICO);
+        Assert.assertEquals(segundoPlan.getPlan(), Plan.ESTANDAR);
+        Assert.assertEquals(tercerPlan.getPlan(), Plan.PREMIUM);
+
+        Assert.assertEquals(primerPlan.getActivo(), false);
+        Assert.assertEquals(segundoPlan.getActivo(), true);
+        Assert.assertEquals(tercerPlan.getActivo(), false);
+
+        Assert.assertFalse(primerPlan.getConDebitoActivado().isPresent());
+        Assert.assertEquals(segundoPlan.getConDebitoActivado().get(), true);
+        Assert.assertFalse(tercerPlan.getConDebitoActivado().isPresent());
+    }
+
+    private void thenSeDesuscribeAlPlan(ModelAndView mv, Cliente cliente) {
+        assertThat(mv.getModel().get("msg")).isEqualTo("Te desuscribiste del plan correctamente");
+        assertThat(mv.getViewName()).isEqualTo("redirect:/planes");
     }
 }

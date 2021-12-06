@@ -32,7 +32,6 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     public List<Pago> getPagos(Long idUsuario) {
-
         Cliente cliente = clienteRepositorio.getById(idUsuario);
         return clienteRepositorio.getPagos(cliente);
     }

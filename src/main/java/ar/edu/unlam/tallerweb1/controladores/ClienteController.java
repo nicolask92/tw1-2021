@@ -19,12 +19,12 @@ public class ClienteController {
     private final ClienteService clienteService;
 
     @Autowired
-    public ClienteController(ClienteService clienteService){
+    public ClienteController(ClienteService clienteService) {
         this.clienteService = clienteService;
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/perfil")
-    public ModelAndView getPerfil(HttpSession sesion){
+    public ModelAndView getPerfil(HttpSession sesion) {
         Long idUsuario = (Long)sesion.getAttribute("usuarioId");
         ModelMap model = new ModelMap();
 
@@ -36,7 +36,7 @@ public class ClienteController {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/historial-pagos")
-    public ModelAndView getHistorialPagos(HttpSession sesion){
+    public ModelAndView getHistorialPagos(HttpSession sesion) {
         Long idUsuario = (Long)sesion.getAttribute("usuarioId");
         ModelMap model = new ModelMap();
 
@@ -44,5 +44,4 @@ public class ClienteController {
         model.put("pagos", pagos);
         return new ModelAndView("historial-pagos", model);
     }
-
 }

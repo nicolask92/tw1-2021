@@ -6,6 +6,7 @@ import ar.edu.unlam.tallerweb1.modelo.Pago;
 import ar.edu.unlam.tallerweb1.modelo.Plan;
 import ar.edu.unlam.tallerweb1.repositorios.ClienteRepositorio;
 import ar.edu.unlam.tallerweb1.servicios.PlanService;
+import ar.edu.unlam.tallerweb1.viewBuilders.PlanesViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -14,9 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Controller
 public class PlanController {
@@ -28,7 +27,6 @@ public class PlanController {
     public PlanController(PlanService planService, ClienteRepositorio clienteRepositorio) {
         this.planService = planService;
         this.clienteRepositorio = clienteRepositorio;
-
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/planes")
@@ -37,15 +35,11 @@ public class PlanController {
         Long idUsuario = (Long)sesion.getAttribute("usuarioId");
         final Pago ultimoPagoEsteMes = planService.getUltimoPagoContratadoParaEsteMesYActivo(idUsuario);
 
-        Map<Plan, Boolean> planesDisponibles = Arrays.stream(Plan.values())
-            .filter( plan -> plan != Plan.NINGUNO )
-            .collect(
-                Collectors.toMap( plan -> plan, plan -> ultimoPagoEsteMes != null && plan == ultimoPagoEsteMes.getPlan())
-            );
+        List<PlanesViewModel> planesAMostrar = PlanesViewModel.getListadoDePlanesActual(ultimoPagoEsteMes);
 
         ModelMap modelMap = new ModelMap();
         modelMap.put("datosPlan", new DatosPlan());
-        modelMap.put("planes", planesDisponibles);
+        modelMap.put("planes", planesAMostrar);
 
         return new ModelAndView("/planes", modelMap);
     }
@@ -65,13 +59,14 @@ public class PlanController {
             return new ModelAndView("redirect:/mostrar-clases", model);
         } catch (PlanNoExisteException e){
             model.put("noExistePlan", "El plan que quiere contratar no existe");
-            return  new ModelAndView("redirect:/planes", model);
+            return new ModelAndView("redirect:/planes", model);
         } catch (YaTienePagoRegistradoParaMismoMes e) {
-            model.put("msgError", "Ya tiene este plan contrado.");
-            return  new ModelAndView("redirect:/mostrar-clases", model);
+            model.put("yaTuvoPlan", "Ya tiene registrado este plan para este mes.");
+            return new ModelAndView("/planes", model);
         }
     }
 
+    // Ahora no se usa mas
     @RequestMapping(method = RequestMethod.GET, path = "/cancelar-plan/{plan}")
     public ModelAndView cancelarPlan(@PathVariable("plan") String plan, HttpSession sesion) throws PlanNoExisteException {
         Long idUsuario = (Long)sesion.getAttribute("usuarioId");
@@ -83,6 +78,21 @@ public class PlanController {
             return new ModelAndView("redirect:/planes", model);
         } catch (PlanNoExisteException | YaTienePagoRegistradoParaMismoMes e){
             model.put("noExistePlan", "El plan que quiere cancelar no existe");
+            return  new ModelAndView("redirect:/planes", model);
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/cancelar-suscripcion/{plan}")
+    public ModelAndView cancelarSuscripcion(@PathVariable("plan") String plan, HttpSession sesion) {
+        Long idUsuario = (Long)sesion.getAttribute("usuarioId");
+        ModelMap model = new ModelMap();
+
+        try {
+            planService.cancelarSuscripcion(idUsuario, plan);
+            model.put("msg", "Te desuscribiste del plan correctamente");
+            return new ModelAndView("redirect:/planes", model);
+        } catch (PlanNoExisteException e) {
+            model.put("noExistePlan", "El plan que quiere desuscribirse no existe");
             return  new ModelAndView("redirect:/planes", model);
         }
     }

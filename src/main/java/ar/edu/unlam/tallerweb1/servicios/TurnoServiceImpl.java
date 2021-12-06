@@ -139,7 +139,6 @@ public class TurnoServiceImpl implements TurnoService {
         return clasesBuscadas;
     }
 
-
     private long getCantidadTurnosPorSemana(Clase clase, List<Turno> turnos) {
         final int diaDeLaSemanaDeLaClase = clase.getDiaClase().getDayOfWeek().getValue();
 

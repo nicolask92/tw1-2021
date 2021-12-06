@@ -1,6 +1,7 @@
 package ar.edu.unlam.tallerweb1.modelo;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Calendar;
@@ -22,6 +23,8 @@ public class Pago {
 
     Boolean debitoAutomatico;
 
+    BigDecimal importePagado;
+
     Boolean activo;
     LocalDate fechaCancelacion;
     LocalDate fechaDeFinalizacion;
@@ -42,6 +45,10 @@ public class Pago {
     }
 
     public Pago() {
+    }
+
+    public void setImportePagado(BigDecimal importePagado) {
+        this.importePagado = importePagado;
     }
 
     public Boolean getDebitoAutomatico() {
@@ -101,6 +108,15 @@ public class Pago {
     public Pago activarPlan() {
         this.activo = true;
         return this;
+    }
+
+    public Pago cancelarSuscripcion() {
+        debitoAutomatico = false;
+        return this;
+    }
+
+    public BigDecimal getImportePagado() {
+        return importePagado;
     }
 
     @Override
