@@ -21,7 +21,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,29 +38,33 @@ public class TurnoController {
         this.clasesViewModelBuilder = clasesViewModelBuilder;
     }
 
-    @RequestMapping({"/mostrar-clases/{mes}", "/mostrar-clases"})
-    public ModelAndView mostrarClasesParaSacarTurnos(@PathVariable Optional<Mes> mes, HttpSession httpSession) throws Exception {
+    @RequestMapping({"/mostrar-clases/{mes}", "/mostrar-clases", "/mostrar-clases/{mes}/{anio}", "/mostrar-clases/{mes}/{anio}/{debito}"})
+    public ModelAndView mostrarClasesParaSacarTurnos(
+        @PathVariable Optional<Mes> mes,
+        @PathVariable Optional<Integer> anio,
+        @PathVariable Optional<String> debito,
+        HttpSession httpSession) throws Exception {
 
         Long idUsuario = (Long) httpSession.getAttribute("usuarioId");
         LocalDate hoy = LocalDate.now();
         ModelMap model = new ModelMap();
-        model.put("mes", mes.isPresent() ? mes.get() : hoy.getMonth().toString());
-        model.put("anio", hoy.getYear());
+        model.put("mes", mes.orElseGet(() -> Mes.values()[hoy.getMonth().getValue() - 1]));
+        model.put("anio", anio.orElse(hoy.getYear()));
         List<Clase> clases;
 
         try {
-            clases = claseService.getClases(mes, idUsuario);
+            clases = claseService.getClases(mes, anio, idUsuario, debito.isPresent());
             List<Turno> turnosDelDia = turnoService.getTurnosParaHoy(idUsuario);
 
-            CalendarioDeActividades calendarioYActividades = clasesViewModelBuilder.getCalendarioCompleto(clases, mes);
+            CalendarioDeActividades calendarioYActividades = clasesViewModelBuilder.getCalendarioCompleto(clases, mes, anio);
 
             model.put("turnosDelDia", turnosDelDia);
             model.put("calendario", calendarioYActividades);
 
             return new ModelAndView("clases-para-turnos", model);
-        } catch (NoTienePlanParaVerLasClasesException e) {
+        } catch (NoTienePlanParaVerLasClasesException | YaTienePagoRegistradoParaMismoMes e) {
             model.put("turnosDelDia", List.of());
-            CalendarioDeActividades calendarioYActividades = clasesViewModelBuilder.getCalendarioCompleto(List.of(), mes);
+            CalendarioDeActividades calendarioYActividades = clasesViewModelBuilder.getCalendarioCompleto(List.of(), mes, anio);
 
             model.put("calendario", calendarioYActividades);
 
@@ -155,7 +158,6 @@ public class TurnoController {
 
         ModelMap model = new ModelMap();
         try {
-
             List<Clase> clasesBuscadas = turnoService.buscarClase(claseABuscar);
             model.put("clasesBuscadas", clasesBuscadas);
             return new ModelAndView("clase-buscada", model);

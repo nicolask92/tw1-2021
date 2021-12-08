@@ -46,22 +46,31 @@ public class Cliente extends Usuario {
         return this.contrataciones;
     }
 
+    public Pago getUltimoPagoEn(Integer mes, Integer anio) {
+        Optional<Pago> pago = contrataciones.stream()
+            .filter( pagoIterador -> pagoIterador.esActivo() && pagoIterador.getAnio().equals(anio) && pagoIterador.getMes().getValue() == mes)
+            .max(Comparator.comparing(Pago::getId));
+        return pago.orElse(null);
+    }
+
     public Pago getUltimoPagoRealizado() {
-        return contrataciones.stream()
+        Optional<Pago> pago = contrataciones.stream()
+            .filter(Pago::esActivo)
             .max(Comparator.comparing(Pago::getMes))
             .stream()
             .max(Comparator.comparing(Pago::getAnio))
             .stream()
-            .max(Comparator.comparing(Pago::getId))
-            .get();
+            .max(Comparator.comparing(Pago::getId));
+        return pago.orElse(null);
     }
 
     public Plan getUltimoPlanContrado() {
-        Optional<Pago> pagoObtenido = contrataciones.stream()
+        Optional<Pago> pagoObtenido = contrataciones
+            .stream()
             .filter( pago -> pago.activo )
             .max(Comparator.comparing(Pago::getMes))
             .stream()
-                .max(Comparator.comparing(Pago::getAnio));
+            .max(Comparator.comparing(Pago::getAnio));
         return pagoObtenido.isEmpty() ? null : pagoObtenido.get().getPlan();
     }
 

@@ -4,7 +4,6 @@ import ar.edu.unlam.tallerweb1.common.Mes;
 import ar.edu.unlam.tallerweb1.modelo.Clase;
 import org.springframework.stereotype.Component;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
@@ -15,9 +14,9 @@ public class ClasesViewModelBuilder {
 
     ClasesViewModelBuilder() {}
 
-    public CalendarioDeActividades getCalendarioCompleto(List<Clase> clases, Optional<Mes> mes) throws Exception {
+    public CalendarioDeActividades getCalendarioCompleto(List<Clase> clases, Optional<Mes> mes, Optional<Integer> anio) throws Exception {
 
-        Calendar calendario = setearCalendario(mes);
+        Calendar calendario = setearCalendario(mes, anio);
 
         return armarCalendario(calendario, clases);
     }
@@ -44,14 +43,14 @@ public class ClasesViewModelBuilder {
         return fecha.getDayOfWeek().getValue() == 7;
     }
 
-    private Calendar setearCalendario(Optional<Mes> mes) {
+    private Calendar setearCalendario(Optional<Mes> mes, Optional<Integer> anio) {
         Calendar calendario = Calendar.getInstance();
         int numeroDeMes = getNumeroDeMes(mes, calendario);
-        int anioActual = calendario.get(Calendar.YEAR);
+        int anioDefinido = anio.orElseGet(() -> calendario.get(Calendar.YEAR));
         if (mes.isPresent()) {
-            calendario.set(anioActual, numeroDeMes - 1, 1);
+            calendario.set(anioDefinido, numeroDeMes - 1, 1);
         } else {
-            calendario.set(anioActual, numeroDeMes, 1);
+            calendario.set(anioDefinido, numeroDeMes, 1);
         }
         return calendario;
     }

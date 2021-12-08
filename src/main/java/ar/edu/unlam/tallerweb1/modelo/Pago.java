@@ -52,7 +52,7 @@ public class Pago {
     }
 
     public Boolean getDebitoAutomatico() {
-        return debitoAutomatico;
+        return debitoAutomatico != null ? debitoAutomatico : false;
     }
 
     public void setDebitoAutomatico(Boolean debitoAutomatico) {

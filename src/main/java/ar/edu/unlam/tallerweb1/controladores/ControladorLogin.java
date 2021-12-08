@@ -1,6 +1,7 @@
 package ar.edu.unlam.tallerweb1.controladores;
 
 import ar.edu.unlam.tallerweb1.modelo.Cliente;
+import ar.edu.unlam.tallerweb1.modelo.Pago;
 import ar.edu.unlam.tallerweb1.modelo.Usuario;
 import ar.edu.unlam.tallerweb1.servicios.ServicioLogin;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.time.LocalDate;
 
 @Controller
 public class ControladorLogin {
@@ -57,9 +59,11 @@ public class ControladorLogin {
 			request.getSession(true).setAttribute("usuarioId", usuarioBuscado.getId());
 
 			if (usuarioBuscado instanceof Cliente) {
+				LocalDate hoy = LocalDate.now();
+				Pago ultimoPago = ((Cliente)usuarioBuscado).getUltimoPagoEn(hoy.getMonth().getValue() ,hoy.getYear());
 				request.getSession(true).setAttribute("nombreCliente", ((Cliente)usuarioBuscado).getNombreCompleto());
 				request.getSession(true).setAttribute("cliente", true);
-				request.getSession(true).setAttribute("plan", ((Cliente)usuarioBuscado).getUltimoPlanContrado());
+				request.getSession(true).setAttribute("plan", ultimoPago != null ? ultimoPago.getPlan() : null);
 			}
 
 			//session.setAttribute("usuarioId", usuarioBuscado.getId());

@@ -303,9 +303,9 @@ public class TurnoControllerTest {
     }
 
     private ModelAndView whenMuestroLosTurnos(Turno turno) throws Exception {
-        when(clasesViewModelBuilder.getCalendarioCompleto(anyList(), any())).thenReturn(new CalendarioDeActividades());
+        when(clasesViewModelBuilder.getCalendarioCompleto(anyList(), any(), any())).thenReturn(new CalendarioDeActividades());
         when(turnoService.getTurnosParaHoy(anyLong())).thenReturn(List.of(turno));
-        return turnoController.mostrarClasesParaSacarTurnos(Optional.empty(), mockSession);
+        return turnoController.mostrarClasesParaSacarTurnos(Optional.empty(), Optional.empty(), Optional.empty(), mockSession);
     }
 
     private ModelAndView whenBorroTurnoDeAyer(Turno turno, Cliente cliente, HttpServletRequest session ) throws ElClienteNoCorrespondeAlTurnoException, TurnoExpiroException {
@@ -361,11 +361,11 @@ public class TurnoControllerTest {
         return turnoController.reservarTurno(1L, session);
     }
 
-    private ModelAndView whenIntentaVerMesDondeNoTieneUnPlanAsociado(Cliente cliente) throws Exception, NoTienePlanParaVerLasClasesException {
+    private ModelAndView whenIntentaVerMesDondeNoTieneUnPlanAsociado(Cliente cliente) throws Exception, NoTienePlanParaVerLasClasesException, YaTienePagoRegistradoParaMismoMes {
         when(mockDeHttpServletSession.getSession()).thenReturn(mockSession);
         when(mockDeHttpServletSession.getSession().getAttribute("usuarioId")).thenReturn(cliente.getId());
-        doThrow(NoTienePlanParaVerLasClasesException.class).when(claseService).getClases(Optional.of(Mes.ABRIL), cliente.getId());
-        return turnoController.mostrarClasesParaSacarTurnos(Optional.of(Mes.ABRIL), mockSession);
+        doThrow(NoTienePlanParaVerLasClasesException.class).when(claseService).getClases(Optional.of(Mes.ABRIL), Optional.empty(), cliente.getId(), false);
+        return turnoController.mostrarClasesParaSacarTurnos(Optional.of(Mes.ABRIL), Optional.empty(), Optional.empty(), mockSession);
     }
 
     private void thenReservoElTurnoCorrectamente(ModelAndView mv) {

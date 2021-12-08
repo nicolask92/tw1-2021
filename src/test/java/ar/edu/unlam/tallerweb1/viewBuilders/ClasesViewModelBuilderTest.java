@@ -12,7 +12,6 @@ import org.junit.Test;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -99,11 +98,11 @@ public class ClasesViewModelBuilderTest {
 
 
     private CalendarioDeActividades whenRenderizoElMes(List<Clase> clases) throws Exception {
-        return clasesBuilder.getCalendarioCompleto(clases, Optional.empty());
+        return clasesBuilder.getCalendarioCompleto(clases, Optional.empty(), Optional.of(LocalDate.now().getYear()));
     }
 
     private CalendarioDeActividades whenRenderizoElMesConMes(List<Clase> clases, Mes mes) throws Exception {
-        return clasesBuilder.getCalendarioCompleto(clases, Optional.ofNullable(mes));
+        return clasesBuilder.getCalendarioCompleto(clases, Optional.ofNullable(mes), Optional.of(LocalDate.now().getYear()));
     }
 
     private void thenLaCantidadDeClasesADevolverEsCero(CalendarioDeActividades calendario) {
@@ -168,10 +167,10 @@ public class ClasesViewModelBuilderTest {
                 .getFechasYSusClases()
                 .stream()
                 .filter( fecha ->
-                                fecha.getDia() == 5 ||
-                                fecha.getDia() == 12 ||
-                                fecha.getDia() ==26 ||
-                                fecha.getDia() == 19
+                    fecha.getDia() == 5 ||
+                    fecha.getDia() == 12 ||
+                    fecha.getDia() ==26 ||
+                    fecha.getDia() == 19
                 )
                 .map(FechaYClases::isEsDomingo)
                 .collect(Collectors.toList());
