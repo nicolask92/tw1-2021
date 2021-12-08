@@ -81,6 +81,75 @@ values(20        , "2021-11-24T10:15:30", "PRESENCIAL", 1, 4);
 insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
 values(20        , "2021-11-25T10:15:30", "PRESENCIAL", 1, 4);
 
+/*--------------------------CLASES DICIEMBRE----------------------------------*/
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2021-12-03T10:15:30", "PRESENCIAL", 1, 1);
+
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2021-12-06T10:15:30", "PRESENCIAL", 2, 2);
+
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2021-12-10T10:15:30", "PRESENCIAL", 1, 3);
+
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2021-12-20T10:15:30", "PRESENCIAL", 1, 4);
+
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2021-12-20T14:15:30", "PRESENCIAL", 2, 3);
+
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2021-12-27T23:15:30", "PRESENCIAL", 1, 4);
+
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2021-12-29T13:15:30", "PRESENCIAL", 1, 4);
+
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2021-12-30T10:15:30", "PRESENCIAL", 1, 4);
+
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2021-12-24T10:15:30", "PRESENCIAL", 1, 4);
+
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2021-12-24T10:15:30", "PRESENCIAL", 1, 4);
+
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2021-12-25T10:15:30", "PRESENCIAL", 1, 4);
+
+/*------------------CLASE ENERO 2022------------------------------------*/
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2022-1-03T10:15:30", "PRESENCIAL", 1, 1);
+
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2022-1-06T10:15:30", "PRESENCIAL", 2, 2);
+
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2022-1-10T10:15:30", "PRESENCIAL", 1, 3);
+
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2022-1-20T10:15:30", "PRESENCIAL", 1, 4);
+
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2022-1-20T14:15:30", "PRESENCIAL", 2, 3);
+
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2022-1-27T23:15:30", "PRESENCIAL", 1, 4);
+
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2022-1-29T13:15:30", "PRESENCIAL", 1, 4);
+
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2022-1-28T10:15:30", "PRESENCIAL", 1, 4);
+
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2022-1-24T10:15:30", "PRESENCIAL", 1, 4);
+
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2022-1-24T10:15:30", "PRESENCIAL", 1, 4);
+
+insert into clase (cupoMaximo, diaClase, modalidad, actividad_id, horario_id)
+values(20        , "2022-1-25T10:15:30", "PRESENCIAL", 1, 4);
+
+
 /*----------------------------------------------------------------------------------*/
 
 insert into diayhorario (id, dia, horario_id)
@@ -109,7 +178,7 @@ values ("Cliente", true, "clientePlanEstandar", "clienteestandar@gmail.com", "Pe
 insert into usuario(DTYPE, activo, apellido, email, nombre, password, rol)
 values ("Cliente", true, "clientePlanPremium", "clientepremium@gmail.com", "Roberto", "cliente123", "Rol de cliente");
 
-INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id) VALUES (5, 1,'2021','2021-11-30',10,'NINGUNO',1);
-INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id) VALUES (5, 1,'2021','2021-11-30',10,'NINGUNO',4);
-INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id) VALUES (5, 1,'2021','2021-11-30',10,'NINGUNO',5);
-INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id) VALUES (5, 1,'2021','2021-11-30',10,'NINGUNO',6);
+INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id) VALUES (5, 1,'2021','2021-12-30',11,'NINGUNO',1);
+INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id) VALUES (5, 1,'2021','2021-12-30',11,'NINGUNO',4);
+INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id) VALUES (5, 1,'2021','2021-12-30',11,'NINGUNO',5);
+INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id) VALUES (5, 1,'2021','2021-12-30',11,'NINGUNO',6);
