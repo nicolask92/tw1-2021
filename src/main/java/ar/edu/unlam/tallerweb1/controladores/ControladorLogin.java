@@ -60,7 +60,7 @@ public class ControladorLogin {
 
 			if (usuarioBuscado instanceof Cliente) {
 				LocalDate hoy = LocalDate.now();
-				Pago ultimoPago = ((Cliente)usuarioBuscado).getUltimoPagoEn(hoy.getMonth().getValue() ,hoy.getYear());
+				Pago ultimoPago = ((Cliente)usuarioBuscado).getUltimoPagoEn(hoy.getMonth().getValue() ,hoy.getYear(), true);
 				request.getSession(true).setAttribute("nombreCliente", ((Cliente)usuarioBuscado).getNombreCompleto());
 				request.getSession(true).setAttribute("cliente", true);
 				request.getSession(true).setAttribute("plan", ultimoPago != null ? ultimoPago.getPlan() : null);

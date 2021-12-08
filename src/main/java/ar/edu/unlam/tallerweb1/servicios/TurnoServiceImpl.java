@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -32,7 +33,7 @@ public class TurnoServiceImpl implements TurnoService {
     }
 
     @Override
-    public void guardarTurno(Long idClase, Long idUsuario) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException {
+    public void guardarTurno(Long idClase, Long idUsuario) throws Exception, LaClaseEsDeUnaFechaAnterioALaActualException, YaHayTurnoDeLaMismaClaseException, SuPlanNoPermiteMasInscripcionesPorDiaException, SinPlanException, SuPlanNoPermiteMasInscripcionesPorSemanaException, YaVencioElMesException {
         final Clase clase = claseRepositorio.getById(idClase);
         final Cliente cliente = clienteRepositorio.getById(idUsuario);
         final List<Turno> turnosDelCliente = turnoRepositorio.getTurnosByIdCliente(cliente);
@@ -41,18 +42,23 @@ public class TurnoServiceImpl implements TurnoService {
 
         final List<Pago> pagos = cliente.getContrataciones();
 
-        Optional<Pago> pagoDeLaClaseElegida = pagos
+        List<Pago> pagosDeLaClaseElegida = pagos
             .stream()
             .filter( pago ->
-                pago.esActivo() &&
                 pago.getMes() == clase.getDiaClase().getMonth()
                     && pago.getAnio() == clase.getDiaClase().getYear()
                     && pago.getPlan() != Plan.NINGUNO
             )
-            .findFirst();
+            .collect(Collectors.toList());
 
-        if (pagoDeLaClaseElegida.isEmpty()) {
+        Optional<Pago> pagoActivo = pagosDeLaClaseElegida
+                .stream().filter(Pago::esActivo)
+                .findFirst();
+
+        if (pagosDeLaClaseElegida.isEmpty()) {
             throw new SinPlanException();
+        } else if (pagoActivo.isEmpty()) {
+            throw new YaVencioElMesException();
         } else {
             long cantidadDeClasesEnElDia = turnosDelCliente
                     .stream()
@@ -63,7 +69,7 @@ public class TurnoServiceImpl implements TurnoService {
 
             long cantidadDeClasesEnLaSemana = getCantidadTurnosPorSemana(clase, turnosDelCliente);
 
-            switch (pagoDeLaClaseElegida.get().getPlan()) {
+            switch (pagoActivo.get().getPlan()) {
                 case NINGUNO:
                     throw new SinPlanException();
                 case BASICO:
@@ -119,7 +125,6 @@ public class TurnoServiceImpl implements TurnoService {
             throw new TurnoExpiroException();
 
         turnoRepositorio.borrarTurno(turno);
-
     }
 
     @Override

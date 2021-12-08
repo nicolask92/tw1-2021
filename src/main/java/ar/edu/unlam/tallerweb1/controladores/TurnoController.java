@@ -132,6 +132,9 @@ public class TurnoController {
         } catch (SuPlanNoPermiteMasInscripcionesPorSemanaException e) {
             model.put("msg", "Su plan no permite sacar mas clases por semana");
             return new ModelAndView("redirect:/mostrar-clases", model);
+        } catch (YaVencioElMesException e) {
+            model.put("msg", "No se puede sacar clases de meses anteriores");
+            return new ModelAndView("redirect:/mostrar-clases", model);
         }
     }
 

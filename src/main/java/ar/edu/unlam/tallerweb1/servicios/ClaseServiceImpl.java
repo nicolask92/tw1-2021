@@ -52,7 +52,7 @@ public class ClaseServiceImpl implements ClaseService {
             anioDefinido = anio.orElseGet(hoy::getYear);
         }
 
-        boolean tienePlanParaElMesAConsultar = cliente.getUltimoPagoEn(mesDefinido, anioDefinido) != null;
+        boolean tienePlanParaElMesAConsultar = cliente.getUltimoPagoEn(mesDefinido, anioDefinido, false) != null;
 
         boolean tieneCapacidadDeGenerarPagoEnElMes = cliente.getUltimoPagoRealizado() != null ? cliente.getUltimoPagoRealizado().getDebitoAutomatico() : false;
 
