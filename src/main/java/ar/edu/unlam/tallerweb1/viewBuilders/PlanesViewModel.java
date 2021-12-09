@@ -36,7 +36,7 @@ public class PlanesViewModel {
         final Plan planDelUltimoPago = ultimoPago != null ? ultimoPago.getPlan() : null;
         LocalDate hoy = LocalDate.now();
         List<PlanesViewModel> planesAContratar = new ArrayList<>();
-        if (planDelUltimoPago == null ) {
+        if (planDelUltimoPago == Plan.NINGUNO || planDelUltimoPago == null) {
             planesAContratar.add(new PlanesViewModel(Plan.BASICO, Optional.empty(), false, Optional.empty(), true));
             planesAContratar.add(new PlanesViewModel(Plan.ESTANDAR, Optional.empty(), false, Optional.empty(), true));
             planesAContratar.add(new PlanesViewModel(Plan.PREMIUM, Optional.empty(), false, Optional.empty(), true));
