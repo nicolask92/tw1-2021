@@ -58,13 +58,16 @@ public class PlanServiceTest {
     }
 
     private void thenElClienteYaNoTieneSuscripcionAutomatica(Cliente cliente) {
-        assertThat(cliente.getUltimoPagoRealizado().getDebitoAutomatico()).isEqualTo(false);
+        Pago pago = cliente.getContrataciones().get(0);
+        assertThat(pago.esActivo()).isEqualTo(false);
+        assertThat(pago.getDebitoAutomatico()).isEqualTo(false);
     }
 
     private void whenClienteSeDesuscribeDelPlan(Cliente cliente, String plan) throws YaTienePagoRegistradoParaMismoMes, PlanNoExisteException {
         when(clienteRepositorio.getById(cliente.getId())).thenReturn(cliente);
-        cliente.getUltimoPagoRealizado().cancelarPlan();
         when(clienteRepositorio.getPagoActivo(cliente)).thenReturn(cliente.getUltimoPagoRealizado());
+        cliente.getUltimoPagoRealizado().cancelarPlan();
+        pagoRepositorio.actualizar(cliente.getUltimoPagoRealizado());
         planService.cancelarSuscripcion(cliente.getId(), plan);
     }
 
@@ -136,9 +139,11 @@ public class PlanServiceTest {
 
     private Cliente givenClienteLogueadoConPlan(Boolean conDebitoAutomatico) throws YaTienePagoRegistradoParaMismoMes {
         Cliente cliente = new Cliente();
+        cliente.setId(1L);
         LocalDate hoy = LocalDate.now();
         Pago pago = new Pago(cliente, hoy.getMonth(), hoy.getYear(), Plan.BASICO);
         pago.setDebitoAutomatico(conDebitoAutomatico);
+        pago.setId(1L);
         cliente.agregarPago(pago);
         return cliente;
     }
