@@ -187,10 +187,10 @@ values ("Cliente", true, "clientePlanEstandar", "clienteestandar@gmail.com", "Pe
 insert into usuario(DTYPE, activo, apellido, email, nombre, password, rol)
 values ("Cliente", true, "clientePlanPremium", "clientepremium@gmail.com", "Roberto", "cliente123", "Rol de cliente");
 
-INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id) VALUES (1, 1,'2021','2021-12-31',11,'NINGUNO',1);
-INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id) VALUES (2, 1,'2021','2021-12-31',11,'NINGUNO',4);
-INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id) VALUES (3, 1,'2021','2021-12-31',11,'NINGUNO',5);
-INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id) VALUES (4, 1,'2021','2021-12-31',11,'NINGUNO',6);
+-- INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id) VALUES (1, 1,'2021','2021-12-31',11,'NINGUNO',1);
+-- INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id) VALUES (2, 1,'2021','2021-12-31',11,'NINGUNO',4);
+-- INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id) VALUES (3, 1,'2021','2021-12-31',11,'NINGUNO',5);
+-- INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id) VALUES (4, 1,'2021','2021-12-31',11,'NINGUNO',6);
 INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id, importePagado, debitoAutomatico) VALUES (5, 0,'2021','2021-11-30',10,'BASICO',1 ,3500, 0);
 
 /*-----------TURNO VIEJO-----------------------*/
