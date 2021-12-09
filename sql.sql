@@ -191,7 +191,7 @@ INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id) V
 INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id) VALUES (2, 1,'2021','2021-12-31',11,'NINGUNO',4);
 INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id) VALUES (3, 1,'2021','2021-12-31',11,'NINGUNO',5);
 INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id) VALUES (4, 1,'2021','2021-12-31',11,'NINGUNO',6);
-INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id, importePagado, debitoAutomatico) VALUES (5, 0,'2021','2021-11-30',10,'BASICO',1 ,3500, 0)
+INSERT INTO pagos(id, activo, anio,fechaDeFinalizacion, mes, plan, cliente_id, importePagado, debitoAutomatico) VALUES (5, 0,'2021','2021-11-30',10,'BASICO',1 ,3500, 0);
 
 /*-----------TURNO VIEJO-----------------------*/
-INSERT INTO turno(`id`, `asisitio`, `fecha_y_hora_de_reserva`, `clase_id`, `cliente_id`) VALUES ('1','false','2021-12-3 14:15:30', 20, 1)
+INSERT INTO turno(id,asisitio, fecha_y_hora_de_reserva, clase_id, cliente_id) VALUES ('1','false','2021-12-3 14:15:30', 20, 1);
